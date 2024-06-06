@@ -66,7 +66,6 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
         checkCollision();
         playerMove();
         monsterMove();
-        checkCollision();
     }
 
     public void addPropertyListener(PropertyChangeListener listener) {
@@ -134,10 +133,10 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
             double distance = Math.sqrt(Math.pow(playerCenterX - monsterCenterX, 2) + Math.pow(playerCenterY - monsterCenterY, 2));
             if (distance < (player.getImageView().getFitWidth() / 2 + monster.getImageView().getFitWidth() / 2)) { // 触发事件
                 CollisionEvent event = new CollisionEvent(player, monster);
-                eventManager.eventTrigger(event);
+                eventManager.fireEvent(event);
                 if (player.getHP() <= 0) { // 检查玩家是否死亡
                     PlayerDieEvent playerDieEvent = new PlayerDieEvent(player, monsterList, root);
-                    eventManager.eventTrigger(playerDieEvent);
+                    eventManager.fireEvent(playerDieEvent);
                     pauseEngine();
                 }
             }

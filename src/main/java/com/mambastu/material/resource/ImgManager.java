@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javafx.scene.image.Image;
 
-public class ImgManager { // TODO: 规划oop设计，实现单例模式
+public class ImgManager { // TODO: 规划oop设计，实现 对象->URL管理
     private static final Map<String, Image> imageCache = new HashMap<>();
 
     public static Image getImage(String path) {

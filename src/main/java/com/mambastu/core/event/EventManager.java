@@ -2,46 +2,38 @@ package com.mambastu.core.event;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import com.mambastu.core.event.comp.event.BaseEvent;
 import com.mambastu.core.event.comp.handler.BaseEventHandler;
 
 public class EventManager { // TODO: 探索单例模式
-    private final Map<Class<? extends BaseEvent>, Set<BaseEventHandler<? extends BaseEvent>>> listeners = new HashMap<>();
+    private final Map<Class<? extends BaseEvent>, BaseEventHandler<? extends BaseEvent>> handlerMap = new HashMap<>();
 
     public <T extends BaseEvent> void register(Class<T> eventType, BaseEventHandler<T> handler) {
-        listeners.computeIfAbsent(eventType, k -> new HashSet<>()).add(handler);
+        handlerMap.put(eventType, handler);
     }
 
     public <T extends BaseEvent> void unregister(Class<T> eventType, BaseEventHandler<T> handler) {
-        Set<BaseEventHandler<? extends BaseEvent>> handlers = listeners.get(eventType);
-        if (handlers != null) {
-            handlers.remove(handler);
-            if (handlers.isEmpty()) {
-                listeners.remove(eventType);
-            }
+        if (handlerMap.containsKey(eventType)) {
+            handlerMap.remove(eventType, handler);
         }
     }
 
-    public <T extends BaseEvent> void eventTrigger(T event) {
-        Set<BaseEventHandler<? extends BaseEvent>> handlers = listeners.get(event.getClass());
-        if (handlers == null || handlers.isEmpty()) { // 动态加载Handler
+    public <T extends BaseEvent> void fireEvent(T event) {
+        BaseEventHandler<? extends BaseEvent> handler = handlerMap.get(event.getClass());
+        if (handler == null) { // 动态加载Handler
             loadHandlerForEvent(event.getClass());
-            handlers = listeners.get(event.getClass());
+            handler = handlerMap.get(event.getClass());
         }
 
-        if (handlers != null) {
-            for (BaseEventHandler<? extends BaseEvent> handler : handlers) {
-                try {
-                    @SuppressWarnings("unchecked")
-                    BaseEventHandler<T> eventHandler = (BaseEventHandler<T>) handler; // 强制向下转型，类型不安全
-                    eventHandler.handle(event);
-                } catch (ClassCastException e) {
-                    e.printStackTrace();
-                }
+        if (handler != null) {
+            try {
+                @SuppressWarnings("unchecked")
+                BaseEventHandler<T> eventHandler = (BaseEventHandler<T>) handler; // 强制向下转型，类型不安全
+                eventHandler.handle(event);
+            } catch (ClassCastException e) {
+                e.printStackTrace();
             }
         }
     }

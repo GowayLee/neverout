@@ -47,7 +47,7 @@ public abstract class BasePlayer extends BaseEntity {
         imageView.setFitHeight(50);
     }
 
-    public abstract void die(); // 设置玩家死亡状态
+    abstract public void die(); // 设置玩家死亡状态
 }
 
 
