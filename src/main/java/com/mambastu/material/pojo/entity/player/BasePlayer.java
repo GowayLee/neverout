@@ -2,7 +2,7 @@ package com.mambastu.material.pojo.entity.player;
 
 import java.util.Set;
 
-import com.mambastu.infuse.pojo.enums.GameInput;
+import com.mambastu.infuse.input.comp.GameInput;
 import com.mambastu.material.pojo.entity.BaseEntity;
 
 import lombok.Getter;

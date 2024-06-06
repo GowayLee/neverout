@@ -1,4 +1,4 @@
-package com.mambastu.infuse.pojo.enums;
+package com.mambastu.infuse.input.comp;
 
 public enum GameInput {
     MOVE_UP,

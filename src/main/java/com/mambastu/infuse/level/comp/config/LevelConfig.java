@@ -1,4 +1,4 @@
-package com.mambastu.infuse.pojo.config;
+package com.mambastu.infuse.level.comp.config;
 
 import java.util.HashMap;
 import java.util.Map;

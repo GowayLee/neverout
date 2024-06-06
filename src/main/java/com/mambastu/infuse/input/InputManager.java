@@ -5,10 +5,11 @@ import javafx.scene.input.KeyCode;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import com.mambastu.infuse.input.comp.GameInput;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-
-import com.mambastu.infuse.pojo.enums.GameInput;
 public class InputManager { // TODO: 实现单例模式
     /*
      * 使用两套输入判定系统：

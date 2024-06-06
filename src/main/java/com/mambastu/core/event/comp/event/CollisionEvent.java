@@ -5,7 +5,7 @@ import com.mambastu.material.pojo.entity.player.BasePlayer;
 
 import lombok.Getter;
 
-public class CollisionEvent extends BaseEvent { // FIXME: 事件命名原则以及分类
+public class CollisionEvent extends BaseEvent { // TODO: 事件命名原则以及分类
     @Getter
     private final BasePlayer player;
 

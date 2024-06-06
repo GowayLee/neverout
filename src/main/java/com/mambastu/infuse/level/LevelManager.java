@@ -1,8 +1,8 @@
 package com.mambastu.infuse.level;
 
 import com.mambastu.core.engine.GameEngine;
-import com.mambastu.infuse.pojo.config.GlobalConfig;
-import com.mambastu.infuse.pojo.config.LevelConfig;
+import com.mambastu.infuse.level.comp.config.GlobalConfig;
+import com.mambastu.infuse.level.comp.config.LevelConfig;
 
 import javafx.scene.Scene;
 

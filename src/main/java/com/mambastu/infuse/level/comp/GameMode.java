@@ -1,4 +1,4 @@
-package com.mambastu.infuse.pojo.enums;
+package com.mambastu.infuse.level.comp;
 
 public enum GameMode {
     NORMAL,

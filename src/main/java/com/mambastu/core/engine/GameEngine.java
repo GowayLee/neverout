@@ -3,7 +3,7 @@ package com.mambastu.core.engine;
 import java.util.LinkedList;
 
 import com.mambastu.core.logic.LogicManager;
-import com.mambastu.infuse.pojo.config.GlobalConfig;
+import com.mambastu.infuse.level.comp.config.GlobalConfig;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;

@@ -1,6 +1,6 @@
-package com.mambastu.infuse.pojo.config;
+package com.mambastu.infuse.level.comp.config;
 
-import com.mambastu.infuse.pojo.enums.GameMode;
+import com.mambastu.infuse.level.comp.GameMode;
 
 import lombok.Getter;
 import lombok.Setter;

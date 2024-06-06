@@ -12,7 +12,7 @@ import com.mambastu.core.event.EventManager;
 import com.mambastu.core.event.comp.event.CollisionEvent;
 import com.mambastu.core.event.comp.event.PlayerDieEvent;
 import com.mambastu.infuse.input.InputManager;
-import com.mambastu.infuse.pojo.config.GlobalConfig;
+import com.mambastu.infuse.level.comp.config.GlobalConfig;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
@@ -25,7 +25,7 @@ import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以及相关组件, 规划oop特性
+public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以及相关组件, 规划oop设计
     private final PropertyChangeSupport support;
     
     private EventManager eventManager;

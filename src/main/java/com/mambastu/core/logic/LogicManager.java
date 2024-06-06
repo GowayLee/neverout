@@ -5,10 +5,10 @@ import java.beans.PropertyChangeListener;
 import com.mambastu.core.engine.GameEngine.EngineProps;
 import com.mambastu.core.logic.comp.ModeLogic;
 import com.mambastu.core.logic.comp.NormalImpl;
-import com.mambastu.infuse.pojo.config.GlobalConfig;
-import com.mambastu.infuse.pojo.enums.GameMode;
+import com.mambastu.infuse.level.comp.GameMode;
+import com.mambastu.infuse.level.comp.config.GlobalConfig;
 
-public class LogicManager {
+public class LogicManager { // TODO: 尝试单例模式
     private GlobalConfig config;
     private EngineProps engineProps;
 

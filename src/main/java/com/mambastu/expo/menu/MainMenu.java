@@ -1,7 +1,7 @@
 package com.mambastu.expo.menu;
 
 import com.mambastu.infuse.level.LevelManager;
-import com.mambastu.infuse.pojo.enums.GameMode;
+import com.mambastu.infuse.level.comp.GameMode;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

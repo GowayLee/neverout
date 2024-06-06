@@ -9,7 +9,7 @@ import java.util.Set;
 import com.mambastu.core.event.comp.event.BaseEvent;
 import com.mambastu.core.event.comp.handler.BaseEventHandler;
 
-public class EventManager {
+public class EventManager { // TODO: 探索单例模式
     private final Map<Class<? extends BaseEvent>, Set<BaseEventHandler<? extends BaseEvent>>> listeners = new HashMap<>();
 
     public <T extends BaseEvent> void register(Class<T> eventType, BaseEventHandler<T> handler) {
