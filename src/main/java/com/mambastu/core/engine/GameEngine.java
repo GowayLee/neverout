@@ -20,6 +20,7 @@ public class GameEngine {
     private LogicManager logicManager;
     private Long lastUpdateTime = System.nanoTime();
     private Boolean isPause = false;
+    private Boolean isOver = false;
     
 
     @Getter
@@ -31,8 +32,6 @@ public class GameEngine {
         
         private Scene scene;
         private Pane root = new Pane();
-        private AnimationTimer timer;
-        private Long lastUpdateTime;
         private Boolean isPause;
 
         private BasePlayer player;
@@ -58,8 +57,6 @@ public class GameEngine {
         EngineProps.getInstance().setConfig(config);
         EngineProps.getInstance().setScene(scene);
         EngineProps.getInstance().setIsPause(isPause);
-        EngineProps.getInstance().setTimer(timer);
-        EngineProps.getInstance().setLastUpdateTime(lastUpdateTime);
     }
 
     public void start() {
@@ -74,8 +71,27 @@ public class GameEngine {
                 lastUpdateTime = now;
             }
         };
+        initEngineStateListener();
         timer.start();
         System.out.println("Game Engine start");
+    }
+
+    public void initEngineStateListener(){ // 初始化引擎状态控制器，底层为一个侦听逻辑模块的侦听器
+        logicManager.addPropertyListener(event -> {
+            switch (event.getPropertyName()) {
+                case "isPause":
+                    if ((Boolean)event.getNewValue()) { // isPause == true
+                        timer.stop();
+                    } else {
+                        timer.start();
+                        lastUpdateTime = System.nanoTime();
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        });
     }
 
 

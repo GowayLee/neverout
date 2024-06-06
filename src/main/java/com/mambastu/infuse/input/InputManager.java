@@ -5,14 +5,28 @@ import javafx.scene.input.KeyCode;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 import com.mambastu.infuse.pojo.enums.GameInput;
-public class InputManager {
+public class InputManager { // TODO: 实现单例模式
+    /*
+     * 使用两套输入判定系统：
+     * 1、对于操纵角色的连贯性输入信号，存入activeInputs集合中
+     * 2、对于暂停游戏等非连贯性输入信号，使用侦听器模式来避免频繁地在游戏引擎逻辑中进行判定
+     */
+    private final PropertyChangeSupport support;
     private Set<GameInput> activeInputs;
+    private boolean gamePause = false;
 
     public InputManager(Scene scene) {
+        this.support = new PropertyChangeSupport(this);
         activeInputs = new HashSet<>();
         initialize(scene);
+    }
+
+    public void addPropertyListener(PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
     }
 
     public void initialize(Scene scene) {
@@ -56,7 +70,8 @@ public class InputManager {
                     activeInputs.add(GameInput.SKILL);
                     break;
                 case P:
-                    activeInputs.add(GameInput.GAME_PAUSE);
+                    gamePause = gamePause ? false : true;
+                    support.firePropertyChange("gamePause", !gamePause, gamePause);
                     break;
                 default:
                     break;
@@ -80,9 +95,6 @@ public class InputManager {
                     break;
                 case K:
                     activeInputs.remove(GameInput.SKILL);
-                    break;
-                case P:
-                    activeInputs.remove(GameInput.GAME_PAUSE);
                     break;
                 default:
                     break;

@@ -48,7 +48,6 @@ public class EventManager {
 
     private <T extends BaseEvent> void loadHandlerForEvent(Class<T> eventType) {
         String handlerClassName = "com.mambastu.core.event.comp.handler." + eventType.getSimpleName() + "Handler";
-        System.out.println(handlerClassName);
         try {
             Class<?> handlerClass = Class.forName(handlerClassName);
             @SuppressWarnings("unchecked")

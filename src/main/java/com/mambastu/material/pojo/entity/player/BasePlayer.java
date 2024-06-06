@@ -43,8 +43,8 @@ public abstract class BasePlayer extends BaseEntity {
         this.y = sceneHeight / 2;
         imageView.setX(x);
         imageView.setY(y);
-        imageView.setFitWidth(150);
-        imageView.setFitHeight(150);
+        imageView.setFitWidth(50);
+        imageView.setFitHeight(50);
     }
 
     public abstract void die(); // 设置玩家死亡状态

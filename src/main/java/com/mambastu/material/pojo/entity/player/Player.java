@@ -14,7 +14,7 @@ public class Player extends BasePlayer{
     }
 
     public void die() {
-        imageView.setImage(ImgManager.getImage("/static/image/fever.png"));
+        imageView.setImage(ImgManager.getImage("/static/image/player_die.png"));
     }
 
 }
