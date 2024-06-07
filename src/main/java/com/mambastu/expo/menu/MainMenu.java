@@ -39,7 +39,7 @@ public class MainMenu {
         testBtn.setLayoutX(scene.getWidth() / 2 + 50);
         testBtn.setLayoutY(scene.getHeight() / 2 + 50);
         testBtn.setOnAction(e -> {
-            levelManager.getConfig().setGameMode(GameMode.NORMAL);;
+            levelManager.getGlobalConfig().setGameMode(GameMode.NORMAL);;
         });
         pane.getChildren().add(testBtn);
         scene.setRoot(pane);

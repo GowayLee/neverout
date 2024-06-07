@@ -47,6 +47,13 @@ public abstract class BasePlayer extends BaseEntity {
         imageView.setFitHeight(50);
     }
 
+    public boolean isDie() { // 判断玩家是否死亡
+        if (HP <= 0) {
+            return true;
+        }
+        return false;
+    }
+    
     abstract public void die(); // 设置玩家死亡状态
 }
 

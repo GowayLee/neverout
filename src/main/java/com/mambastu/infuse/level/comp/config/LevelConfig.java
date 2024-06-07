@@ -14,7 +14,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LevelConfig {
+public class LevelConfig { // TODO: 增加玩家属性，例如玩家的道具，武器，技能等。在每一个关卡都需要改变
     // Listing features of the level
     private int levelNum;
 
@@ -24,10 +24,10 @@ public class LevelConfig {
     private double monsterScalDamage;
     private double monsterScalGold;
 
-    private Class<? extends BasePlayer> playerEgg;
+    private Class<? extends BasePlayer> playerEgg; // FIXME: 酱紫采用玩家蛋来生成玩家会导致难以在关卡间传递玩家的属性
     private Map<Class<? extends BaseMonster>, Double> monsterEggList;
 
-    public LevelConfig() {
+    public LevelConfig() { // INFO: 测试用，写死
         monsterEggList = new HashMap<>();
         monsterEggList.put(HotMonster.class, 1.0);
         monsterEggList.put(BossMonster.class, 2.0);
