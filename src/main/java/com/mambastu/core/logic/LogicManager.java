@@ -30,7 +30,7 @@ public class LogicManager { // TODO: 尝试单例模式
         }
     }
 
-    public void addPropertyListener(PropertyChangeListener listener) {
+    public void addPropertyListener4Engine(PropertyChangeListener listener) { // 添加监听器到逻辑层，以便在引擎属性变化时执行相应的逻辑操作
         logiModule.addPropertyListener(listener);
     }
 
