@@ -1,4 +1,4 @@
-package com.mambastu.infuse.input.comp;
+package com.mambastu.controller.input.comp;
 
 public enum GameInput {
     MOVE_UP,

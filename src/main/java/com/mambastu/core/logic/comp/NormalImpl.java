@@ -1,18 +1,16 @@
 package com.mambastu.core.logic.comp;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
 
+import com.mambastu.controller.input.InputManager;
+import com.mambastu.controller.level.comp.config.GlobalConfig;
 import com.mambastu.core.engine.GameEngine.EngineProps;
 import com.mambastu.core.event.EventManager;
 import com.mambastu.core.event.comp.event.CollisionEvent;
 import com.mambastu.core.event.comp.event.PlayerDieEvent;
-import com.mambastu.infuse.input.InputManager;
-import com.mambastu.infuse.level.comp.config.GlobalConfig;
+import com.mambastu.listener.LogicLayerListener;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
@@ -26,29 +24,25 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以及相关组件, 规划oop设计
-    private final PropertyChangeSupport support;
+    private final LogicLayerListener listener;
 
-    private EventManager eventManager;
-    private InputManager inputManager;
+    private final EventManager eventManager;
+    private final InputManager inputManager;
 
-    private GlobalConfig config;
-    private Pane root;
+    private final GlobalConfig config;
+    private final Pane root;
 
-    @SuppressWarnings("unused")
-    private boolean isPause = false;
-    @SuppressWarnings("unused")
-    private boolean isGameOver = false;
     private ArrayList<Timeline> monsterEggTimerList;
 
     private BasePlayer player;
-    private LinkedList<BaseMonster> monsterList;
-    private LinkedList<BaseBullet> bulletList;
-    private LinkedList<BaseBarrier> barrierList;
+    private final LinkedList<BaseMonster> monsterList;
+    private final LinkedList<BaseBullet> bulletList;
+    private final LinkedList<BaseBarrier> barrierList;
 
     // ================================= Init Section =================================
 
-    public NormalImpl(EngineProps engineProps) {
-        this.support = new PropertyChangeSupport(this);
+    public NormalImpl(EngineProps engineProps, LogicLayerListener listener) {
+        this.listener = listener;
         this.config = engineProps.getConfig();
         this.player = engineProps.getPlayer();
         this.monsterList = engineProps.getMonsterList();
@@ -65,10 +59,6 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
                 resumeEngine();
             }
         });
-    }
-
-    public void addPropertyListener(PropertyChangeListener listener) {
-        support.addPropertyChangeListener(listener);
     }
 
     public void initPlayer() {
@@ -93,6 +83,7 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
             monsterEggTimer.setCycleCount(Timeline.INDEFINITE);
             monsterEggTimerList.add(monsterEggTimer);
         }
+        startMonsterGenTimer();
     }
 
     private <T extends BaseMonster> EventHandler<ActionEvent> generateMonster(Class<T> eggClass) {
@@ -153,20 +144,17 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
     // ================================= EngineState Control Section =================================
     
     private void pauseEngine() { // 游戏暂停时调用，暂停引擎
-        isPause = true;
-        support.firePropertyChange("isPause", !isPause, isPause);
+        listener.pauseEngine();
         stopMonsterGenTimer();
     }
 
     private void resumeEngine() { // 游戏恢复时调用，恢复引擎
-        isPause = false;
-        support.firePropertyChange("isPause", !isPause, isPause);
+        listener.resumeEngine();
         startMonsterGenTimer();
     }
 
     private void stopEngine() { // 游戏结束时调用，关闭引擎并且清空实体们
-        isGameOver = true;
-        support.firePropertyChange("isGameOver", !isGameOver, isGameOver);
+        listener.stopEngine();
         stopMonsterGenTimer();
         clearAllEntity();
     }

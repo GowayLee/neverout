@@ -5,6 +5,7 @@ module com.mambastu {
     requires lombok;
     requires javafx.base;
     requires java.desktop;
+    requires org.apache.logging.log4j;
 
     opens com.mambastu to javafx.fxml;
     exports com.mambastu;

@@ -1,4 +1,4 @@
-package com.mambastu.infuse.level.comp;
+package com.mambastu.controller.level.comp;
 
 public enum GameMode {
     NORMAL,
