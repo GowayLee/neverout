@@ -6,9 +6,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class BossMonster extends BaseMonster{
-    public BossMonster() {
-        Image image = ImgManager.getImage("/static/image/boss.png");
-        imageView = new ImageView(image);
+    public BossMonster(String imageUrl) {
+        imageView = new ImageView(imageUrl);
+        System.out.println("创建成功 " + imageUrl);
     }
 
     @Override

@@ -6,7 +6,7 @@ module com.mambastu {
     requires javafx.base;
     requires java.desktop;
     requires org.apache.logging.log4j;
-
+    requires org.json;
     opens com.mambastu to javafx.fxml;
     exports com.mambastu;
 }
