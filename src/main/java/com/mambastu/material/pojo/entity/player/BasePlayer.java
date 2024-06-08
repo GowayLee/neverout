@@ -13,6 +13,8 @@ import lombok.Setter;
 public abstract class BasePlayer extends BaseEntity {
     protected double speed = 5;
     protected int HP = 100;
+    protected double prevX;
+    protected double prevY;
 
     public void move(Set<GameInput> activeInputs) {
         double deltaX = 0, deltaY = 0;
@@ -33,9 +35,13 @@ public abstract class BasePlayer extends BaseEntity {
 
         x += deltaX;
         y += deltaY;
+        if(!(x<0)&&(x+deltaX < prevX))x += deltaX;
+        if(!(y<0))
+
 
         imageView.setX(x);
         imageView.setY(y);
+
     }
 
     public void setPos(double sceneWidth, double sceneHeight) { // 默认出生在屏幕中央

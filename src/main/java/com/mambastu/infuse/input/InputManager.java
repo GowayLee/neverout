@@ -1,5 +1,7 @@
 package com.mambastu.infuse.input;
 
+import com.studiohartman.jamepad.ControllerManager;
+import com.studiohartman.jamepad.ControllerState;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 
@@ -19,6 +21,11 @@ public class InputManager { // TODO: 实现单例模式
     private final PropertyChangeSupport support;
     private Set<GameInput> activeInputs;
     private boolean gamePause = false;
+    private final ControllerManager controllers = new ControllerManager();;
+    ControllerState currState;
+
+
+
 
     public InputManager(Scene scene) {
         this.support = new PropertyChangeSupport(this);
@@ -32,12 +39,15 @@ public class InputManager { // TODO: 实现单例模式
 
     public void initialize(Scene scene) {
         handleKeyboardInput(scene);
-        // 手柄的handle方法
+        controllers.initSDLGamepad();
+        new Thread(this::updateJoystickInput).start();//手柄
     }
     
     public Set<GameInput> getActiveInputs() {
         return activeInputs;
     }
+
+
 
     private void handleKeyboardInput(Scene scene) { // 映射键盘输入
         scene.setOnKeyPressed(event -> {
@@ -46,7 +56,9 @@ public class InputManager { // TODO: 实现单例模式
 
         scene.setOnKeyReleased(event -> {
             mapKeyToGameInput(event.getCode(), false);
+            System.out.println(event.getCode());
         });
+
     }
 
     private void mapKeyToGameInput(KeyCode code, boolean isPressed) {
@@ -100,6 +112,49 @@ public class InputManager { // TODO: 实现单例模式
                 default:
                     break;
             }
+        }
+    }
+
+
+
+    private void updateJoystickInput() {
+        while (true) {
+            currState = controllers.getState(0);
+            if (currState.isConnected) {
+                double leftX = currState.leftStickX;
+                double leftY = currState.leftStickY;
+                leftJoystickInput(leftX, leftY);
+            }
+        }
+    }
+
+    private void leftJoystickInput(double leftX, double leftY) {
+        // 向上
+        if (leftY > 0.5 || (leftY > 0.3 && Math.abs(leftX) < 0.3)) {
+            activeInputs.add(GameInput.MOVE_UP);
+        } else {
+            activeInputs.remove(GameInput.MOVE_UP);
+        }
+
+        // 向下
+        if (leftY < -0.5 || (leftY < -0.3 && Math.abs(leftX) < 0.3)) {
+            activeInputs.add(GameInput.MOVE_DOWN);
+        } else {
+            activeInputs.remove(GameInput.MOVE_DOWN);
+        }
+
+        // 向左
+        if (leftX < -0.5 || (leftX < -0.3 && Math.abs(leftY) < 0.3)) {
+            activeInputs.add(GameInput.MOVE_LEFT);
+        } else {
+            activeInputs.remove(GameInput.MOVE_LEFT);
+        }
+
+        // 向右
+        if (leftX > 0.5 || (leftX > 0.3 && Math.abs(leftY) < 0.3)) {
+            activeInputs.add(GameInput.MOVE_RIGHT);
+        } else {
+            activeInputs.remove(GameInput.MOVE_RIGHT);
         }
     }
 }
