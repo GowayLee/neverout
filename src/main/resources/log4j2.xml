@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration status="ERROR">
+
+    <Appenders>
+        <Console name="consoleAppender">
+            <LevelRangeFilter maxLevel="INFO"/>
+            <PatternLayout>
+                <LevelPatternSelector defaultPattern="%highlight{[%p][%d{DEFAULT}]}-> %style{at %c}{Underline Dim} - [%style{%m}{White Bright}]%n">
+                    <PatternMatch key="ERROR" pattern="%highlight{[%p][%d{DEFAULT}]->} %style{at %c}{Underline} - [%style{%m}{BG_White Red Bright}]%n" />
+                    <PatternMatch key="WARN" pattern="%highlight{[%p][%d{DEFAULT}]->} %style{at %c}{Underline} - [%style{%m}{BG_White Yellow Bright}]%n" />
+                    <PatternMatch key="INFO" pattern="%highlight{[%p][%d{DEFAULT}]}-> %style{at %c}{Underline Dim} - [%style{%m}{White}]%n" />
+                </LevelPatternSelector>
+            </PatternLayout>
+
+        </Console>
+
+        <!-- 输出日志到文件 -->
+        <File name="fileAppender" fileName="D:/testLogs/logs.log" append="true">
+            <!-- 日志输出格式 -->
+            <PatternLayout>
+                <LevelPatternSelector defaultPattern="[%p][%d{DEFAULT}]%style{[%c]}{Underline}%style{[%m]}{White}%n">
+                    <PatternMatch key="ERROR" pattern="[%p][%d{DEFAULT}]%style{[%c]}{Underline}%style{[%m]}{BG_Black Red}%n" />
+                    <PatternMatch key="WARN" pattern="[%p][%d{DEFAULT}]%style{[%c]}{Underline}%style{[%m]}{BG_Black Yellow}%n" />
+                    <PatternMatch key="INFO" pattern="[%p][%d{DEFAULT}]%style{[%c]}{Underline}%style{[%m]}{White}%n" />
+                </LevelPatternSelector>
+            </PatternLayout>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="consoleAppender"/>
+            <!-- <AppenderRef ref="fileAppender"/> -->
+        </Root>
+    </Loggers>
+</Configuration>

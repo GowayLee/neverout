@@ -1,26 +1,22 @@
-package com.mambastu.expo.menu;
+package com.mambastu.ui.menu;
 
-import com.mambastu.infuse.level.LevelManager;
-import com.mambastu.infuse.level.comp.GameMode;
+import com.mambastu.controller.level.comp.GameMode;
+import com.mambastu.listener.MainMenuListener;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 
 public class MainMenu {
-    private LevelManager levelManager;
     private final Scene scene;
+    private final MainMenuListener listener;
 
-    public MainMenu(Scene scene) {
+    public MainMenu(Scene scene, MainMenuListener listener) {
         this.scene = scene;
+        this.listener = listener;
     }
 
     public void show() {
-        init();
-    }
-
-    private void init() {
-        levelManager = new LevelManager(scene);
         buildLayout();
     }
 
@@ -31,7 +27,7 @@ public class MainMenu {
         startBtn.setLayoutX(scene.getWidth() / 2);
         startBtn.setLayoutY(scene.getHeight() / 2);
         startBtn.setOnAction(e -> {
-            levelManager.startLevel();
+            listener.startGame();
         });
         pane.getChildren().add(startBtn);
 
@@ -39,7 +35,7 @@ public class MainMenu {
         testBtn.setLayoutX(scene.getWidth() / 2 + 50);
         testBtn.setLayoutY(scene.getHeight() / 2 + 50);
         testBtn.setOnAction(e -> {
-            levelManager.getGlobalConfig().setGameMode(GameMode.NORMAL);;
+            listener.selectGameMode(GameMode.NORMAL);
         });
         pane.getChildren().add(testBtn);
         scene.setRoot(pane);

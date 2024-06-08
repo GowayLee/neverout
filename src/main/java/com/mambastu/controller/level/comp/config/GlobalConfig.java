@@ -1,6 +1,6 @@
-package com.mambastu.infuse.level.comp.config;
+package com.mambastu.controller.level.comp.config;
 
-import com.mambastu.infuse.level.comp.GameMode;
+import com.mambastu.controller.level.comp.GameMode;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.mambastu.infuse.level.comp.config;
+package com.mambastu.controller.level.comp.config;
 
 import java.util.HashMap;
 import java.util.Map;

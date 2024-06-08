@@ -1,4 +1,4 @@
-package com.mambastu.infuse.input;
+package com.mambastu.controller.input;
 
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -6,7 +6,7 @@ import javafx.scene.input.KeyCode;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.mambastu.infuse.input.comp.GameInput;
+import com.mambastu.controller.input.comp.GameInput;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

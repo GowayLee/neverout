@@ -1,11 +1,14 @@
 package com.mambastu.core.engine;
 
 import java.util.LinkedList;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.mambastu.controller.level.comp.config.GlobalConfig;
 import com.mambastu.core.logic.LogicManager;
-import com.mambastu.infuse.level.comp.config.GlobalConfig;
+import com.mambastu.listener.EngineLayerListener;
+import com.mambastu.listener.LogicLayerListener;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
@@ -18,18 +21,20 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class GameEngine {
-    private final PropertyChangeSupport support;
+    private static final Logger logger = LogManager.getLogger(GameEngine.class);
 
-    private LogicManager logicManager;
+    private final EngineLayerListener listener;
+
+    private final LogicManager logicManager;
+
+    private final LogicLayerHandler logicLayerHandler; // 初始化逻辑层处理器 用于处理逻辑层事件 例如暂停游戏，继续游戏等事件
 
     private AnimationTimer timer;
     private Long lastUpdateTime = System.nanoTime();
-    private boolean isPause = false;
-    private boolean isGameOver = false;
 
     @Getter
     @Setter
-    public static class EngineProps { // 单例模式静态内部类 引擎属性将贯穿引擎层与逻辑层
+    public static class EngineProps { // 单例模式静态内部类 引擎属性将贯穿引擎层与逻辑层 TODO: 考虑是否需要使用代理模式进行封装
         private static final EngineProps INSTANCE = new EngineProps();
 
         private GlobalConfig config;
@@ -52,12 +57,13 @@ public class GameEngine {
 
     // ================================= Init Section =================================
 
-    public GameEngine(GlobalConfig config, Scene scene) {
-        this.support = new PropertyChangeSupport(this); // 初始化监听器支持类 用于监听引擎运行状态变化 例如游戏暂停 游戏结束等状态变化时触发相应事件
+    public GameEngine(GlobalConfig config, Scene scene, EngineLayerListener listener) {
+        this.listener = listener;
+        this.logicLayerHandler = new LogicLayerHandler();
         scene.setRoot(EngineProps.getInstance().getRoot()); // 切换显示节点
         initEngineProps(config, scene);
-        this.logicManager = new LogicManager(EngineProps.getInstance()); // 传递引擎参数初始化逻辑管理器
-        System.out.println("Game Engine successfully initialized!");
+        this.logicManager = new LogicManager(EngineProps.getInstance(), logicLayerHandler); // 传递引擎参数初始化逻辑管理器
+        logger.info("Game Engine successfully initialized!");
     }
 
     private void initEngineProps(GlobalConfig config, Scene scene) {
@@ -65,30 +71,23 @@ public class GameEngine {
         EngineProps.getInstance().setScene(scene);
     }
 
-    public void addPropertyListener4LevelManager(PropertyChangeListener listener) { // 添加监听器到引擎层，以便在引擎运行状态变化时执行相应的逻辑操作
-        support.addPropertyChangeListener(listener);
-    }
+    private class LogicLayerHandler implements LogicLayerListener {
+        @Override
+        public void pauseEngine() {
+            timer.stop();
+            listener.pauseGame();
+        }
 
-    private void initEngineStateListener() { // 初始化逻辑层引擎属性监听器(Handler)
-        logicManager.addPropertyListener4Engine(event -> {
-            switch (event.getPropertyName()) {
-                case "isPause": // 游戏暂停逻辑
-                    isPause = (boolean) event.getNewValue();
-                    support.firePropertyChange("isPause", !isPause, isPause);
-                    if (isPause) {
-                        timer.stop(); // 暂停游戏时停止游戏逻辑更新
-                    } else {
-                        timer.start(); // 恢复游戏时重新开始游戏逻辑更新
-                    }
-                    break;
-                case "isGameOver": // 游戏结束时停止游戏逻辑更新 并触发相应事件
-                    isGameOver = (boolean) event.getNewValue();
-                    support.firePropertyChange("isGameOver", false, isGameOver);
-                    break;
-                default:
-                    break;
-            }
-        });
+        @Override
+        public void resumeEngine() {
+            timer.start();
+            listener.resumeGame();
+        }
+
+        @Override
+        public void stopEngine() {
+            listener.stopGame();
+        }
     }
     // ================================= Start Section =================================
 
@@ -104,9 +103,8 @@ public class GameEngine {
                 lastUpdateTime = now;
             }
         };
-        initEngineStateListener();
         timer.start();
-        System.out.println("Game Engine start");
+        logger.info("Game Engine start");
     }
 
 }
