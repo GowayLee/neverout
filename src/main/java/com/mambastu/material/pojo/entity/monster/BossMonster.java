@@ -1,28 +1,24 @@
 package com.mambastu.material.pojo.entity.monster;
 
-import com.mambastu.material.resource.ImgManager;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-import java.util.Random;
+public class BossMonster extends BaseMonster {
+    private enum State {
+        IDLE, MOVING, SHAKING
+    }
 
-public class BossMonster extends BaseMonster{
-    private enum State {IDLE, MOVING,SHAKING}
     private State state;
 
-    public BossMonster() {
-        Image image = ImgManager.getImage("/static/image/boss.png");
-        imageView = new ImageView(image);
+    public BossMonster(String imageUrl) {
+        imageView = new ImageView(imageUrl);
         this.state = State.IDLE;
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(5), event -> setState(State.SHAKING)),
-                new KeyFrame(Duration.seconds(5.5), event -> setState(State.MOVING)),
-                new KeyFrame(Duration.seconds(6), event -> setState(State.IDLE))
-        );
+                new KeyFrame(Duration.seconds(3), event -> setState(State.SHAKING)),
+                new KeyFrame(Duration.seconds(3.5), event -> setState(State.MOVING)),
+                new KeyFrame(Duration.seconds(4), event -> setState(State.IDLE)));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
@@ -33,34 +29,25 @@ public class BossMonster extends BaseMonster{
 
     @Override
     public void move(double targetX, double targetY) {
-        double SPEED = 5;
+        speed = 10.0;
         if (state == State.MOVING) {
-            double dx = targetX - x;
-            double dy = targetY - y;
+            double dx = targetX - x.get();
+            double dy = targetY - y.get();
             double distance = Math.sqrt(dx * dx + dy * dy);
-
             if (distance > 0) {
-                x += SPEED * dx / distance;
-                y += SPEED * dy / distance;
+                x.set(x.get() + speed * dx / distance);
+                y.set(y.get() + speed * dy / distance);
             }
-
-            imageView.setX(x);
-            imageView.setY(y);
+            imageView.setX(x.get());
+            imageView.setY(y.get());
+        } else if (state == State.SHAKING) {
+            double shakingDistance = Math.random() - 0.5;
+            x.set(x.get() + shakingDistance * imageView.getFitWidth() * 0.4);
+            y.set(y.get() + shakingDistance * imageView.getFitHeight() * 0.4);
+            imageView.setX(x.get());
+            imageView.setY(y.get());
         }
 
-        if (state == State.SHAKING) {
-            double shakingDistance = Math.random()-0.5;
-            x += shakingDistance*imageView.getFitWidth()*0.3;
-            y += shakingDistance*imageView.getFitHeight()*0.3;
-            imageView.setX(x);
-            imageView.setY(y);
-        }
     }
-
-
-
-
-
-
 
 }

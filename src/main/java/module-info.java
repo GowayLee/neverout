@@ -5,6 +5,8 @@ module com.mambastu {
     requires static lombok;
     requires javafx.base;
     requires java.desktop;
+    requires org.apache.logging.log4j;
+    requires org.json;
     requires Jamepad;
 
 

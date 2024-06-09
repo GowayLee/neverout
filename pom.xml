@@ -9,8 +9,6 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
-
-
     <repositories>
         <repository>
             <snapshots>
@@ -25,8 +23,6 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
-
-
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -42,7 +38,16 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.24</version>
-            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.23.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20220320</version>
         </dependency>
         <dependency>
             <groupId>com.github.WilliamAHartman</groupId>
@@ -54,14 +59,13 @@
             <artifactId>sdl2gdx</artifactId>
             <version>1.0.4</version>
         </dependency>
-
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.10.1</version>
                 <configuration>
                     <release>11</release>
                 </configuration>
@@ -69,7 +73,7 @@
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.6</version>
+                <version>0.0.8</version>
                 <executions>
                     <execution>
                         <!-- Default configuration for running -->
