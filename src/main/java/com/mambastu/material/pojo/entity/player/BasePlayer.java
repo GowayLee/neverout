@@ -15,7 +15,7 @@ public abstract class BasePlayer extends BaseEntity {
     protected double speed = 5;
     protected SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
 
-    public void move(Set<GameInput> activeInputs) {
+    public void move(Set<GameInput> activeInputs) { // TODO: 边界问题
         double deltaX = 0, deltaY = 0;
 
         if (activeInputs.contains(GameInput.MOVE_UP))
@@ -34,6 +34,9 @@ public abstract class BasePlayer extends BaseEntity {
 
         x.set(x.get() + deltaX);
         y.set(y.get() + deltaY);
+
+        // if (!(x.get() < 0) && (x.get() + deltaX < prevX)) x.set(x.get() + deltaX);
+        // if (!(y.get() < 0))
 
         imageView.setX(x.get());
         imageView.setY(y.get());
@@ -54,8 +57,6 @@ public abstract class BasePlayer extends BaseEntity {
         }
         return false;
     }
-    
+
     abstract public void die(); // 设置玩家死亡状态
 }
-
-

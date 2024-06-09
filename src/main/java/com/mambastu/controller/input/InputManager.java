@@ -1,5 +1,8 @@
 package com.mambastu.controller.input;
 
+import com.studiohartman.jamepad.ControllerManager;
+import com.studiohartman.jamepad.ControllerState;
+
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 
@@ -24,6 +27,8 @@ public class InputManager {
      * 2、对于暂停游戏等非连贯性输入信号，使用侦听器模式来避免频繁地在游戏引擎逻辑中进行判定
      */
     private final Set<GameInput> activeInputs;
+    private final ControllerManager gamepadControllers = new ControllerManager();
+    private ControllerState currState;
 
     private InputManager(Scene scene) {
         activeInputs = new HashSet<>();
@@ -53,9 +58,10 @@ public class InputManager {
 
     public void initialize(Scene scene) {
         handleKeyboardInput(scene);
-        // 手柄的handle方法
+        gamepadControllers.initSDLGamepad();
+        new Thread(this::updateGamepadInput).start();// 手柄
     }
-    
+
     public Set<GameInput> getActiveInputs() {
         return activeInputs;
     }
@@ -68,6 +74,61 @@ public class InputManager {
         scene.setOnKeyReleased(event -> {
             mapKeyToGameInput(event.getCode(), false);
         });
+    }
+
+    private void updateGamepadInput() {
+        while (true) {
+            currState = gamepadControllers.getState(0);
+            boolean isConnected = currState.isConnected;
+            if (isConnected) {
+                leftJoystickInput(currState.leftStickX, currState.leftStickY);
+                buttonInput(currState.x, currState.a, currState.b, currState.y, currState.startJustPressed,
+                        currState.backJustPressed);
+                triggerInput(currState.leftTrigger, currState.rightTrigger);
+            }
+        }
+    }
+
+    private void triggerInput(double leftTrigger, double rightTrigger) {
+        // if (leftTrigger>0.5) {
+        // System.out.println("L: " + leftTrigger);
+        // }
+    }
+
+    private void buttonInput(boolean x, boolean a, boolean b, boolean y, boolean start, boolean back) { // FIXME: 暂停键映射无法正常暂停
+        // if (start) {
+        //     listener.switchPausenResume();
+        // }
+    }
+
+    private void leftJoystickInput(double leftX, double leftY) { // 手柄左摇杆输入映射
+        // 向上
+        if (leftY > 0.5 || (leftY > 0.3 && Math.abs(leftX) < 0.3)) {
+            activeInputs.add(GameInput.MOVE_UP);
+        } else {
+            activeInputs.remove(GameInput.MOVE_UP);
+        }
+
+        // 向下
+        if (leftY < -0.5 || (leftY < -0.3 && Math.abs(leftX) < 0.3)) {
+            activeInputs.add(GameInput.MOVE_DOWN);
+        } else {
+            activeInputs.remove(GameInput.MOVE_DOWN);
+        }
+
+        // 向左
+        if (leftX < -0.5 || (leftX < -0.3 && Math.abs(leftY) < 0.3)) {
+            activeInputs.add(GameInput.MOVE_LEFT);
+        } else {
+            activeInputs.remove(GameInput.MOVE_LEFT);
+        }
+
+        // 向右
+        if (leftX > 0.5 || (leftX > 0.3 && Math.abs(leftY) < 0.3)) {
+            activeInputs.add(GameInput.MOVE_RIGHT);
+        } else {
+            activeInputs.remove(GameInput.MOVE_RIGHT);
+        }
     }
 
     private void mapKeyToGameInput(KeyCode code, boolean isPressed) {
@@ -92,8 +153,8 @@ public class InputManager {
                     activeInputs.add(GameInput.SKILL);
                     break;
                 // case P:
-                //     listener.switchPausenResume();
-                //     break;
+                // listener.switchPausenResume();
+                // break;
                 default:
                     break;
             }
