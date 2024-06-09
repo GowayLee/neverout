@@ -5,15 +5,18 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import com.mambastu.controller.input.InputManager;
-import com.mambastu.controller.level.comp.config.GlobalConfig;
+import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.core.engine.GameEngine.EngineProps;
 import com.mambastu.core.event.EventManager;
 import com.mambastu.core.event.comp.event.CollisionEvent;
 import com.mambastu.core.event.comp.event.PlayerDieEvent;
+import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
+import com.mambastu.material.factories.MonsterFactory;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
+import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 
 import javafx.animation.KeyFrame;
@@ -25,13 +28,14 @@ import javafx.util.Duration;
 
 public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以及相关组件, 规划oop设计
     private final LogicLayerListener listener;
+    private final InputHandler inputListener;
 
     private final EventManager eventManager;
-    private final InputManager inputManager;
 
-    private final GlobalConfig config;
-    private final Pane root;
+    private final Context ctx;
+    private final Pane gamePane;
 
+    private boolean isPause;
     private ArrayList<Timeline> monsterEggTimerList;
 
     private BasePlayer player;
@@ -43,29 +47,32 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     public NormalImpl(EngineProps engineProps, LogicLayerListener listener) {
         this.listener = listener;
-        this.config = engineProps.getConfig();
+        this.inputListener = new InputHandler();
+        this.ctx = engineProps.getCtx();
         this.player = engineProps.getPlayer();
         this.monsterList = engineProps.getMonsterList();
         this.bulletList = engineProps.getBulletList();
         this.barrierList = engineProps.getBarrierList();
-        this.root = engineProps.getRoot();
+        this.gamePane = engineProps.getGamePane();
         this.eventManager = new EventManager();
-        this.inputManager = new InputManager(engineProps.getScene());
+        InputManager.getInstance().addListener(inputListener);
+    }
 
-        inputManager.addPropertyListener(event -> { // 设置InputManager暂停侦听器
-            if ((boolean) event.getNewValue()) {
-                pauseEngine();
-            } else {
+    private class InputHandler implements InputListener {
+        @Override
+        public void switchPausenResume() {
+            if (isPause) {
                 resumeEngine();
+            } else {
+                pauseEngine();
             }
-        });
+        }
     }
 
     public void initPlayer() {
         try {
-            player = config.getLevelConfig().getPlayerEgg().getDeclaredConstructor().newInstance();
-            player.setPos(root.getWidth(), root.getHeight());
-            player.putOnPane(root);
+            player.setPos(gamePane.getWidth(), gamePane.getHeight());
+            player.putOnPane(gamePane);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -73,12 +80,12 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     public void initMonsterGenTimer() {
         monsterEggTimerList = new ArrayList<>();
-        for (Map.Entry<Class<? extends BaseMonster>, Double> eggEntry : config.getLevelConfig().getMonsterEggList()
+        for (Map.Entry<MonsterTypes, Double> eggEntry : ctx.getLevelConfig().getMonsterEggList()
                 .entrySet()) {
             Timeline monsterEggTimer = new Timeline();
             monsterEggTimer.getKeyFrames()
                     .add(new KeyFrame(
-                            Duration.millis((long) (config.getLevelConfig().getMonsterScalNum() * eggEntry.getValue())),
+                            Duration.millis((long) (ctx.getLevelConfig().getMonsterScalDensity() * eggEntry.getValue())),
                             generateMonster(eggEntry.getKey())));
             monsterEggTimer.setCycleCount(Timeline.INDEFINITE);
             monsterEggTimerList.add(monsterEggTimer);
@@ -86,14 +93,14 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
         startMonsterGenTimer();
     }
 
-    private <T extends BaseMonster> EventHandler<ActionEvent> generateMonster(Class<T> eggClass) {
+    private EventHandler<ActionEvent> generateMonster(MonsterTypes eggType) {
         return new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    T monster = eggClass.getDeclaredConstructor().newInstance(); // TODO: 对象池实现
-                    monster.setPos(root.getWidth(), root.getHeight(), player);
-                    monster.putOnPane(root);
+                    BaseMonster monster = MonsterFactory.getMonsterFactory().create(eggType); // TODO: 对象池实现
+                    monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
+                    monster.putOnPane(gamePane);
                     monsterList.add(monster);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -112,18 +119,18 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     private void monsterMove() {
         for (BaseMonster monster : monsterList) {
-            monster.move(player.getX(), player.getY());
+            monster.move(player.getX().get(), player.getY().get());
         }
     }
 
     private void playerMove() {
-        player.move(inputManager.getActiveInputs());
+        player.move(InputManager.getInstance().getActiveInputs());
     }
 
     private void checkCollision() {
         for (BaseMonster monster : monsterList) { // HACK: 替换改进碰撞检测逻辑
-            double playerCenterX = player.getX() + player.getImageView().getFitWidth() / 2;
-            double playerCenterY = player.getY() + player.getImageView().getFitHeight() / 2;
+            double playerCenterX = player.getX().get() + player.getImageView().getFitWidth() / 2;
+            double playerCenterY = player.getY().get() + player.getImageView().getFitHeight() / 2;
             double monsterCenterX = monster.getImageView().getX() + monster.getImageView().getFitWidth() / 2;
             double monsterCenterY = monster.getImageView().getY() + monster.getImageView().getFitHeight() / 2;
 
@@ -133,7 +140,7 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
                 CollisionEvent event = new CollisionEvent(player, monster);
                 eventManager.fireEvent(event);
                 if (player.isDie()) { // 检查玩家是否死亡
-                    PlayerDieEvent playerDieEvent = new PlayerDieEvent(player, monsterList, root);
+                    PlayerDieEvent playerDieEvent = new PlayerDieEvent(player, monsterList, gamePane);
                     eventManager.fireEvent(playerDieEvent);
                     stopEngine();
                 }
@@ -144,11 +151,13 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
     // ================================= EngineState Control Section =================================
     
     private void pauseEngine() { // 游戏暂停时调用，暂停引擎
+        isPause = true;
         listener.pauseEngine();
         stopMonsterGenTimer();
     }
 
     private void resumeEngine() { // 游戏恢复时调用，恢复引擎
+        isPause = false;
         listener.resumeEngine();
         startMonsterGenTimer();
     }

@@ -1,5 +1,6 @@
 package com.mambastu.material.pojo.entity;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import lombok.Getter;
@@ -9,8 +10,10 @@ import lombok.Setter;
 @Setter
 public abstract class BaseEntity {
     protected ImageView imageView; // 实体都能够被显示
-    protected double x;
-    protected double y;
+    protected SimpleDoubleProperty x = new SimpleDoubleProperty();
+    protected SimpleDoubleProperty y = new SimpleDoubleProperty();
+    protected double prevX; // 用于碰撞检测的变量，记录上一次的位置
+    protected double prevY;
 
     public void setImageSize(double width, double height) {
         imageView.setFitWidth(width);

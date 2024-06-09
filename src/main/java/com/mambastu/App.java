@@ -2,12 +2,14 @@ package com.mambastu;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import com.mambastu.controller.input.InputManager;
 import com.mambastu.controller.level.LevelController;
+import com.mambastu.material.resource.ResourceManager;
 
 /**
  * JavaFX App
@@ -18,10 +20,15 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Pane root = new Pane();
-        scene = new Scene(root, 800, 800);
+        StackPane root = new StackPane();
+        scene = new Scene(root, 1920, 1080);
+        // 绑定StackPane的尺寸到场景的尺寸
+        root.prefWidthProperty().bind(scene.widthProperty());
+        root.prefHeightProperty().bind(scene.heightProperty());
         
-        LevelController controller = new LevelController(scene);
+        ResourceManager.getResourceManager().loadResources(); // 初始化资源管理器，载入JSON
+        InputManager.init(scene); // 初始化输入管理器
+        LevelController controller = new LevelController(root);
         controller.showMainMenu();
 
         stage.setTitle("Never Out");

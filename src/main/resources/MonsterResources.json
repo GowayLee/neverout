@@ -7,8 +7,8 @@
       "bornImage": "/static/image/fever.png"
     }
   },
-  "Player":  {
-    "bornImage": "static/image/player1.png",
+  "Player": {
+    "bornImage": "/static/image/player1.png",
     "deadImage": "/static/image/player_die.png"
   }
 }
