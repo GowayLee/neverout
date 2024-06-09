@@ -7,6 +7,7 @@ module com.mambastu {
     requires java.desktop;
     requires Jamepad;
 
+
     opens com.mambastu to javafx.fxml;
     exports com.mambastu;
 }

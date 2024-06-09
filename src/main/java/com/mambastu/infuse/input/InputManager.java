@@ -4,10 +4,8 @@ import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerState;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
-
 import java.util.HashSet;
 import java.util.Set;
-
 import com.mambastu.infuse.input.comp.GameInput;
 
 import java.beans.PropertyChangeListener;
@@ -21,7 +19,7 @@ public class InputManager { // TODO: 实现单例模式
     private final PropertyChangeSupport support;
     private Set<GameInput> activeInputs;
     private boolean gamePause = false;
-    private final ControllerManager controllers = new ControllerManager();;
+    private final ControllerManager gamepadControllers = new ControllerManager();;
     ControllerState currState;
 
 
@@ -33,20 +31,18 @@ public class InputManager { // TODO: 实现单例模式
         initialize(scene);
     }
 
+
     public void addPropertyListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
     }
 
     public void initialize(Scene scene) {
         handleKeyboardInput(scene);
-        controllers.initSDLGamepad();
-        new Thread(this::updateJoystickInput).start();//手柄
+        gamepadControllers.initSDLGamepad();
+        new Thread(this::updateGamepadInput).start();//手柄
     }
     
-    public Set<GameInput> getActiveInputs() {
-        return activeInputs;
-    }
-
+    public Set<GameInput> getActiveInputs() {return activeInputs;}
 
 
     private void handleKeyboardInput(Scene scene) { // 映射键盘输入
@@ -56,10 +52,10 @@ public class InputManager { // TODO: 实现单例模式
 
         scene.setOnKeyReleased(event -> {
             mapKeyToGameInput(event.getCode(), false);
-            System.out.println(event.getCode());
         });
 
     }
+
 
     private void mapKeyToGameInput(KeyCode code, boolean isPressed) {
         if (isPressed) {
@@ -83,7 +79,7 @@ public class InputManager { // TODO: 实现单例模式
                     activeInputs.add(GameInput.SKILL);
                     break;
                 case P:
-                    gamePause = gamePause ? false : true;
+                    gamePause = !gamePause;
                     support.firePropertyChange("gamePause", !gamePause, gamePause);
                     break;
                 default:
@@ -117,16 +113,31 @@ public class InputManager { // TODO: 实现单例模式
 
 
 
-    private void updateJoystickInput() {
-        while (true) {
-            currState = controllers.getState(0);
-            if (currState.isConnected) {
-                double leftX = currState.leftStickX;
-                double leftY = currState.leftStickY;
-                leftJoystickInput(leftX, leftY);
+    private void updateGamepadInput() {
+            while (true) {
+                currState = gamepadControllers.getState(0);
+                boolean isConnected = currState.isConnected;
+                if (isConnected) {
+                    leftJoystickInput(currState.leftStickX, currState.leftStickY);
+                    buttonInput(currState.x, currState.a, currState.b, currState.y, currState.startJustPressed, currState.backJustPressed);
+                    triggerInput(currState.leftTrigger,currState.rightTrigger);
+                }
             }
+    }
+
+    private void triggerInput(double leftTrigger, double rightTrigger) {
+//        if (leftTrigger>0.5) {
+//            System.out.println("L: " + leftTrigger);
+//        }
+    }
+
+    private void buttonInput (boolean x,boolean a,boolean b,boolean y,boolean start,boolean back){
+        if(start){
+            gamePause = !gamePause;
+            support.firePropertyChange("gamePause", !gamePause, gamePause);
         }
     }
+
 
     private void leftJoystickInput(double leftX, double leftY) {
         // 向上
