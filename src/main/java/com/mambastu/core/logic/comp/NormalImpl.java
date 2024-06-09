@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import com.mambastu.controller.input.InputManager;
-import com.mambastu.controller.level.comp.config.GlobalConfig;
+import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.core.engine.GameEngine.EngineProps;
 import com.mambastu.core.event.EventManager;
 import com.mambastu.core.event.comp.event.CollisionEvent;
@@ -30,7 +30,7 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     private final EventManager eventManager;
 
-    private final GlobalConfig config;
+    private final Context ctx;
     private final Pane gamePane;
 
     private boolean isPause;
@@ -46,7 +46,7 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
     public NormalImpl(EngineProps engineProps, LogicLayerListener listener) {
         this.listener = listener;
         this.inputListener = new InputHandler();
-        this.config = engineProps.getConfig();
+        this.ctx = engineProps.getCtx();
         this.player = engineProps.getPlayer();
         this.monsterList = engineProps.getMonsterList();
         this.bulletList = engineProps.getBulletList();
@@ -69,7 +69,6 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     public void initPlayer() {
         try {
-            player = config.getLevelConfig().getPlayerEgg().getDeclaredConstructor().newInstance();
             player.setPos(gamePane.getWidth(), gamePane.getHeight());
             player.putOnPane(gamePane);
         } catch (Exception e) {
@@ -79,12 +78,12 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     public void initMonsterGenTimer() {
         monsterEggTimerList = new ArrayList<>();
-        for (Map.Entry<Class<? extends BaseMonster>, Double> eggEntry : config.getLevelConfig().getMonsterEggList()
+        for (Map.Entry<Class<? extends BaseMonster>, Double> eggEntry : ctx.getLevelConfig().getMonsterEggList()
                 .entrySet()) {
             Timeline monsterEggTimer = new Timeline();
             monsterEggTimer.getKeyFrames()
                     .add(new KeyFrame(
-                            Duration.millis((long) (config.getLevelConfig().getMonsterScalNum() * eggEntry.getValue())),
+                            Duration.millis((long) (ctx.getLevelConfig().getMonsterScalDensity() * eggEntry.getValue())),
                             generateMonster(eggEntry.getKey())));
             monsterEggTimer.setCycleCount(Timeline.INDEFINITE);
             monsterEggTimerList.add(monsterEggTimer);

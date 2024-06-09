@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mambastu.controller.level.comp.config.GlobalConfig;
+import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.core.logic.LogicManager;
 import com.mambastu.listener.EngineLayerListener;
 import com.mambastu.listener.LogicLayerListener;
@@ -36,7 +36,7 @@ public class GameEngine {
     @Getter
     @Setter
     public class EngineProps { // 成员内部类 引擎属性将贯穿引擎层与逻辑层
-        private final GlobalConfig config;
+        private final Context ctx;
 
         private final StackPane root;
         private final Pane gamePane;
@@ -46,11 +46,11 @@ public class GameEngine {
         private final LinkedList<BaseBullet> bulletList;
         private final LinkedList<BaseBarrier> barrierList;
 
-        public EngineProps(GlobalConfig config, StackPane root) {
-            this.config = config; // 引擎配置参数
+        public EngineProps(Context ctx, StackPane root) {
+            this.ctx = ctx; // 引擎配置参数
             this.root = root; // 根节点 用于挂载游戏画布节点 以及游戏UI节点等
             this.gamePane = new Pane();
-            this.player = config.getLevelConfig().getPlayer();
+            this.player = ctx.getLevelConfig().getPlayer();
             this.monsterList = new LinkedList<>();
             this.bulletList = new LinkedList<>();
             this.barrierList = new LinkedList<>();
@@ -59,10 +59,10 @@ public class GameEngine {
 
     // ================================= Init Section =================================
 
-    public GameEngine(GlobalConfig config, StackPane root, EngineLayerListener listener) {
+    public GameEngine(Context ctx, StackPane root, EngineLayerListener listener) {
         this.listener = listener;
         this.logicLayerHandler = new LogicLayerHandler();
-        this.engineProps = new EngineProps(config, root);
+        this.engineProps = new EngineProps(ctx, root);
         root.getChildren().add(engineProps.getGamePane()); // 将游戏画布节点压入StackPane
         this.logicManager = new LogicManager(engineProps, logicLayerHandler); // 传递引擎参数初始化逻辑管理器
         logger.info("Game Engine successfully initialized!");

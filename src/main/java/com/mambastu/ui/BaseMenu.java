@@ -1,4 +1,4 @@
-package com.mambastu.ui.menu;
+package com.mambastu.ui;
 
 import javafx.scene.Scene;
 

@@ -1,6 +1,6 @@
-package com.mambastu.ui.menu;
+package com.mambastu.ui;
 
-import com.mambastu.controller.level.comp.GameMode;
+import com.mambastu.controller.level.context.enums.GameMode;
 import com.mambastu.listener.MainMenuListener;
 
 import javafx.scene.control.Button;
