@@ -1,21 +1,33 @@
 package com.mambastu.ui;
 
+import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.controller.level.context.enums.GameMode;
 import com.mambastu.listener.MainMenuListener;
+import com.mambastu.material.pojo.entity.player.PlayerTypes;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import lombok.Getter;
 
 public class MainMenu {
-    private final StackPane root;
     private final MainMenuListener listener;
+
+    private final StackPane root;
+    private final Context ctx;
+
+    private final SimpleObjectProperty<GameMode> gameMode; // 游戏模式
+    private final SimpleObjectProperty<PlayerTypes> playerType; // 玩家类型
 
     private final Pane menuPane;
 
-    public MainMenu(StackPane root, MainMenuListener listener) {
+    public MainMenu(StackPane root, Context ctx,  MainMenuListener listener) {
         this.root = root;
+        this.ctx = ctx;
         this.listener = listener;
+        this.gameMode = new SimpleObjectProperty<>(GameMode.NORMAL);
+        this.playerType = new SimpleObjectProperty<>(PlayerTypes.NormalPlayer);
         this.menuPane = new Pane();
     }
 
@@ -29,7 +41,12 @@ public class MainMenu {
     }
 
     public void init() { // 初始化
+        bindProperties();
         buildLayout();
+    }
+
+    private void bindProperties() {
+        ctx.getGameMode().bind(gameMode); // 将游戏模式绑定到上下文
     }
 
     private void buildLayout() {
@@ -46,7 +63,7 @@ public class MainMenu {
         testBtn.setLayoutX(root.getWidth() / 2 + 50);
         testBtn.setLayoutY(root.getHeight() / 2 + 50);
         testBtn.setOnAction(e -> {
-            listener.selectGameMode(GameMode.NORMAL);
+            gameMode.set(GameMode.NORMAL);;
         });
         menuPane.getChildren().add(testBtn);
     }

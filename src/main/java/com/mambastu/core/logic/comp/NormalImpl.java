@@ -12,9 +12,11 @@ import com.mambastu.core.event.comp.event.CollisionEvent;
 import com.mambastu.core.event.comp.event.PlayerDieEvent;
 import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
+import com.mambastu.material.factories.MonsterFactory;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
+import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 
 import javafx.animation.KeyFrame;
@@ -78,7 +80,7 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     public void initMonsterGenTimer() {
         monsterEggTimerList = new ArrayList<>();
-        for (Map.Entry<Class<? extends BaseMonster>, Double> eggEntry : ctx.getLevelConfig().getMonsterEggList()
+        for (Map.Entry<MonsterTypes, Double> eggEntry : ctx.getLevelConfig().getMonsterEggList()
                 .entrySet()) {
             Timeline monsterEggTimer = new Timeline();
             monsterEggTimer.getKeyFrames()
@@ -91,12 +93,12 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
         startMonsterGenTimer();
     }
 
-    private <T extends BaseMonster> EventHandler<ActionEvent> generateMonster(Class<T> eggClass) {
+    private EventHandler<ActionEvent> generateMonster(MonsterTypes eggType) {
         return new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    T monster = eggClass.getDeclaredConstructor().newInstance(); // TODO: 对象池实现
+                    BaseMonster monster = MonsterFactory.getMonsterFactory().create(eggType); // TODO: 对象池实现
                     monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
                     monster.putOnPane(gamePane);
                     monsterList.add(monster);
@@ -117,7 +119,7 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     private void monsterMove() {
         for (BaseMonster monster : monsterList) {
-            monster.move(player.getX(), player.getY());
+            monster.move(player.getX().get(), player.getY().get());
         }
     }
 
@@ -127,8 +129,8 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     private void checkCollision() {
         for (BaseMonster monster : monsterList) { // HACK: 替换改进碰撞检测逻辑
-            double playerCenterX = player.getX() + player.getImageView().getFitWidth() / 2;
-            double playerCenterY = player.getY() + player.getImageView().getFitHeight() / 2;
+            double playerCenterX = player.getX().get() + player.getImageView().getFitWidth() / 2;
+            double playerCenterY = player.getY().get() + player.getImageView().getFitHeight() / 2;
             double monsterCenterX = monster.getImageView().getX() + monster.getImageView().getFitWidth() / 2;
             double monsterCenterY = monster.getImageView().getY() + monster.getImageView().getFitHeight() / 2;
 

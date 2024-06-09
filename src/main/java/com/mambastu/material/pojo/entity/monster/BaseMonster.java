@@ -12,24 +12,21 @@ public abstract class BaseMonster extends BaseEntity{
 
     public void setPos(double sceneWidth, double sceneHeight, BasePlayer player) { // 默认在地图中随机生成 TODO: 避开玩家
         Random rand = new Random();
-        double x, y;
         // 怪物避开玩家的半径
         double avoidRadius = 50;
         do {
-            x = rand.nextDouble() * sceneWidth;
-            y = rand.nextDouble() * sceneHeight;
-        } while (isInAvoidRange(x, y, player.getX(), player.getY(), avoidRadius));
-
-        this.x = x;
-        this.y = y;
-        imageView.setX(x);
-        imageView.setY(y);
+            x.set(rand.nextDouble() * sceneWidth);
+            y.set(rand.nextDouble() * sceneHeight);
+        } while (isInAvoidRange(player.getX().get(), player.getY().get(), avoidRadius));
+        imageView.setX(x.get());
+        imageView.setY(y.get());
         imageView.setFitWidth(50);
         imageView.setFitHeight(50);
     }
-    private boolean isInAvoidRange(double x, double y, double playerX, double playerY, double avoidRadius) {
-        double dx = x - playerX;
-        double dy = y - playerY;
+
+    private boolean isInAvoidRange(double playerX, double playerY, double avoidRadius) {
+        double dx = x.get() - playerX;
+        double dy = y.get() - playerY;
         double distanceSquared = dx * dx + dy * dy;
         return distanceSquared < avoidRadius * avoidRadius;
     }

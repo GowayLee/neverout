@@ -1,8 +1,9 @@
 package com.mambastu.ui;
 
-import com.mambastu.controller.level.context.dto.record.LevelRecord;
+import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.listener.PauseMenuListener;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -13,18 +14,22 @@ public class PauseMenu {
     private final PauseMenuListener listener;
 
     private final StackPane root;
-    private LevelRecord record;
+    private final Context ctx;
+
+    private final SimpleIntegerProperty levelNum;
 
     private final Pane menuPane;
 
-    public PauseMenu(StackPane root, PauseMenuListener listener) {
+    public PauseMenu(StackPane root, Context ctx, PauseMenuListener listener) {
         this.root = root;
+        this.ctx = ctx;
         this.listener = listener;
+        this.levelNum = new SimpleIntegerProperty(0);
         this.menuPane = new Pane();
     }
 
-    public void init(LevelRecord record) { // 初始化
-        this.record = record;
+    public void init() { // 初始化
+        bindProperties();
         buildLayout();
         menuPane.setStyle("-fx-background-color: black;");
         menuPane.setOpacity(0.7); // 设置不透明度
@@ -39,6 +44,10 @@ public class PauseMenu {
         root.getChildren().remove(menuPane);
     }
 
+    private void bindProperties() {
+        levelNum.bind(ctx.getLevelRecord().getLevelNum());
+    }
+
     private void buildLayout() {
         // 创建显示暂停文字的Text节点
         Text pauseText = new Text("Pause!");
@@ -47,7 +56,7 @@ public class PauseMenu {
         pauseText.setLayoutX((root.getWidth() - pauseText.getLayoutBounds().getWidth()) / 2); // 居中
         pauseText.setLayoutY(root.getHeight() / 2); // 居中
         
-        Text levelNumText = new Text("Current Level: " + String.valueOf(record.getLevelNum()));
+        Text levelNumText = new Text("Current Level: " + String.valueOf(levelNum.get()));
         levelNumText.setFill(Color.WHITE); // 设置文本颜色为白色
         levelNumText.setFont(new Font("Segoe Script", 50)); // 设置字体大小和样式
         levelNumText.setLayoutX(50);

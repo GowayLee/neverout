@@ -12,7 +12,7 @@ import java.io.InputStream;
  * Description:
  * DateTime: 2024/6/8下午7:36
  **/
-public class ResourceManager {
+public class ResourceManager { // TODO: 实现缓存
     private static ResourceManager resourceManager;
     private JSONObject Resources ;
 
@@ -33,7 +33,6 @@ public class ResourceManager {
                 throw new FileNotFoundException("Resource not found: " + JsonUrl);
             }
             Resources = new JSONObject(new JSONTokener(inputStream));
-            System.out.println(Resources.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

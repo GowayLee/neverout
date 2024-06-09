@@ -5,6 +5,6 @@ import com.mambastu.core.event.comp.event.CollisionEvent;
 public class CollisionEventHandler extends BaseEventHandler<CollisionEvent> {
     @Override
     public void handle(CollisionEvent event) {
-        event.getPlayer().setHP(0);
+        event.getPlayer().getHP().set(event.getPlayer().getHP().get() - 1);
     }
 }

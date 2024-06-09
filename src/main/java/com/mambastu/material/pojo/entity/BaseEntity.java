@@ -1,5 +1,6 @@
 package com.mambastu.material.pojo.entity;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import lombok.Getter;
@@ -9,8 +10,8 @@ import lombok.Setter;
 @Setter
 public abstract class BaseEntity {
     protected ImageView imageView; // 实体都能够被显示
-    protected double x;
-    protected double y;
+    protected SimpleDoubleProperty x = new SimpleDoubleProperty();
+    protected SimpleDoubleProperty y = new SimpleDoubleProperty();
 
     public void setImageSize(double width, double height) {
         imageView.setFitWidth(width);

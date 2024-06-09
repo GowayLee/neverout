@@ -18,7 +18,7 @@ public class LogicManager { // TODO: 尝试单例模式
         this.listener = listener;
         this.engineProps = engineProps;
         this.ctx = engineProps.getCtx();
-        pickLogiImpl(ctx.getGameMode());
+        pickLogiImpl(ctx.getGameMode().get());
     }
 
     private void pickLogiImpl(GameMode gameMode) {

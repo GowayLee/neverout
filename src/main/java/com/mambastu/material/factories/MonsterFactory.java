@@ -26,13 +26,14 @@ public class MonsterFactory implements ResourceFactory<BaseMonster, MonsterTypes
      */
     @Override
     public  BaseMonster  create(MonsterTypes monsterType) {
+        String imageUrl;
         ResourceManager resourceManager = ResourceManager.getResourceManager();
         switch (monsterType) {
             case BossMonster:
-                String imageUrl = resourceManager.getResourcesByTypeAndCase("bornImage", "Monster", "BossMonster");
-                System.out.println("BossMonster imageUrl:" + imageUrl);
+                imageUrl = resourceManager.getResourcesByTypeAndCase("bornImage", "Monster", "BossMonster");
                 return  new BossMonster(imageUrl);
             case HotMonster:
+                imageUrl = resourceManager.getResourcesByTypeAndCase("bornImage", "Monster", "HotMonster");
                 return new HotMonster("/static/image/fever.png");
             default:
                 throw new IllegalArgumentException("Unknown monster type");

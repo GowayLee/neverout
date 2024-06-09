@@ -1,6 +1,7 @@
 package com.mambastu.controller.level.context.manager;
 
 import com.mambastu.controller.level.context.dto.Context;
+import com.mambastu.controller.level.context.enums.GameMode;
 import com.mambastu.controller.level.context.manager.comp.ModeCtxLogic;
 import com.mambastu.controller.level.context.manager.comp.NormalCtxImpl;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
@@ -17,7 +18,7 @@ public class ContextManager {
     }
 
     public void init() {
-        pickLogicImpl(); // 选择逻辑实现类，这里使用的是NormalCtxImpl，可以根据需要进行修改。
+        pickLogicImpl(ctx.getGameMode().get()); // 选择逻辑实现类，这里使用的是NormalCtxImpl，可以根据需要进行修改。
         initFirstCtx(); // 初始化第一关的上下文信息。
     }
 
@@ -27,12 +28,12 @@ public class ContextManager {
     }
 
     private BasePlayer initPlayer() { // 根据玩家选择进入第一关生成玩家
-        // 初始化玩家信息，包括玩家等级、金币数、生命值等。
+        // ctx.getPlayerType().get();
         return new Player(); // TODO: 这里需要根据玩家选择生成玩家。
     }
 
-    private void pickLogicImpl() {
-        switch (ctx.getGameMode()) {
+    private void pickLogicImpl(GameMode mode) {
+        switch (mode) {
             case NORMAL:
                 modeCtxLogic = new NormalCtxImpl(ctx);
                 break;

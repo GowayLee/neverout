@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mambastu.controller.level.context.dto.Context;
-import com.mambastu.controller.level.context.enums.GameMode;
 import com.mambastu.controller.level.context.manager.ContextManager;
 import com.mambastu.core.engine.GameEngine;
 import com.mambastu.listener.EngineLayerListener;
@@ -16,6 +15,7 @@ import com.mambastu.ui.LevelMenu;
 import com.mambastu.ui.MainMenu;
 import com.mambastu.ui.PauseMenu;
 
+import javafx.print.PrinterAttributes;
 import javafx.scene.layout.StackPane;
 
 public class LevelController {
@@ -48,30 +48,30 @@ public class LevelController {
         this.mainMenuListener = new MainMenuHandler();
         this.pauseMenuListener = new PauseMenuHandler();
 
-        this.mainMenu = new MainMenu(root, mainMenuListener); // 初始化主菜单，传入关卡配置信息，用于显示关卡选择
-        this.pauseMenu = new PauseMenu(root, pauseMenuListener);
+        this.mainMenu = new MainMenu(root, ctx, mainMenuListener); // 初始化主菜单，传入关卡配置信息，用于显示关卡选择
+        this.pauseMenu = new PauseMenu(root, ctx, pauseMenuListener);
         this.levelMenu = new LevelMenu(root);
         this.gameOverMenu = new GameOverMenu(root); // 初始化游戏结束菜单，传入关卡配置信息，用于显示关卡选择
-        this.inGameHud = new InGameHud(root); // 初始化游戏内HUD
+        this.inGameHud = new InGameHud(root, ctx); // 初始化游戏内HUD
     }
 
-    public void init() {
-        mainMenu.init();
-        inGameHud.init(ctx);
+    private void initDynamicResource() { // 初始化动态资源ctx, 动态菜单
+        ctxManager.init(); // 初始化上下文管理器
+        initDynamicMenu();
     }
 
     private void initDynamicMenu() { // 初始化动态菜单，如游戏内HUD、暂停菜单等，这些菜单需要根据关卡配置信息来显示不同的内容。
-        pauseMenu.init(ctx.getLevelRecord());
+        pauseMenu.init();
+        inGameHud.init();
     }
 
     // ================================= Operation Section =================================
     public void showMainMenu() { // 显示主菜单逻辑
+        mainMenu.init(); // 静态菜单单独初始化
         mainMenu.show();
     }
 
     private void startFirstLevel() { // 初始化引擎层, 开始关卡逻辑
-        ctxManager.init(); // 初始化上下文管理器
-        initDynamicMenu();
         gameEngine = new GameEngine(ctx, root, engineLayerListener);
         gameEngine.start();
         inGameHud.show();
@@ -83,6 +83,7 @@ public class LevelController {
         initDynamicMenu();
         gameEngine = new GameEngine(ctx, root, engineLayerListener);
         gameEngine.start();
+        inGameHud.show();
     }
 
     // ================================= Listeners and Handlers Section =================================
@@ -107,12 +108,8 @@ public class LevelController {
 
     private class MainMenuHandler implements MainMenuListener {
         @Override
-        public void selectGameMode(GameMode gameMode) {
-            ctx.setGameMode(gameMode);
-        }
-
-        @Override
         public void startGame() {
+            initDynamicResource();
             mainMenu.hide();
             startFirstLevel();
         }
