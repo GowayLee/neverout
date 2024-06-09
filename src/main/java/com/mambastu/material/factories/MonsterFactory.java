@@ -18,6 +18,12 @@ public class MonsterFactory implements ResourceFactory<BaseMonster, MonsterTypes
         return monsterFactory;
     }
 
+    /**
+     * 传入MonsterTypes中的一种，返回对应的BaseMonster对象，在外部记得实例化！！！
+     *
+     * @param monsterType
+     * @return
+     */
     @Override
     public  BaseMonster  create(MonsterTypes monsterType) {
         ResourceManager resourceManager = ResourceManager.getResourceManager();

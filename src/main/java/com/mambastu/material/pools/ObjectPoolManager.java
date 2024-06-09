@@ -23,6 +23,17 @@ public class ObjectPoolManager {
         return objectPoolManagerInstance;
     }
 
+    /**通过获得的池管理器来取得对象池以及防止重复产生某一个对象的对象池
+     *
+     * @param poolName
+     * @param resourceFactory
+     * @param v
+     * @param initialSize
+     * @param maxSize
+     * @return : 返回某个子类的ObjectPool对象
+     * @param <T>
+     * @param <V>
+     */
     public  <T, V extends Enum<V>>  ObjectPool<T, V> getObjectPool(String poolName, ResourceFactory<T, V> resourceFactory, V v, int initialSize, int maxSize) {
 
         if (pools.containsKey(poolName)) {
