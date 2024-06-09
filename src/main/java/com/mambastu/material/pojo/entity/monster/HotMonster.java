@@ -7,9 +7,9 @@ import javafx.scene.image.ImageView;
 
 public class HotMonster extends BaseMonster {
 
-    public HotMonster() {
-        Image image = ImgManager.getImage("/static/image/fever.png");
-        imageView = new ImageView(image);
+    public HotMonster(String imageUrl) {
+
+        imageView = new ImageView(imageUrl);
     }
 
     @Override
