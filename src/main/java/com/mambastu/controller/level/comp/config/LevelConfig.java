@@ -24,6 +24,8 @@ public class LevelConfig { // TODO: 增加玩家属性，例如玩家的道具�
     private double monsterScalDamage;
     private double monsterScalGold;
 
+    private final BasePlayer player = new Player(); // 占位，需要修改为从配置文件中读取玩家属性，例如玩家的道具，武器，技能等。在每一个关卡都需要改变
+ 
     private Class<? extends BasePlayer> playerEgg; // FIXME: 酱紫采用玩家蛋来生成玩家会导致难以在关卡间传递玩家的属性
     private Map<Class<? extends BaseMonster>, Double> monsterEggList;
 

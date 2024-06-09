@@ -15,8 +15,8 @@ import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 
 import javafx.animation.AnimationTimer;
-import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,50 +25,47 @@ public class GameEngine {
 
     private final EngineLayerListener listener;
 
-    private final LogicManager logicManager;
-
     private final LogicLayerHandler logicLayerHandler; // 初始化逻辑层处理器 用于处理逻辑层事件 例如暂停游戏，继续游戏等事件
 
+    private final LogicManager logicManager;
+
+    private final EngineProps engineProps;
     private AnimationTimer timer;
     private Long lastUpdateTime = System.nanoTime();
 
     @Getter
     @Setter
-    public static class EngineProps { // 单例模式静态内部类 引擎属性将贯穿引擎层与逻辑层 TODO: 考虑是否需要使用代理模式进行封装
-        private static final EngineProps INSTANCE = new EngineProps();
+    public class EngineProps { // 成员内部类 引擎属性将贯穿引擎层与逻辑层
+        private final GlobalConfig config;
 
-        private GlobalConfig config;
+        private final StackPane root;
+        private final Pane gamePane;
 
-        private Scene scene;
-        private Pane root = new Pane();
+        private final BasePlayer player;
+        private final LinkedList<BaseMonster> monsterList;
+        private final LinkedList<BaseBullet> bulletList;
+        private final LinkedList<BaseBarrier> barrierList;
 
-        private BasePlayer player;
-        private LinkedList<BaseMonster> monsterList = new LinkedList<>();
-        private LinkedList<BaseBullet> bulletList = new LinkedList<>();
-        private LinkedList<BaseBarrier> barrierList = new LinkedList<>();
-
-        private EngineProps() {
-        } // 私有构造方法 防止在外部被实例化
-
-        public static EngineProps getInstance() {
-            return EngineProps.INSTANCE;
+        public EngineProps(GlobalConfig config, StackPane root) {
+            this.config = config; // 引擎配置参数
+            this.root = root; // 根节点 用于挂载游戏画布节点 以及游戏UI节点等
+            this.gamePane = new Pane();
+            this.player = config.getLevelConfig().getPlayer();
+            this.monsterList = new LinkedList<>();
+            this.bulletList = new LinkedList<>();
+            this.barrierList = new LinkedList<>();
         }
     }
 
     // ================================= Init Section =================================
 
-    public GameEngine(GlobalConfig config, Scene scene, EngineLayerListener listener) {
+    public GameEngine(GlobalConfig config, StackPane root, EngineLayerListener listener) {
         this.listener = listener;
         this.logicLayerHandler = new LogicLayerHandler();
-        scene.setRoot(EngineProps.getInstance().getRoot()); // 切换显示节点
-        initEngineProps(config, scene);
-        this.logicManager = new LogicManager(EngineProps.getInstance(), logicLayerHandler); // 传递引擎参数初始化逻辑管理器
+        this.engineProps = new EngineProps(config, root);
+        root.getChildren().add(engineProps.getGamePane()); // 将游戏画布节点压入StackPane
+        this.logicManager = new LogicManager(engineProps, logicLayerHandler); // 传递引擎参数初始化逻辑管理器
         logger.info("Game Engine successfully initialized!");
-    }
-
-    private void initEngineProps(GlobalConfig config, Scene scene) {
-        EngineProps.getInstance().setConfig(config);
-        EngineProps.getInstance().setScene(scene);
     }
 
     private class LogicLayerHandler implements LogicLayerListener {
@@ -88,6 +85,15 @@ public class GameEngine {
         public void stopEngine() {
             listener.stopGame();
         }
+    }
+
+    // ================================= Control Section =================================
+    public void pauseThisEngine() { // 暂停引擎
+        timer.stop();
+    }
+
+    public void resumeThisEngine() { // 恢复引擎
+        timer.start();
     }
     // ================================= Start Section =================================
 

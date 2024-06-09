@@ -10,6 +10,7 @@ import com.mambastu.core.engine.GameEngine.EngineProps;
 import com.mambastu.core.event.EventManager;
 import com.mambastu.core.event.comp.event.CollisionEvent;
 import com.mambastu.core.event.comp.event.PlayerDieEvent;
+import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
@@ -25,13 +26,14 @@ import javafx.util.Duration;
 
 public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以及相关组件, 规划oop设计
     private final LogicLayerListener listener;
+    private final InputHandler inputListener;
 
     private final EventManager eventManager;
-    private final InputManager inputManager;
 
     private final GlobalConfig config;
-    private final Pane root;
+    private final Pane gamePane;
 
+    private boolean isPause;
     private ArrayList<Timeline> monsterEggTimerList;
 
     private BasePlayer player;
@@ -43,29 +45,33 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     public NormalImpl(EngineProps engineProps, LogicLayerListener listener) {
         this.listener = listener;
+        this.inputListener = new InputHandler();
         this.config = engineProps.getConfig();
         this.player = engineProps.getPlayer();
         this.monsterList = engineProps.getMonsterList();
         this.bulletList = engineProps.getBulletList();
         this.barrierList = engineProps.getBarrierList();
-        this.root = engineProps.getRoot();
+        this.gamePane = engineProps.getGamePane();
         this.eventManager = new EventManager();
-        this.inputManager = new InputManager(engineProps.getScene());
+        InputManager.getInstance().addListener(inputListener);
+    }
 
-        inputManager.addPropertyListener(event -> { // 设置InputManager暂停侦听器
-            if ((boolean) event.getNewValue()) {
-                pauseEngine();
-            } else {
+    private class InputHandler implements InputListener {
+        @Override
+        public void switchPausenResume() {
+            if (isPause) {
                 resumeEngine();
+            } else {
+                pauseEngine();
             }
-        });
+        }
     }
 
     public void initPlayer() {
         try {
             player = config.getLevelConfig().getPlayerEgg().getDeclaredConstructor().newInstance();
-            player.setPos(root.getWidth(), root.getHeight());
-            player.putOnPane(root);
+            player.setPos(gamePane.getWidth(), gamePane.getHeight());
+            player.putOnPane(gamePane);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -92,8 +98,8 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
             public void handle(ActionEvent event) {
                 try {
                     T monster = eggClass.getDeclaredConstructor().newInstance(); // TODO: 对象池实现
-                    monster.setPos(root.getWidth(), root.getHeight(), player);
-                    monster.putOnPane(root);
+                    monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
+                    monster.putOnPane(gamePane);
                     monsterList.add(monster);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -117,7 +123,7 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
     }
 
     private void playerMove() {
-        player.move(inputManager.getActiveInputs());
+        player.move(InputManager.getInstance().getActiveInputs());
     }
 
     private void checkCollision() {
@@ -133,7 +139,7 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
                 CollisionEvent event = new CollisionEvent(player, monster);
                 eventManager.fireEvent(event);
                 if (player.isDie()) { // 检查玩家是否死亡
-                    PlayerDieEvent playerDieEvent = new PlayerDieEvent(player, monsterList, root);
+                    PlayerDieEvent playerDieEvent = new PlayerDieEvent(player, monsterList, gamePane);
                     eventManager.fireEvent(playerDieEvent);
                     stopEngine();
                 }
@@ -144,11 +150,13 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
     // ================================= EngineState Control Section =================================
     
     private void pauseEngine() { // 游戏暂停时调用，暂停引擎
+        isPause = true;
         listener.pauseEngine();
         stopMonsterGenTimer();
     }
 
     private void resumeEngine() { // 游戏恢复时调用，恢复引擎
+        isPause = false;
         listener.resumeEngine();
         startMonsterGenTimer();
     }

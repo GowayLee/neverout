@@ -1,11 +1,11 @@
 package com.mambastu.ui.menu;
 
-import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 
 public class GameOverMenu {
-    private final Scene scene;
+    private final StackPane root;
 
-    public GameOverMenu(Scene scene) {
-        this.scene = scene;
+    public GameOverMenu(StackPane root) {
+        this.root = root;
     }
 }

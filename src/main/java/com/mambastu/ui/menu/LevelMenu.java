@@ -1,11 +1,12 @@
 package com.mambastu.ui.menu;
 
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 
 public class LevelMenu {
-    private final Scene scene;
+    private final StackPane root;
 
-    public LevelMenu(Scene scene) {
-        this.scene = scene;
+    public LevelMenu(StackPane root) {
+        this.root = root;
     }
 }
