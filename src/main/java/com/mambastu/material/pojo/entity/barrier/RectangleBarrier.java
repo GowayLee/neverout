@@ -2,19 +2,20 @@ package com.mambastu.material.pojo.entity.barrier;
 
 import com.mambastu.material.resource.ResourceManager;
 
-import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 
 public class RectangleBarrier extends BaseBarrier {
-    private ImageView bornImageView;
+    private Image bornImage;
 
 
     public RectangleBarrier() {
+        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
     }
 
     @Override
     public void init() {
-        bornImageView = new ImageView(ResourceManager.getInstance().getImg("bornImage", "Player", "Player1"));
-        showingImageView = bornImageView;
+        showingImage.set(bornImage);
+        showingImageView.imageProperty().bind(showingImage);
     }
 
 

@@ -1,28 +1,30 @@
 package com.mambastu.material.pojo.entity.player;
 
 import com.mambastu.material.resource.ResourceManager;
-import javafx.scene.image.ImageView;
+
+import javafx.scene.image.Image;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class LaughPlayer extends BasePlayer{
-    private ImageView bornImageView;
-    private ImageView dieImageView;
+    private Image bornImage;
+    private Image dieImage;
 
     public LaughPlayer() {
+        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
+        this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Player1");
     }
 
     @Override
     public void init() {
-        bornImageView = new ImageView(ResourceManager.getInstance().getImg("bornImage", "Player", "Player1"));
-        dieImageView = new ImageView(ResourceManager.getInstance().getImg("dieImage", "Player", "Player1"));
-        showingImageView = bornImageView;
+        showingImage.set(bornImage);
+        showingImageView.imageProperty().bind(showingImage);
     }
 
     public void die() {
-        showingImageView = dieImageView;
+        showingImage.set(dieImage);
     }
 
 }

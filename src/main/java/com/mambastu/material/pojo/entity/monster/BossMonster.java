@@ -4,6 +4,7 @@ import com.mambastu.material.resource.ResourceManager;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
@@ -11,21 +12,33 @@ public class BossMonster extends BaseMonster {
     private enum State { IDLE, MOVING, SHAKING };
     private final Timeline timeline;
 
+    private final Image bornImage;
+    private final Image attackImage;
+
     private State state;
 
     public BossMonster() {
+        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "BossMonster");
+        this.attackImage = ResourceManager.getInstance().getImg("attackImage", "Monster", "BossMonster");
         this.state = State.IDLE;
         this.timeline = new Timeline(
-                new KeyFrame(Duration.seconds(4.0), event -> setState(State.SHAKING)),
+                new KeyFrame(Duration.seconds(4.0), event -> {
+                    setState(State.SHAKING);
+                    showingImage.set(attackImage);
+                }),
                 new KeyFrame(Duration.seconds(4.5), event -> setState(State.MOVING)),
-                new KeyFrame(Duration.seconds(5.0), event -> setState(State.IDLE)));
+                new KeyFrame(Duration.seconds(5.0), event -> {
+                    setState(State.IDLE);
+                    showingImage.set(bornImage);
+                }));
         timeline.setCycleCount(Timeline.INDEFINITE);
     }
 
     @Override
     public void init() {
         timeline.playFromStart();
-        showingImageView = new ImageView(ResourceManager.getInstance().getImg("bornImage", "Monster", "BossMonster"));
+        showingImage.set(bornImage);
+        showingImageView.imageProperty().bind(showingImage);
     }
 
     private void setState(State state) {
