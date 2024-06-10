@@ -8,7 +8,9 @@
     }
   },
   "Player": {
-    "bornImage": "/static/image/player1.png",
-    "deadImage": "/static/image/player_die.png"
+    "Player1": {
+      "bornImage": "/static/image/player1.png",
+      "dieImage": "/static/image/player_die.png"
+    }
   }
 }

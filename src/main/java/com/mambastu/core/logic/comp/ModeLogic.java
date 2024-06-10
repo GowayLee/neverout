@@ -4,7 +4,9 @@ public interface ModeLogic {
     /*
      * 更新所有游戏实体属性
      */
-    void updateEntity(long elapsedTime);
+    void update(long elapsedTime);
+
+    void initCountDownTimer();
 
     void initMonsterGenTimer();
 

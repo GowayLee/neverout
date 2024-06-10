@@ -1,21 +1,27 @@
 package com.mambastu.material.factories;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.monster.BossMonster;
 import com.mambastu.material.pojo.entity.monster.HotMonster;
 import com.mambastu.material.pojo.entity.monster.MonsterTypes;
-import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.material.pools.ObjectPool;
+import com.mambastu.material.pools.ObjectPoolManager;
 
-public class MonsterFactory implements ResourceFactory<BaseMonster, MonsterTypes> {
-    private static MonsterFactory monsterFactory;
+public class MonsterFactory implements EntityFactory<BaseMonster, MonsterTypes> {
+    private static final Logger logger = LogManager.getLogger(MonsterFactory.class);
 
-    private MonsterFactory() {}
+    private static MonsterFactory INSTANCE = new MonsterFactory();;
 
-    public static MonsterFactory getMonsterFactory() {
-        if (monsterFactory == null) {
-            monsterFactory = new MonsterFactory();
-        }
-        return monsterFactory;
+    private final ObjectPoolManager objectPoolManager = ObjectPoolManager.getInstance();
+
+    private MonsterFactory() {
+    }
+
+    public static MonsterFactory getInstance() {
+        return INSTANCE;
     }
 
     /**
@@ -25,18 +31,26 @@ public class MonsterFactory implements ResourceFactory<BaseMonster, MonsterTypes
      * @return
      */
     @Override
-    public  BaseMonster  create(MonsterTypes monsterType) {
-        String imageUrl;
-        ResourceManager resourceManager = ResourceManager.getResourceManager();
+    public BaseMonster create(MonsterTypes monsterType) {
         switch (monsterType) {
             case BossMonster:
-                imageUrl = resourceManager.getResourcesByTypeAndCase("bornImage", "Monster", "BossMonster");
-                return  new BossMonster(imageUrl);
+                BossMonster bossMonster = (BossMonster) objectPoolManager.getObjectPool(BossMonster.class).borrowObject();
+                bossMonster.init();
+                return bossMonster;
             case HotMonster:
-                imageUrl = resourceManager.getResourcesByTypeAndCase("bornImage", "Monster", "HotMonster");
-                return new HotMonster("/static/image/fever.png");
+                HotMonster hotMonster = (HotMonster) objectPoolManager.getObjectPool(HotMonster.class).borrowObject();
+                hotMonster.init();
+                return hotMonster;
             default:
+                logger.error("Error in creating Monster! Unknown monster type: " + monsterType);
                 throw new IllegalArgumentException("Unknown monster type");
         }
+    }
+
+    @Override
+    public void delete(BaseMonster obj) {
+        @SuppressWarnings("unchecked")
+        ObjectPool<BaseMonster> objectPool = (ObjectPool<BaseMonster>)  ObjectPoolManager.getInstance().getObjectPool(obj.getClass());
+        objectPool.returnObject(obj);
     }
 }

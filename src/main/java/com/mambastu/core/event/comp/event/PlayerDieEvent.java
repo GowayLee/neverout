@@ -18,10 +18,8 @@ public class PlayerDieEvent extends BaseEvent{
     @Getter
     private Pane root;
 
-    public PlayerDieEvent(BasePlayer player, LinkedList<BaseMonster> monsterList, Pane root) {
+    public PlayerDieEvent(BasePlayer player) {
         super("PlayerDieEvent");
         this.player = player;
-        this.monsterList = monsterList;
-        this.root = root;
     }
 }
