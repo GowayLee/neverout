@@ -4,8 +4,8 @@ import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.controller.level.context.enums.GameMode;
 import com.mambastu.controller.level.context.manager.comp.ModeCtxLogic;
 import com.mambastu.controller.level.context.manager.comp.NormalCtxImpl;
+import com.mambastu.material.factories.PlayerFactory;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
-import com.mambastu.material.pojo.entity.player.Player;
 
 public class ContextManager {
     private final Context ctx;
@@ -28,8 +28,9 @@ public class ContextManager {
     }
 
     private BasePlayer initPlayer() { // 根据玩家选择进入第一关生成玩家
-        // ctx.getPlayerType().get();
-        return new Player(); // TODO: 这里需要根据玩家选择生成玩家。
+        BasePlayer player =  PlayerFactory.getInstance().create(ctx.getPlayerType().get());
+        player.init();
+        return player;
     }
 
     private void pickLogicImpl(GameMode mode) {

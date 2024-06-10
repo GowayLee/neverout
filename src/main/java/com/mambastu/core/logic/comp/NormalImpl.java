@@ -13,14 +13,15 @@ import com.mambastu.core.event.comp.event.PlayerDieEvent;
 import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
 import com.mambastu.material.factories.MonsterFactory;
+import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
-
 import com.mambastu.material.pools.ObjectPool;
 import com.mambastu.material.pools.ObjectPoolManager;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -113,12 +114,7 @@ public class NormalImpl implements ModeLogic {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    MonsterFactory monsterFactory = MonsterFactory.getMonsterFactory();
-                    ObjectPoolManager objectPoolManager = ObjectPoolManager.getObjectPoolManagerInstance();
-                    String poolName = eggType.name() + "Pool";
-                    ObjectPool<BaseMonster, MonsterTypes> monsterPool = objectPoolManager.getObjectPool(poolName,
-                            monsterFactory, eggType, 10, 50);
-                    BaseMonster monster = monsterPool.borrowObject();
+                    BaseMonster monster = MonsterFactory.getInstance().create(eggType);
                     monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
                     monster.putOnPane(gamePane);
                     monsterList.add(monster);
@@ -149,23 +145,35 @@ public class NormalImpl implements ModeLogic {
     }
 
     private void checkCollision() {
+        ArrayList<BaseMonster> delList = new ArrayList<>(); // 测试版
         for (BaseMonster monster : monsterList) { // HACK: 替换改进碰撞检测逻辑
-            double playerCenterX = player.getX().get() + player.getImageView().getFitWidth() / 2;
-            double playerCenterY = player.getY().get() + player.getImageView().getFitHeight() / 2;
-            double monsterCenterX = monster.getImageView().getX() + monster.getImageView().getFitWidth() / 2;
-            double monsterCenterY = monster.getImageView().getY() + monster.getImageView().getFitHeight() / 2;
+            double playerCenterX = player.getX().get() + player.getShowingImageView().getFitWidth() / 2;
+            double playerCenterY = player.getY().get() + player.getShowingImageView().getFitHeight() / 2;
+            double monsterCenterX = monster.getShowingImageView().getX() + monster.getShowingImageView().getFitWidth() / 2;
+            double monsterCenterY = monster.getShowingImageView().getY() + monster.getShowingImageView().getFitHeight() / 2;
 
             double distance = Math
                     .sqrt(Math.pow(playerCenterX - monsterCenterX, 2) + Math.pow(playerCenterY - monsterCenterY, 2));
-            if (distance < (player.getImageView().getFitWidth() / 2 + monster.getImageView().getFitWidth() / 2)) { // 触发事件
-                CollisionEvent event = new CollisionEvent(player, monster);
-                eventManager.fireEvent(event);
+            if (distance < (player.getShowingImageView().getFitWidth() / 2 + monster.getShowingImageView().getFitWidth() / 2)) { // 触发事件
+                // CollisionEvent event = new CollisionEvent(player, monster);
+                // eventManager.fireEvent(event);
+                gamePane.getChildren().remove(monster.getShowingImageView()); // 移除怪物
+                delList.add(monster); // 测试版
+                MonsterFactory.getInstance().delete(monster);
             }
+        }
+        for (BaseMonster monster : delList) { // 测试版
+            monsterList.remove(monster);
         }
     }
 
     private void checkIsGameOver() { // 检查游戏是否结束，例如时间结束或者玩家死亡等条件
-        if (ctx.getLevelRecord().getRemainDuration().get() <= 0 || player.isDie()) {
+        if (player.isDie()) {
+            PlayerDieEvent event = new PlayerDieEvent(player); // 触发玩家死亡事件，记录数据等操作
+            eventManager.fireEvent(event);
+            stopEngine();
+        }
+        if (ctx.getLevelRecord().getRemainDuration().get() <= 0) {
             stopEngine();
         }
     }
@@ -213,6 +221,9 @@ public class NormalImpl implements ModeLogic {
     }
 
     private void clearAllEntity() {
+        for (BaseMonster monster : monsterList) {
+            monster.removeFromPane(gamePane);
+        }
         monsterList.clear();
         monsterEggTimerList.clear();
         bulletList.clear();

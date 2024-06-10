@@ -1,11 +1,17 @@
 package com.mambastu.material.pojo.entity.monster;
 
+import com.mambastu.material.resource.ResourceManager;
+
 import javafx.scene.image.ImageView;
 
 public class HotMonster extends BaseMonster {
 
-    public HotMonster(String imageUrl) {
-        imageView = new ImageView(imageUrl);
+    public HotMonster() {
+    }
+
+    @Override
+    public void init() {
+        showingImageView = new ImageView(ResourceManager.getInstance().getImg("bornImage", "Monster", "HotMonster"));
     }
 
     @Override
@@ -18,7 +24,7 @@ public class HotMonster extends BaseMonster {
             x.set(x.get() + speed * dx / distance);
             y.set(y.get() + speed * dy / distance);
         }
-        imageView.setX(x.get());
-        imageView.setY(y.get());
+        showingImageView.setX(x.get());
+        showingImageView.setY(y.get());
     }
 }

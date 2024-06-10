@@ -10,6 +10,8 @@ public abstract class BaseMonster extends BaseEntity{
     protected double speed;
     abstract public void move(double targX, double targY); // 怪物的移动需要参照目标
 
+    abstract public void init();
+
     public void setPos(double sceneWidth, double sceneHeight, BasePlayer player) { // 默认在地图中随机生成 TODO: 避开玩家
         Random rand = new Random();
         // 怪物避开玩家的半径
@@ -18,10 +20,10 @@ public abstract class BaseMonster extends BaseEntity{
             x.set(rand.nextDouble() * sceneWidth);
             y.set(rand.nextDouble() * sceneHeight);
         } while (isInAvoidRange(player.getX().get(), player.getY().get(), avoidRadius));
-        imageView.setX(x.get());
-        imageView.setY(y.get());
-        imageView.setFitWidth(50);
-        imageView.setFitHeight(50);
+        showingImageView.setX(x.get());
+        showingImageView.setY(y.get());
+        showingImageView.setFitWidth(50);
+        showingImageView.setFitHeight(50);
     }
 
     private boolean isInAvoidRange(double playerX, double playerY, double avoidRadius) {

@@ -27,7 +27,7 @@ public class MainMenu {
         this.ctx = ctx;
         this.listener = listener;
         this.gameMode = new SimpleObjectProperty<>(GameMode.NORMAL);
-        this.playerType = new SimpleObjectProperty<>(PlayerTypes.NormalPlayer);
+        this.playerType = new SimpleObjectProperty<>(PlayerTypes.LaughPlayer);
         this.menuPane = new Pane();
     }
 

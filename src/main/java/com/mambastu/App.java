@@ -26,7 +26,7 @@ public class App extends Application {
         root.prefWidthProperty().bind(scene.widthProperty());
         root.prefHeightProperty().bind(scene.heightProperty());
         
-        ResourceManager.getResourceManager().loadResources(); // 初始化资源管理器，载入JSON
+        ResourceManager.getInstance().loadResources(); // 初始化资源管理器，载入JSON
         InputManager.init(scene); // 初始化输入管理器
         LevelController controller = new LevelController(root);
         controller.showMainMenu();

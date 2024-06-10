@@ -1,8 +1,11 @@
 package com.mambastu.material.pools;
 
-import com.mambastu.material.factories.ResourceFactory;
+import com.mambastu.material.pojo.entity.BaseEntity;
 
 import java.util.Stack;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Author:JngyEn
@@ -12,63 +15,69 @@ import java.util.Stack;
  * @ V:某个pojo.entity枚举类
  * DateTime: 2024/6/9上午10:45
  **/
-public class ObjectPool<T, V extends Enum<V>> {
-    private Stack<T> pool;
-    private int initialSize;
-    private int currentSize;
-    private int maxSize;
-    private V enumV;
-    private ResourceFactory<T, V> resourceFactory;
+public class ObjectPool<T extends BaseEntity> {
+    private static final Logger logger = LogManager.getLogger(ObjectPool.class);
+
+    private final Stack<T> pool;
+    private final Class<T> objectClass;
+    private int maxCapacity;
 
     /**
      *
      * @param resourceFactory : 该元素对应的工厂类
      * @param v               : 枚举类包含的一个元素,同时也是这个线程池的具体生成类型
-     * @param initialSize
-     * @param maxSize
+     * @param initCapacity
+     * @param maxCapacity
      */
-    private ObjectPool(ResourceFactory<T, V> resourceFactory, V v, int initialSize, int maxSize) {
-        this.resourceFactory = resourceFactory;
-        this.initialSize = initialSize;
-        this.maxSize = maxSize;
-        this.enumV = v;
+    public ObjectPool(Class<T> objectClass, int maxCapacity) {
         this.pool = new Stack<>();
-        initializePool();
+        this.objectClass = objectClass;
+        this.maxCapacity = maxCapacity;
+        init();
     }
 
-    private void initializePool() {
-        for (int i = 0; i < initialSize; i++) {
-            pool.push(resourceFactory.create(enumV));
-            currentSize++;
+    private void init() { // 初始化对象池
+        for (int i = 0; i < maxCapacity; i++) {
+            try {
+                pool.push(objectClass.getDeclaredConstructor().newInstance());
+            } catch (Exception e) {
+                logger.error("Error in initializing object pool!");
+                e.printStackTrace();
+            }
+
         }
     }
 
-    public static <T, V extends Enum<V>> ObjectPool<T, V> createPool(ResourceFactory<T, V> resourceFactory, V v,
-            int initialSize, int maxSize) {
-        return new ObjectPool<>(resourceFactory, v, initialSize, maxSize);
-    }
+    // public static <T, V extends Enum<V>> ObjectPool<T, V> createPool(ResourceFactory<T, V> resourceFactory, V v,
+    //         int initCapacity, int maxCapacity) {
+    //     return new ObjectPool<>(resourceFactory, v, initCapacity, maxCapacity);
+    // }
 
     /**
      * 当池中元素不够时自动扩容
      *
-     * @return : 返回的泛型类，一定记得强制转化
+     * @return : 返回的超类
      */
     public T borrowObject() {
-        if (pool.isEmpty() && currentSize < maxSize) {
-            T obj = resourceFactory.create(enumV);
-            currentSize++;
-            pool.push(obj);
-            return obj;
-        } else if (!pool.isEmpty()) {
+        if (!pool.isEmpty()) { // 如果池中有元素，直接返回
             return pool.pop();
+        } else { // 如果池中没有元素，创建新元素并返回，同时增加池的容量 TODO: 考虑增加扩容机制
+            try {
+                T obj = objectClass.getDeclaredConstructor().newInstance();
+                maxCapacity++;
+                logger.info("Enlarge obejct pool! Current Capacity: " + maxCapacity);
+                return obj;
+            } catch (Exception e) {
+                logger.error("Error in enlarging object pool!");
+                e.printStackTrace();
+            }
         }
-        return null;
+        return null; // 如果创建新元素失败，抛出异常返回null
     }
 
-    public synchronized void returnObject(T obj) {
-        if (pool.size() < maxSize) {
-            pool.push(obj);
-        }
+    public void returnObject(T obj) {
+        pool.push(obj);
+        logger.info("Return object to pool! ");
     }
 
 }
