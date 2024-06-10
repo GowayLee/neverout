@@ -59,4 +59,12 @@ public abstract class BasePlayer extends BaseEntity {
     }
 
     abstract public void die(); // 设置玩家死亡状态
+
+
+    @Override
+    public Bounds getBounds() {//返回圆形bound类
+        double radius = Math.max(imageView.getFitWidth(), imageView.getFitHeight()) / 2;
+        return new CircleBounds(x, y, radius);
+    }
+
 }

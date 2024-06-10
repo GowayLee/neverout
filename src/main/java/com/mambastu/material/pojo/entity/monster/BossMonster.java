@@ -13,6 +13,7 @@ public class BossMonster extends BaseMonster {
     private State state;
 
     public BossMonster(String imageUrl) {
+
         imageView = new ImageView(imageUrl);
         this.state = State.IDLE;
         Timeline timeline = new Timeline(
@@ -50,4 +51,7 @@ public class BossMonster extends BaseMonster {
 
     }
 
+    public State getState() {
+        return state;
+    }
 }

@@ -129,14 +129,7 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     private void checkCollision() {
         for (BaseMonster monster : monsterList) { // HACK: 替换改进碰撞检测逻辑
-            double playerCenterX = player.getX().get() + player.getImageView().getFitWidth() / 2;
-            double playerCenterY = player.getY().get() + player.getImageView().getFitHeight() / 2;
-            double monsterCenterX = monster.getImageView().getX() + monster.getImageView().getFitWidth() / 2;
-            double monsterCenterY = monster.getImageView().getY() + monster.getImageView().getFitHeight() / 2;
-
-            double distance = Math
-                    .sqrt(Math.pow(playerCenterX - monsterCenterX, 2) + Math.pow(playerCenterY - monsterCenterY, 2));
-            if (distance < (player.getImageView().getFitWidth() / 2 + monster.getImageView().getFitWidth() / 2)) { // 触发事件
+            if (player.getBounds().isColliding(monster.getBounds())) { // 触发事件
                 CollisionEvent event = new CollisionEvent(player, monster);
                 eventManager.fireEvent(event);
                 if (player.isDie()) { // 检查玩家是否死亡
