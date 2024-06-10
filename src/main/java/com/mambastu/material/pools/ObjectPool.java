@@ -6,6 +6,8 @@ import java.util.Stack;
  * Author:JngyEn
  * Description: 一个子类一个对象池
  *              如果怪物类都放在一个对象池中，那么这个池中的类型是baseMonster，后面无法转换出相应的类型
+ * @ T:某个pojo.entity 的基类
+ * @ V:某个pojo.entity枚举类
  * DateTime: 2024/6/9上午10:45
  **/
 public class ObjectPool<T, V extends Enum<V>> {
@@ -19,7 +21,7 @@ public class ObjectPool<T, V extends Enum<V>> {
     /**
      *
      * @param resourceFactory : 该元素对应的工厂类
-     * @param v : 枚举类包含的一个元素
+     * @param v : 枚举类包含的一个元素,同时也是这个线程池的具体生成类型
      * @param initialSize
      * @param maxSize
      */

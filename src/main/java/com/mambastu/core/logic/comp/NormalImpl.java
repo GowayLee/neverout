@@ -19,6 +19,8 @@ import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 
+import com.mambastu.material.pools.ObjectPool;
+import com.mambastu.material.pools.ObjectPoolManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -98,7 +100,11 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    BaseMonster monster = MonsterFactory.getMonsterFactory().create(eggType); // TODO: 对象池实现
+                    MonsterFactory monsterFactory = MonsterFactory.getMonsterFactory();
+                    ObjectPoolManager objectPoolManager = ObjectPoolManager.getObjectPoolManagerInstance();
+                    String poolName = eggType.name() + "Pool";
+                    ObjectPool<BaseMonster,MonsterTypes> monsterPool = objectPoolManager.getObjectPool(poolName,monsterFactory,eggType,10,50);
+                    BaseMonster monster = monsterPool.borrowObject();
                     monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
                     monster.putOnPane(gamePane);
                     monsterList.add(monster);

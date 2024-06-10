@@ -25,7 +25,7 @@ public class ObjectPoolManager {
 
     /**通过获得的池管理器来取得对象池以及防止重复产生某一个对象的对象池
      *
-     * @param poolName
+     * @param poolName :命名规则：类名 + Pool
      * @param resourceFactory
      * @param v
      * @param initialSize
