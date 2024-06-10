@@ -10,9 +10,9 @@ import com.mambastu.core.engine.GameEngine.EngineProps;
 import com.mambastu.core.event.EventManager;
 import com.mambastu.core.event.comp.event.CollisionEvent;
 import com.mambastu.core.event.comp.event.PlayerDieEvent;
+import com.mambastu.factories.MonsterFactory;
 import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
-import com.mambastu.material.factories.MonsterFactory;
 import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
@@ -146,13 +146,14 @@ public class NormalImpl implements ModeLogic {
 
     private void checkCollision() {
         ArrayList<BaseMonster> delList = new ArrayList<>(); // 测试版
-        for (BaseMonster monster : monsterList) { // HACK: 替换改进碰撞检测逻辑
+        for (BaseMonster monster : monsterList) {
             if (player.getBounds().isColliding(monster.getBounds())) { // 触发事件
                 // CollisionEvent event = new CollisionEvent(player, monster);
                 // eventManager.fireEvent(event);
                 gamePane.getChildren().remove(monster.getShowingImageView()); // 移除怪物
                 delList.add(monster); // 测试版
                 MonsterFactory.getInstance().delete(monster);
+                ctx.getLevelRecord().getKillCount().set(ctx.getLevelRecord().getKillCount().get() + 1);
             }
         }
         for (BaseMonster monster : delList) { // 测试版

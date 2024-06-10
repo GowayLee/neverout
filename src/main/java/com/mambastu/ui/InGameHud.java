@@ -7,9 +7,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 public class InGameHud {
     private final StackPane root;
@@ -17,6 +15,7 @@ public class InGameHud {
 
     private final SimpleIntegerProperty remainDuration;
     private final SimpleIntegerProperty HP;
+    private final SimpleIntegerProperty killCount;
 
     private final Pane menuPane;
 
@@ -26,6 +25,7 @@ public class InGameHud {
         this.menuPane = new Pane();
         this.HP = new SimpleIntegerProperty(100); // 假设初始生命值为100
         this.remainDuration = new SimpleIntegerProperty(0);
+        this.killCount = new SimpleIntegerProperty(0); // 初始击杀数为0
     }
 
     public void init() { // 初始化
@@ -45,6 +45,7 @@ public class InGameHud {
     private void bindProperties() { // 绑定属性，例如生命值、分数等
         remainDuration.bind(ctx.getLevelRecord().getRemainDuration());
         HP.bind(ctx.getLevelRecord().getPlayer().getHP());
+        killCount.bind(ctx.getLevelRecord().getKillCount());
     }
 
     private void buildLayout() { // TODO: 构建布局，包括显示分数、生命值、游戏时间等游戏信息。
@@ -60,8 +61,15 @@ public class InGameHud {
         countdownLabel.setStyle("-fx-text-fill: black;"); // 设置文本颜色为红色
         countdownLabel.setFont(new Font("Segoe Script", 30)); // 设置字体大小和样式
         countdownLabel.setLayoutX(500);
-        countdownLabel.setLayoutY(20);
+        countdownLabel.setLayoutY(25);
 
-        menuPane.getChildren().addAll(HPLabel, countdownLabel);
+        Label killCountLabel = new Label();
+        killCountLabel.textProperty().bind(killCount.asString("Kill: %d "));
+        killCountLabel.setStyle("-fx-text-fill: red;"); // 设置文本颜色为红色
+        killCountLabel.setFont(new Font("Segoe Script", 40)); // 设置字体大小和样式
+        killCountLabel.setLayoutX(1000);
+        killCountLabel.setLayoutY(20);
+
+        menuPane.getChildren().addAll(HPLabel, countdownLabel, killCountLabel);
     }
 }
