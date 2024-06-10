@@ -16,9 +16,9 @@ public class BossMonster extends BaseMonster {
         imageView = new ImageView(imageUrl);
         this.state = State.IDLE;
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(3), event -> setState(State.SHAKING)),
-                new KeyFrame(Duration.seconds(3.5), event -> setState(State.MOVING)),
-                new KeyFrame(Duration.seconds(4), event -> setState(State.IDLE)));
+                new KeyFrame(Duration.seconds(4.0), event -> setState(State.SHAKING)),
+                new KeyFrame(Duration.seconds(4.5), event -> setState(State.MOVING)),
+                new KeyFrame(Duration.seconds(5.0), event -> setState(State.IDLE)));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }

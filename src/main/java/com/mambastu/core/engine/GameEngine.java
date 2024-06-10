@@ -83,6 +83,7 @@ public class GameEngine {
 
         @Override
         public void stopEngine() {
+            timer.stop();
             listener.stopGame();
         }
     }
@@ -98,7 +99,8 @@ public class GameEngine {
     // ================================= Start Section =================================
 
     public void start() {
-        logicManager.initEntity(); // 初始化玩家以及怪物蛋定时孵化器
+        logicManager.initEntities(); // 初始化怪物蛋
+        logicManager.initTimers(); // 初始化玩家以及怪物蛋定时孵化器
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {

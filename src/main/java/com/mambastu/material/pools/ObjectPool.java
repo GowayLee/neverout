@@ -1,11 +1,13 @@
 package com.mambastu.material.pools;
+
 import com.mambastu.material.factories.ResourceFactory;
 
 import java.util.Stack;
+
 /**
  * Author:JngyEn
  * Description: 一个子类一个对象池
- *              如果怪物类都放在一个对象池中，那么这个池中的类型是baseMonster，后面无法转换出相应的类型
+ * 如果怪物类都放在一个对象池中，那么这个池中的类型是baseMonster，后面无法转换出相应的类型
  * @ T:某个pojo.entity 的基类
  * @ V:某个pojo.entity枚举类
  * DateTime: 2024/6/9上午10:45
@@ -21,7 +23,7 @@ public class ObjectPool<T, V extends Enum<V>> {
     /**
      *
      * @param resourceFactory : 该元素对应的工厂类
-     * @param v : 枚举类包含的一个元素,同时也是这个线程池的具体生成类型
+     * @param v               : 枚举类包含的一个元素,同时也是这个线程池的具体生成类型
      * @param initialSize
      * @param maxSize
      */
@@ -41,8 +43,9 @@ public class ObjectPool<T, V extends Enum<V>> {
         }
     }
 
-    public static <T, V extends Enum<V>> ObjectPool<T,V> createPool (ResourceFactory<T, V> resourceFactory,V v,int initialSize, int maxSize) {
-            return new ObjectPool<>(resourceFactory,v, initialSize, maxSize );
+    public static <T, V extends Enum<V>> ObjectPool<T, V> createPool(ResourceFactory<T, V> resourceFactory, V v,
+            int initialSize, int maxSize) {
+        return new ObjectPool<>(resourceFactory, v, initialSize, maxSize);
     }
 
     /**
@@ -50,7 +53,7 @@ public class ObjectPool<T, V extends Enum<V>> {
      *
      * @return : 返回的泛型类，一定记得强制转化
      */
-    public  T borrowObject() {
+    public T borrowObject() {
         if (pool.isEmpty() && currentSize < maxSize) {
             T obj = resourceFactory.create(enumV);
             currentSize++;

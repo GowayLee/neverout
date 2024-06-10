@@ -21,7 +21,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         StackPane root = new StackPane();
-        scene = new Scene(root, 1500, 800);
+        scene = new Scene(root, 1920, 1080);
         // 绑定StackPane的尺寸到场景的尺寸
         root.prefWidthProperty().bind(scene.widthProperty());
         root.prefHeightProperty().bind(scene.heightProperty());

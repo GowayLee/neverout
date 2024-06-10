@@ -31,13 +31,16 @@ public class LogicManager { // TODO: 尝试单例模式
         }
     }
 
-    public void update(long elapsedTime) {
-        logiModule.updateEntity(elapsedTime);
-    }
-
-    public void initEntity() {
+    public void initEntities() { // 初始化游戏实体，包括玩家、障碍物等
         logiModule.initPlayer();
-        logiModule.initMonsterGenTimer();
     }
 
+    public void initTimers() { // 初始化游戏计时器，包括怪物生成计时器、倒计时计时器等
+        logiModule.initMonsterGenTimer();
+        logiModule.initCountDownTimer();
+    }
+
+    public void update(long elapsedTime) {
+        logiModule.update(elapsedTime);
+    }
 }
