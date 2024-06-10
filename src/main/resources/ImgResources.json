@@ -12,5 +12,10 @@
       "bornImage": "/static/image/player1.png",
       "dieImage": "/static/image/player_die.png"
     }
+  },
+  "Barrier": {
+    "RectangleBarrier": {
+      "bornImage": "/static/image/stone.png"
+    }
   }
 }

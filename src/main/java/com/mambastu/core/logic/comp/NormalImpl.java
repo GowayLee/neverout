@@ -147,14 +147,7 @@ public class NormalImpl implements ModeLogic {
     private void checkCollision() {
         ArrayList<BaseMonster> delList = new ArrayList<>(); // 测试版
         for (BaseMonster monster : monsterList) { // HACK: 替换改进碰撞检测逻辑
-            double playerCenterX = player.getX().get() + player.getShowingImageView().getFitWidth() / 2;
-            double playerCenterY = player.getY().get() + player.getShowingImageView().getFitHeight() / 2;
-            double monsterCenterX = monster.getShowingImageView().getX() + monster.getShowingImageView().getFitWidth() / 2;
-            double monsterCenterY = monster.getShowingImageView().getY() + monster.getShowingImageView().getFitHeight() / 2;
-
-            double distance = Math
-                    .sqrt(Math.pow(playerCenterX - monsterCenterX, 2) + Math.pow(playerCenterY - monsterCenterY, 2));
-            if (distance < (player.getShowingImageView().getFitWidth() / 2 + monster.getShowingImageView().getFitWidth() / 2)) { // 触发事件
+            if (player.getBounds().isColliding(monster.getBounds())) { // 触发事件
                 // CollisionEvent event = new CollisionEvent(player, monster);
                 // eventManager.fireEvent(event);
                 gamePane.getChildren().remove(monster.getShowingImageView()); // 移除怪物
