@@ -19,6 +19,8 @@ public class LevelConfig { // TODO: 增加玩家属性，例如玩家的道具�
     private double monsterScalDamage;
     private double monsterScalGold;
 
+    private int duration;
+
     private BasePlayer player; // 占位，需要修改为从配置文件中读取玩家属性，例如玩家的道具，武器，技能等。在每一个关卡都需要改变
  
     private final Map<MonsterTypes, Double> monsterEggList;

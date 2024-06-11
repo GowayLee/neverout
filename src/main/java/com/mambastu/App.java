@@ -1,9 +1,8 @@
 package com.mambastu;
 
-import com.mambastu.material.resource.ImgManager;
+import com.mambastu.material.resource.ImgCache;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -23,19 +22,19 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         StackPane root = new StackPane();
-        scene = new Scene(root, 1920*0.5, 1080*0.5);
+        scene = new Scene(root, 1920, 1080);
         // 绑定StackPane的尺寸到场景的尺寸
         root.prefWidthProperty().bind(scene.widthProperty());
         root.prefHeightProperty().bind(scene.heightProperty());
         
-        ResourceManager.getResourceManager().loadResources(); // 初始化资源管理器，载入JSON
+        ResourceManager.getInstance().loadResources(); // 初始化资源管理器，载入JSON
         InputManager.init(scene); // 初始化输入管理器
         LevelController controller = new LevelController(root);
         controller.showMainMenu();
 
         stage.setTitle("Never Out");
         stage.setScene(scene);
-        stage.getIcons().add(ImgManager.getImage("/static/image/player1.png"));
+        stage.getIcons().add(ImgCache.getImage("/static/image/player1.png"));
         stage.show();
     }
 

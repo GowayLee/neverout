@@ -5,6 +5,7 @@ import com.studiohartman.jamepad.ControllerState;
 
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import lombok.Getter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,6 +27,7 @@ public class InputManager {
      * 1、对于操纵角色的连贯性输入信号，存入activeInputs集合中
      * 2、对于暂停游戏等非连贯性输入信号，使用侦听器模式来避免频繁地在游戏引擎逻辑中进行判定
      */
+    @Getter
     private final Set<GameInput> activeInputs;
     private final ControllerManager gamepadControllers = new ControllerManager();
     private ControllerState currState;
@@ -60,10 +62,6 @@ public class InputManager {
         handleKeyboardInput(scene);
         gamepadControllers.initSDLGamepad();
         new Thread(this::updateGamepadInput).start();// 手柄
-    }
-
-    public Set<GameInput> getActiveInputs() {
-        return activeInputs;
     }
 
     private void handleKeyboardInput(Scene scene) { // 映射键盘输入
