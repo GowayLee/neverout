@@ -1,4 +1,4 @@
-package com.mambastu.material.factories;
+package com.mambastu.factories;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

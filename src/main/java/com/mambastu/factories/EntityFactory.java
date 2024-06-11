@@ -1,4 +1,4 @@
-package com.mambastu.material.factories;
+package com.mambastu.factories;
 
 
 /**

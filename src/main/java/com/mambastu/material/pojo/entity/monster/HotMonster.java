@@ -4,10 +4,11 @@ import com.mambastu.material.resource.ResourceManager;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 public class HotMonster extends BaseMonster {
+    private final Image bornImage;
 
     private enum State {
         IDLE, MOVING
@@ -15,11 +16,13 @@ public class HotMonster extends BaseMonster {
     private State state;
 
     public HotMonster() {
+        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "HotMonster");
     }
 
     @Override
     public void init() {
-        showingImageView = new ImageView(ResourceManager.getInstance().getImg("bornImage", "Monster", "HotMonster"));
+        showingImage.set(bornImage);
+        showingImageView.imageProperty().bind(showingImage);
         this.state = HotMonster.State.IDLE;
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.seconds(1), event ->this.state = State.MOVING)

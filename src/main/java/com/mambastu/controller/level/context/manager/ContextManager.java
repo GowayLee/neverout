@@ -4,7 +4,7 @@ import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.controller.level.context.enums.GameMode;
 import com.mambastu.controller.level.context.manager.comp.ModeCtxLogic;
 import com.mambastu.controller.level.context.manager.comp.NormalCtxImpl;
-import com.mambastu.material.factories.PlayerFactory;
+import com.mambastu.factories.PlayerFactory;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 
 public class ContextManager {

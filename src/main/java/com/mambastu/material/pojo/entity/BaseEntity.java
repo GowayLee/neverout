@@ -2,6 +2,8 @@ package com.mambastu.material.pojo.entity;
 
 import com.mambastu.material.pojo.entity.enums.CollisionState;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import lombok.Getter;
@@ -10,7 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class BaseEntity {
-    protected ImageView showingImageView; // 正在被展示的图片
+    protected final ImageView showingImageView = new ImageView(); // 正在被展示的图片节点
+    protected final SimpleObjectProperty<Image> showingImage = new SimpleObjectProperty<>(); // 正在被绑定展示的图片
     protected SimpleDoubleProperty x = new SimpleDoubleProperty();
     protected SimpleDoubleProperty y = new SimpleDoubleProperty();
     protected double prevX; // 用于碰撞检测的变量，记录上一次的位置

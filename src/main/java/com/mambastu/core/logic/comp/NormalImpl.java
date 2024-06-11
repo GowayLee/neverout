@@ -10,15 +10,17 @@ import com.mambastu.core.engine.GameEngine.EngineProps;
 import com.mambastu.core.event.EventManager;
 import com.mambastu.core.event.comp.event.CollisionEvent;
 import com.mambastu.core.event.comp.event.PlayerDieEvent;
+import com.mambastu.factories.MonsterFactory;
 import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
-import com.mambastu.material.factories.MonsterFactory;
-import com.mambastu.material.pojo.entity.enums.CollisionState;
+import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
+import com.mambastu.material.pools.ObjectPool;
+import com.mambastu.material.pools.ObjectPoolManager;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -27,7 +29,7 @@ import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以及相关组件, 规划oop设计
+public class NormalImpl implements ModeLogic {
     private final LogicLayerListener listener;
     private final InputHandler inputListener;
 
@@ -37,7 +39,8 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
     private final Pane gamePane;
 
     private boolean isPause;
-    private ArrayList<Timeline> monsterEggTimerList;
+    private final Timeline countDownTimer;
+    private final ArrayList<Timeline> monsterEggTimerList;
 
     private BasePlayer player;
     private final LinkedList<BaseMonster> monsterList;
@@ -51,6 +54,8 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
         this.inputListener = new InputHandler();
         this.ctx = engineProps.getCtx();
         this.player = engineProps.getPlayer();
+        this.countDownTimer = new Timeline();
+        this.monsterEggTimerList = new ArrayList<>();
         this.monsterList = engineProps.getMonsterList();
         this.bulletList = engineProps.getBulletList();
         this.barrierList = engineProps.getBarrierList();
@@ -70,7 +75,17 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
         }
     }
 
-    public void initPlayer() {
+    public void initCountDownTimer() { // 初始化倒计时，并将其添加到游戏画布中。
+        ctx.getLevelRecord().getRemainDuration().set(ctx.getLevelConfig().getDuration());
+        countDownTimer.getKeyFrames().add(new KeyFrame(
+            Duration.seconds(1), event -> {
+                ctx.getLevelRecord().getRemainDuration().set(ctx.getLevelRecord().getRemainDuration().get() - 1);
+            }));
+        countDownTimer.setCycleCount(Timeline.INDEFINITE);
+        countDownTimer.play();
+    }
+
+    public void initPlayer() { // 初始化玩家位置和属性，并将其添加到游戏画布中。
         try {
             player.setPos(gamePane.getWidth(), gamePane.getHeight());
             player.putOnPane(gamePane);
@@ -80,13 +95,13 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
     }
 
     public void initMonsterGenTimer() {
-        monsterEggTimerList = new ArrayList<>();
         for (Map.Entry<MonsterTypes, Double> eggEntry : ctx.getLevelConfig().getMonsterEggList()
                 .entrySet()) {
             Timeline monsterEggTimer = new Timeline();
             monsterEggTimer.getKeyFrames()
                     .add(new KeyFrame(
-                            Duration.millis((long) (ctx.getLevelConfig().getMonsterScalDensity() * eggEntry.getValue())),
+                            Duration.millis(
+                                    (long) (ctx.getLevelConfig().getMonsterScalDensity() * eggEntry.getValue())),
                             generateMonster(eggEntry.getKey())));
             monsterEggTimer.setCycleCount(Timeline.INDEFINITE);
             monsterEggTimerList.add(monsterEggTimer);
@@ -99,7 +114,7 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    BaseMonster monster = MonsterFactory.getMonsterFactory().create(eggType); // TODO: 对象池实现
+                    BaseMonster monster = MonsterFactory.getInstance().create(eggType);
                     monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
                     monster.putOnPane(gamePane);
                     monsterList.add(monster);
@@ -112,10 +127,11 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     // ================================= Update Logic Section =================================
 
-    public void updateEntity(long elapsedTime) { // 游戏循环更新
+    public void update(long elapsedTime) { // 游戏循环更新
         checkCollision();
         playerMove();
         monsterMove();
+        checkIsGameOver();
     }
 
     private void monsterMove() {
@@ -129,37 +145,61 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
     }
 
     private void checkCollision() {
-        for (BaseMonster monster : monsterList) { // HACK: 替换改进碰撞检测逻辑
-            if (player.getBounds().collisionState(monster.getBounds()) == CollisionState.TRUE) { // 触发事件
-                CollisionEvent event = new CollisionEvent(player, monster);
-                eventManager.fireEvent(event);
-                if (player.isDie()) { // 检查玩家是否死亡
-                    PlayerDieEvent playerDieEvent = new PlayerDieEvent(player, monsterList, gamePane);
-                    eventManager.fireEvent(playerDieEvent);
-                    stopEngine();
-                }
+        ArrayList<BaseMonster> delList = new ArrayList<>(); // 测试版
+        for (BaseMonster monster : monsterList) {
+            if (player.getBounds().isColliding(monster.getBounds())) { // 触发事件
+                // CollisionEvent event = new CollisionEvent(player, monster);
+                // eventManager.fireEvent(event);
+                gamePane.getChildren().remove(monster.getShowingImageView()); // 移除怪物
+                delList.add(monster); // 测试版
+                MonsterFactory.getInstance().delete(monster);
+                ctx.getLevelRecord().getKillCount().set(ctx.getLevelRecord().getKillCount().get() + 1);
             }
+        }
+        for (BaseMonster monster : delList) { // 测试版
+            monsterList.remove(monster);
         }
     }
 
+    private void checkIsGameOver() { // 检查游戏是否结束，例如时间结束或者玩家死亡等条件
+        if (player.isDie()) {
+            PlayerDieEvent event = new PlayerDieEvent(player); // 触发玩家死亡事件，记录数据等操作
+            eventManager.fireEvent(event);
+            stopEngine();
+        }
+        if (ctx.getLevelRecord().getRemainDuration().get() <= 0) {
+            stopEngine();
+        }
+    }
     // ================================= EngineState Control Section =================================
-    
+
     private void pauseEngine() { // 游戏暂停时调用，暂停引擎
         isPause = true;
         listener.pauseEngine();
+        stopCountDownTimer();
         stopMonsterGenTimer();
     }
 
     private void resumeEngine() { // 游戏恢复时调用，恢复引擎
         isPause = false;
         listener.resumeEngine();
+        startCountDownTimer();
         startMonsterGenTimer();
     }
 
     private void stopEngine() { // 游戏结束时调用，关闭引擎并且清空实体们
-        listener.stopEngine();
         stopMonsterGenTimer();
+        stopCountDownTimer();
         clearAllEntity();
+        listener.stopEngine();
+    }
+
+    private void startCountDownTimer() {
+        countDownTimer.play();
+    }
+
+    private void stopCountDownTimer() {
+        countDownTimer.stop();
     }
 
     private void startMonsterGenTimer() {
@@ -175,6 +215,9 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
     }
 
     private void clearAllEntity() {
+        for (BaseMonster monster : monsterList) {
+            monster.removeFromPane(gamePane);
+        }
         monsterList.clear();
         monsterEggTimerList.clear();
         bulletList.clear();
