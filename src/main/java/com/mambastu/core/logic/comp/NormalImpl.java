@@ -13,6 +13,7 @@ import com.mambastu.core.event.comp.event.PlayerDieEvent;
 import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
 import com.mambastu.material.factories.MonsterFactory;
+import com.mambastu.material.pojo.entity.enums.CollisionState;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
@@ -129,7 +130,7 @@ public class NormalImpl implements ModeLogic { // TODO: 加入RecordManager以�
 
     private void checkCollision() {
         for (BaseMonster monster : monsterList) { // HACK: 替换改进碰撞检测逻辑
-            if (player.getBounds().isColliding(monster.getBounds())) { // 触发事件
+            if (player.getBounds().collisionState(monster.getBounds()) == CollisionState.TRUE) { // 触发事件
                 CollisionEvent event = new CollisionEvent(player, monster);
                 eventManager.fireEvent(event);
                 if (player.isDie()) { // 检查玩家是否死亡
