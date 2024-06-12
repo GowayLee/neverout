@@ -13,7 +13,8 @@ import lombok.Setter;
 @Setter
 public abstract class BasePlayer extends BaseEntity {
     protected double speed = 5;
-    protected SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
+    protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
+    protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
 
     abstract public void init();
 

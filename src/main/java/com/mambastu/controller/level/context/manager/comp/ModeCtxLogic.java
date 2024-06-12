@@ -7,5 +7,7 @@ public interface ModeCtxLogic {
 
     void updateLevelConfig();
 
+    void initLevelRecord();
+
     void refreshLevelRecord();
 }

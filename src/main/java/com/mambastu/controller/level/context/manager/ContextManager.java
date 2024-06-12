@@ -24,7 +24,7 @@ public class ContextManager {
 
     private void initFirstCtx() { // 进入第一关前初始化关卡上下文信息，包括关卡参数、关卡记录等。
         modeCtxLogic.initLevelConfig(initPlayer());
-        modeCtxLogic.refreshLevelRecord();
+        modeCtxLogic.initLevelRecord();
     }
 
     private BasePlayer initPlayer() { // 根据玩家选择进入第一关生成玩家

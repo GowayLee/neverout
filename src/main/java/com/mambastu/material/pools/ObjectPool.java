@@ -61,12 +61,11 @@ public class ObjectPool<T extends BaseEntity> {
     public T borrowObject() {
         if (!pool.isEmpty()) { // 如果池中有元素，直接返回
             return pool.pop();
-        } else { // 如果池中没有元素，创建新元素并返回，同时增加池的容量 TODO: 考虑增加扩容机制
+        } else { // 如果池中没有元素，创建新元素并返回，同时增加池的容量
             try {
-                T obj = objectClass.getDeclaredConstructor().newInstance();
-                maxCapacity++;
+                enlargePool();
                 logger.info("Enlarge obejct pool! Current Capacity: " + maxCapacity);
-                return obj;
+                return pool.pop();
             } catch (Exception e) {
                 logger.error("Error in enlarging object pool!");
                 e.printStackTrace();
@@ -80,4 +79,15 @@ public class ObjectPool<T extends BaseEntity> {
         logger.info("Return object to pool! ");
     }
 
+    private void enlargePool() { // 扩容池子，增加池容量
+        for (int i = 0; i < maxCapacity; i++) { // 扩容一倍最大容量, 实际容量*2
+            try {
+                pool.push(objectClass.getDeclaredConstructor().newInstance());
+            } catch (Exception e) {
+                logger.error("Error in enlarging object pool!");
+                e.printStackTrace();
+            }
+        }
+        maxCapacity += maxCapacity;
+    }
 }

@@ -5,5 +5,5 @@ public interface EngineLayerListener {
     
     void resumeGame();
 
-    void stopGame();
+    void stopGame(boolean isPassLevel);
 }
