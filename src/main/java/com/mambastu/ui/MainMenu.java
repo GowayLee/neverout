@@ -39,6 +39,10 @@ public class MainMenu {
         root.getChildren().remove(menuPane);
     }
 
+    
+    /** 
+     * @param bindProperties(
+     */
     public void init() { // 初始化
         bindProperties();
         buildLayout();

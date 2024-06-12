@@ -21,6 +21,10 @@ public class LogicManager { // TODO: 尝试单例模式
         pickLogiImpl(ctx.getGameMode().get());
     }
 
+    
+    /** 
+     * @param gameMode
+     */
     private void pickLogiImpl(GameMode gameMode) {
         switch (gameMode) {
             case NORMAL:
