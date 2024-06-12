@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import lombok.Getter;
 
 public class MainMenu {
     private final MainMenuListener listener;
@@ -27,7 +26,7 @@ public class MainMenu {
         this.ctx = ctx;
         this.listener = listener;
         this.gameMode = new SimpleObjectProperty<>(GameMode.NORMAL);
-        this.playerType = new SimpleObjectProperty<>(PlayerTypes.NormalPlayer);
+        this.playerType = new SimpleObjectProperty<>(PlayerTypes.LaughPlayer);
         this.menuPane = new Pane();
     }
 

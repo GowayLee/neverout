@@ -1,0 +1,22 @@
+{
+  "Monster": {
+    "BossMonster": {
+      "bornImage": "/static/image/boss.png",
+      "attackImage": "/static/image/bossAttack.png"
+    },
+    "HotMonster": {
+      "bornImage": "/static/image/fever.png"
+    }
+  },
+  "Player": {
+    "Player1": {
+      "bornImage": "/static/image/player1.png",
+      "dieImage": "/static/image/player_die.png"
+    }
+  },
+  "Barrier": {
+    "RectangleBarrier": {
+      "bornImage": "/static/image/stone.png"
+    }
+  }
+}

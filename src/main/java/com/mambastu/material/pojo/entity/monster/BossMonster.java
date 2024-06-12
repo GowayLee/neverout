@@ -1,26 +1,44 @@
 package com.mambastu.material.pojo.entity.monster;
 
+import com.mambastu.material.resource.ResourceManager;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 public class BossMonster extends BaseMonster {
-    private enum State {
-        IDLE, MOVING, SHAKING
-    }
+    private enum State { IDLE, MOVING, SHAKING };
+    private final Timeline timeline;
+
+    private final Image bornImage;
+    private final Image attackImage;
 
     private State state;
 
-    public BossMonster(String imageUrl) {
-        imageView = new ImageView(imageUrl);
+    public BossMonster() {
+        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "BossMonster");
+        this.attackImage = ResourceManager.getInstance().getImg("attackImage", "Monster", "BossMonster");
         this.state = State.IDLE;
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(3), event -> setState(State.SHAKING)),
-                new KeyFrame(Duration.seconds(3.5), event -> setState(State.MOVING)),
-                new KeyFrame(Duration.seconds(4), event -> setState(State.IDLE)));
+        this.timeline = new Timeline(
+                new KeyFrame(Duration.seconds(4.0), event -> {
+                    setState(State.SHAKING);
+                    showingImage.set(attackImage);
+                }),
+                new KeyFrame(Duration.seconds(4.5), event -> setState(State.MOVING)),
+                new KeyFrame(Duration.seconds(5.0), event -> {
+                    setState(State.IDLE);
+                    showingImage.set(bornImage);
+                }));
         timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+    }
+
+    @Override
+    public void init() {
+        timeline.playFromStart();
+        setState(State.IDLE);
+        showingImage.set(bornImage);
+        showingImageView.imageProperty().bind(showingImage);
     }
 
     private void setState(State state) {
@@ -38,16 +56,19 @@ public class BossMonster extends BaseMonster {
                 x.set(x.get() + speed * dx / distance);
                 y.set(y.get() + speed * dy / distance);
             }
-            imageView.setX(x.get());
-            imageView.setY(y.get());
+            showingImageView.setX(x.get());
+            showingImageView.setY(y.get());
         } else if (state == State.SHAKING) {
             double shakingDistance = Math.random() - 0.5;
-            x.set(x.get() + shakingDistance * imageView.getFitWidth() * 0.4);
-            y.set(y.get() + shakingDistance * imageView.getFitHeight() * 0.4);
-            imageView.setX(x.get());
-            imageView.setY(y.get());
+            x.set(x.get() + shakingDistance * showingImageView.getFitWidth() * 0.4);
+            y.set(y.get() + shakingDistance * showingImageView.getFitHeight() * 0.4);
+            showingImageView.setX(x.get());
+            showingImageView.setY(y.get());
         }
 
     }
 
+    public State getState() {
+        return state;
+    }
 }

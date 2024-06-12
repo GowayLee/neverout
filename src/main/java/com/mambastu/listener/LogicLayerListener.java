@@ -5,5 +5,5 @@ public interface LogicLayerListener {
 
     void resumeEngine();
 
-    void stopEngine();
+    void stopEngine(boolean isPassLevel);
 }
