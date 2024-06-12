@@ -18,10 +18,10 @@ public abstract class BaseMonster extends BaseEntity{
             x.set(rand.nextDouble() * sceneWidth);
             y.set(rand.nextDouble() * sceneHeight);
         } while (isInAvoidRange(player.getX().get(), player.getY().get(), avoidRadius));
-        imageView.setX(x.get());
-        imageView.setY(y.get());
-        imageView.setFitWidth(50);
-        imageView.setFitHeight(50);
+        showingImageView.setX(x.get());
+        showingImageView.setY(y.get());
+        showingImageView.setFitWidth(50);
+        showingImageView.setFitHeight(50);
     }
 
     private boolean isInAvoidRange(double playerX, double playerY, double avoidRadius) {
@@ -33,7 +33,7 @@ public abstract class BaseMonster extends BaseEntity{
 
     @Override
     public Bounds getBounds() {//返回圆形bound类
-        double radius = Math.max(imageView.getFitWidth(), imageView.getFitHeight()) / 2;
+        double radius = Math.max(showingImageView.getFitWidth(), showingImageView.getFitHeight()) / 2;
         return new CircleBounds(x, y, radius,prevX,prevY);
     }
 

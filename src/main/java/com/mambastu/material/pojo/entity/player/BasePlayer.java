@@ -16,6 +16,8 @@ public abstract class BasePlayer extends BaseEntity {
     protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
 
+
+
     public void move(Set<GameInput> activeInputs) { // TODO: 边界问题
         double deltaX = 0, deltaY = 0;
 
@@ -39,17 +41,17 @@ public abstract class BasePlayer extends BaseEntity {
         // if (!(x.get() < 0) && (x.get() + deltaX < prevX)) x.set(x.get() + deltaX);
         // if (!(y.get() < 0))
 
-        imageView.setX(x.get());
-        imageView.setY(y.get());
+        showingImageView.setX(x.get());
+        showingImageView.setY(y.get());
     }
 
     public void setPos(double sceneWidth, double sceneHeight) { // 默认出生在屏幕中央
         this.x.set(sceneWidth / 2);
         this.y.set(sceneHeight / 2);
-        imageView.setX(x.get());
-        imageView.setY(y.get());
-        imageView.setFitWidth(50);
-        imageView.setFitHeight(50);
+        showingImageView.setX(x.get());
+        showingImageView.setY(y.get());
+        showingImageView.setFitWidth(50);
+        showingImageView.setFitHeight(50);
     }
 
     public boolean isDie() { // 判断玩家是否死亡
@@ -64,7 +66,7 @@ public abstract class BasePlayer extends BaseEntity {
 
     @Override
     public Bounds getBounds() {//返回圆形bound类
-        double radius = Math.max(imageView.getFitWidth(), imageView.getFitHeight()) / 2;
+        double radius = Math.max(showingImageView.getFitWidth(), showingImageView.getFitHeight()) / 2;
         return new CircleBounds(x, y, radius,prevX,prevY);
     }
 

@@ -15,6 +15,7 @@ import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
+import com.mambastu.material.pojo.entity.enums.CollisionState;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
@@ -144,7 +145,7 @@ public class NormalImpl implements ModeLogic {
 
     private void checkCollision() {
         for (BaseMonster monster : monsterList) {
-            if (player.getBounds().isColliding(monster.getBounds())) { // 触发事件
+            if (player.getBounds().collisionState(monster.getBounds())== CollisionState.TRUE) { // 触发事件
                 CollisionEvent event = new CollisionEvent(player, monster);
                 eventManager.fireEvent(event);
             }
