@@ -1,13 +1,17 @@
 package com.mambastu.material.pojo.entity.monster;
 
+import com.mambastu.material.pojo.Interface.Movable;
+import com.mambastu.material.pojo.enums.CollisionState;
 import com.mambastu.material.resource.ResourceManager;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 public class BossMonster extends BaseMonster {
+
     private enum State { IDLE, MOVING, SHAKING };
     private final Timeline timeline;
 
@@ -48,6 +52,7 @@ public class BossMonster extends BaseMonster {
     @Override
     public void move(double targetX, double targetY) {
         speed = 10.0;
+        savePreviousFrame();
         if (state == State.MOVING) {
             double dx = targetX - x.get();
             double dy = targetY - y.get();
@@ -64,10 +69,10 @@ public class BossMonster extends BaseMonster {
             y.set(y.get() + shakingDistance * showingImageView.getFitHeight() * 0.4);
             showingImageView.setX(x.get());
             showingImageView.setY(y.get());
+            crossedBoundary();
         }
 
     }
-
     public State getState() {
         return state;
     }

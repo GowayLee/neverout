@@ -1,6 +1,6 @@
 package com.mambastu.material.pojo.entity;
 
-import com.mambastu.material.pojo.entity.enums.CollisionState;
+import com.mambastu.material.pojo.enums.CollisionState;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.image.Image;
@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class BaseEntity {
+    protected Pane root;
     protected final ImageView showingImageView = new ImageView(); // 正在被展示的图片节点
     protected final SimpleObjectProperty<Image> showingImage = new SimpleObjectProperty<>(); // 正在被绑定展示的图片
     protected SimpleDoubleProperty x = new SimpleDoubleProperty();
@@ -26,11 +27,11 @@ public abstract class BaseEntity {
         showingImageView.setFitHeight(height);
     }
 
-    public void putOnPane (Pane root) { // 放置实体
+    public void putOnPane () { // 放置实体
         root.getChildren().add(showingImageView);
     }
 
-    public void removeFromPane (Pane root) { // 移除实体
+    public void removeFromPane () { // 移除实体
         root.getChildren().remove(showingImageView);
     }
 
@@ -41,8 +42,8 @@ public abstract class BaseEntity {
         public abstract CollisionState collisionState(Bounds other);
     }
 
-      //矩形Bounds类
-    public static class RectangleBounds extends Bounds {
+    //不可进入矩形Bounds类
+    public static class RectangleInBounds extends Bounds {
         private final SimpleDoubleProperty x;
         private final SimpleDoubleProperty y;
         private final double width;
@@ -50,7 +51,7 @@ public abstract class BaseEntity {
 
 
 
-        public RectangleBounds(SimpleDoubleProperty x, SimpleDoubleProperty y, double width, double height) {
+        public RectangleInBounds(SimpleDoubleProperty x, SimpleDoubleProperty y, double width, double height) {
             this.x = x;
             this.y = y;
             this.width = width;
@@ -67,8 +68,8 @@ public abstract class BaseEntity {
         @Override
         public CollisionState collisionState(Bounds aim) {
 
-            if (aim instanceof RectangleBounds) {//和矩形Bound碰撞
-                RectangleBounds aimRectangle = (RectangleBounds) aim;
+            if (aim instanceof RectangleInBounds) {//和矩形Bound碰撞
+                RectangleInBounds aimRectangle = (RectangleInBounds) aim;
                 boolean collision =
                         x.get() < aimRectangle.getX().get() + aimRectangle.getWidth() &&
                         x.get() + width > aimRectangle.getX().get() &&
@@ -84,8 +85,48 @@ public abstract class BaseEntity {
         }
     }
 
+    //不可离开矩形Bounds类
+    public static class RectangleOutBounds extends Bounds {
+        private final SimpleDoubleProperty x;
+        private final SimpleDoubleProperty y;
+        private final double width;
+        private final double height;
 
 
+
+        public RectangleOutBounds(SimpleDoubleProperty x, SimpleDoubleProperty y, double width, double height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+
+
+        public SimpleDoubleProperty getX() {return x;}
+        public SimpleDoubleProperty getY() {return y;}
+        public double getWidth() {return width;}
+        public double getHeight() {return height;}
+
+
+        @Override
+        public CollisionState collisionState(Bounds aim) {
+
+            if (aim instanceof RectangleInBounds) {//和矩形Bound碰撞
+                RectangleInBounds aimRectangle = (RectangleInBounds) aim;
+                boolean collision =
+                        x.get() < aimRectangle.getX().get() + aimRectangle.getWidth() &&
+                                x.get() + width > aimRectangle.getX().get() &&
+                                y.get() < aimRectangle.getY().get() + aimRectangle.getHeight() &&
+                                y.get() + height > aimRectangle.getY().get();
+                if(collision)return CollisionState.TRUE;
+            }
+            else if (aim instanceof CircleBounds) {//和圆形Bound碰撞
+                CircleBounds aimCircle = (CircleBounds) aim;
+                return aimCircle.collisionState(this);
+            }
+            return CollisionState.FALSE;
+        }
+    }
 
     //圆形Bounds
     public static class CircleBounds extends Bounds {
@@ -128,9 +169,8 @@ public abstract class BaseEntity {
                         .sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
                 double radiusSum = radius + otherCircle.getRadius();
                 if(distance< radiusSum) return CollisionState.TRUE;
-            }
-            else if (aim instanceof RectangleBounds) {//判断和矩形Bound的碰撞
-                RectangleBounds otherRectangle = (RectangleBounds) aim;
+            } else if (aim instanceof RectangleInBounds) {//判断和不可进入矩形Bound的碰撞
+                RectangleInBounds otherRectangle = (RectangleInBounds) aim;
                 double wallX = otherRectangle.getX().get();
                 double wallY = otherRectangle.getY().get();
                 double width = otherRectangle.getX().get() + otherRectangle.getWidth();
@@ -143,6 +183,24 @@ public abstract class BaseEntity {
                         prevX < x.get() && isImageViewCenterNearLine(centerX.get(),centerY.get(),radius, wallX, wallY, wallX, wallY + height);
                 boolean intersectsRight =
                         prevX > x.get() && isImageViewCenterNearLine(centerX.get(),centerY.get(), radius,wallX + width, wallY, wallX + width, wallY + height);
+
+                if ((intersectsBottom || intersectsTop)&&(intersectsLeft || intersectsRight))return CollisionState.BOTH;
+                if ((intersectsBottom || intersectsTop)) return CollisionState.VERTICAL;
+                if ((intersectsLeft || intersectsRight)) return CollisionState.HORIZONTAL;
+            }else if (aim instanceof RectangleOutBounds) {//判断和不可离开矩形Bound的碰撞
+                RectangleOutBounds otherRectangle = (RectangleOutBounds) aim;
+                double wallX = otherRectangle.getX().get();
+                double wallY = otherRectangle.getY().get();
+                double width = otherRectangle.getX().get() + otherRectangle.getWidth();
+                double height = otherRectangle.getY().get() + otherRectangle.getHeight();
+                boolean intersectsTop =
+                        prevY > y.get() && isImageViewCenterNearLine(centerX.get(),centerY.get(),radius,wallX, wallY, wallX + width, wallY);
+                boolean intersectsBottom =
+                        prevY < y.get() && isImageViewCenterNearLine(centerX.get(),centerY.get(), radius,wallX, wallY + height, wallX + width, wallY + height);
+                boolean intersectsLeft =
+                        prevX > x.get() && isImageViewCenterNearLine(centerX.get(),centerY.get(),radius, wallX, wallY, wallX, wallY + height);
+                boolean intersectsRight =
+                        prevX < x.get() && isImageViewCenterNearLine(centerX.get(),centerY.get(), radius,wallX + width, wallY, wallX + width, wallY + height);
 
                 if ((intersectsBottom || intersectsTop)&&(intersectsLeft || intersectsRight))return CollisionState.BOTH;
                 if ((intersectsBottom || intersectsTop)) return CollisionState.VERTICAL;
@@ -189,7 +247,6 @@ public abstract class BaseEntity {
             return Math.sqrt(dx * dx + dy * dy);
         }
     }
-
 
     // 按情况覆盖
     public abstract Bounds getBounds();

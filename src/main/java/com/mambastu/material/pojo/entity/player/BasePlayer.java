@@ -3,24 +3,25 @@ package com.mambastu.material.pojo.entity.player;
 import java.util.Set;
 
 import com.mambastu.controller.input.comp.GameInput;
+import com.mambastu.material.pojo.Interface.Movable;
 import com.mambastu.material.pojo.entity.BaseEntity;
 
+import com.mambastu.material.pojo.enums.CollisionState;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class BasePlayer extends BaseEntity {
+public abstract class BasePlayer extends BaseEntity implements Movable {
     protected double speed = 5;
     protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
 
-
-
-    public void move(Set<GameInput> activeInputs) { // TODO: 边界问题
+    public void move(Set<GameInput> activeInputs) {
         double deltaX = 0, deltaY = 0;
-
+        savePreviousFrame();
         if (activeInputs.contains(GameInput.MOVE_UP))
             deltaY -= speed;
         if (activeInputs.contains(GameInput.MOVE_DOWN))
@@ -38,11 +39,9 @@ public abstract class BasePlayer extends BaseEntity {
         x.set(x.get() + deltaX);
         y.set(y.get() + deltaY);
 
-        // if (!(x.get() < 0) && (x.get() + deltaX < prevX)) x.set(x.get() + deltaX);
-        // if (!(y.get() < 0))
-
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
+        crossedBoundary();
     }
 
     public void setPos(double sceneWidth, double sceneHeight) { // 默认出生在屏幕中央
@@ -67,7 +66,25 @@ public abstract class BasePlayer extends BaseEntity {
     @Override
     public Bounds getBounds() {//返回圆形bound类
         double radius = Math.max(showingImageView.getFitWidth(), showingImageView.getFitHeight()) / 2;
-        return new CircleBounds(x, y, radius,prevX,prevY);
+        return new CircleBounds(x, y, radius, prevX, prevY);
     }
 
+    @Override
+    public void crossedBoundary() {
+        double sceneWidth = root.getWidth();
+        double sceneHeight = root.getHeight();
+        RectangleOutBounds sceneBounds = new RectangleOutBounds(new SimpleDoubleProperty(0.0), new SimpleDoubleProperty(0.0), sceneWidth, sceneHeight);
+        CollisionState collisionState = sceneBounds.collisionState(this.getBounds());
+        if (collisionState == CollisionState.HORIZONTAL) x = new SimpleDoubleProperty(prevX);
+        if (collisionState == CollisionState.VERTICAL) y = new SimpleDoubleProperty(prevY);
+        if (collisionState == CollisionState.BOTH) {
+            x = new SimpleDoubleProperty(prevX);
+            y = new SimpleDoubleProperty(prevY);
+        }
+    }
+
+    public void savePreviousFrame() {
+        prevX = x.get();
+        prevY = y.get();
+    }
 }

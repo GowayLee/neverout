@@ -1,4 +1,4 @@
-package com.mambastu.material.pojo.entity.enums;
+package com.mambastu.material.pojo.enums;
 
 public enum CollisionState {
     VERTICAL,HORIZONTAL,BOTH,
