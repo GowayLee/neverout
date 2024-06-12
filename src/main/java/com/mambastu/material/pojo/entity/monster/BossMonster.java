@@ -5,7 +5,6 @@ import com.mambastu.material.resource.ResourceManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 public class BossMonster extends BaseMonster {
@@ -37,6 +36,7 @@ public class BossMonster extends BaseMonster {
     @Override
     public void init() {
         timeline.playFromStart();
+        setState(State.IDLE);
         showingImage.set(bornImage);
         showingImageView.imageProperty().bind(showingImage);
     }

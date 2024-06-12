@@ -4,6 +4,7 @@ import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.listener.PauseMenuListener;
 
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -56,11 +57,12 @@ public class PauseMenu {
         pauseText.setLayoutX((root.getWidth() - pauseText.getLayoutBounds().getWidth()) / 2); // 居中
         pauseText.setLayoutY(root.getHeight() / 2); // 居中
         
-        Text levelNumText = new Text("Current Level: " + String.valueOf(levelNum.get()));
-        levelNumText.setFill(Color.WHITE); // 设置文本颜色为白色
-        levelNumText.setFont(new Font("Segoe Script", 50)); // 设置字体大小和样式
-        levelNumText.setLayoutX(50);
-        levelNumText.setLayoutY(100);
-        menuPane.getChildren().addAll(pauseText, levelNumText);
+        Label levelNumLabel = new Label();
+        levelNumLabel.textProperty().bind(levelNum.asString("Current Level: %d"));
+        levelNumLabel.setStyle("-fx-text-fill: white;"); // 设置文本颜色为红色
+        levelNumLabel.setFont(new Font("Segoe Script", 50)); // 设置字体大小和样式
+        levelNumLabel.setLayoutX(50);
+        levelNumLabel.setLayoutY(100);
+        menuPane.getChildren().addAll(pauseText, levelNumLabel);
     }
 }

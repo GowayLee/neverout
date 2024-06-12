@@ -13,13 +13,11 @@ import com.mambastu.core.event.comp.event.PlayerDieEvent;
 import com.mambastu.factories.MonsterFactory;
 import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
-import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
-import com.mambastu.material.pools.ObjectPool;
 import com.mambastu.material.pools.ObjectPoolManager;
 
 import javafx.animation.KeyFrame;
@@ -145,30 +143,30 @@ public class NormalImpl implements ModeLogic {
     }
 
     private void checkCollision() {
-        ArrayList<BaseMonster> delList = new ArrayList<>(); // 测试版
         for (BaseMonster monster : monsterList) {
             if (player.getBounds().isColliding(monster.getBounds())) { // 触发事件
-                // CollisionEvent event = new CollisionEvent(player, monster);
-                // eventManager.fireEvent(event);
-                gamePane.getChildren().remove(monster.getShowingImageView()); // 移除怪物
-                delList.add(monster); // 测试版
-                MonsterFactory.getInstance().delete(monster);
-                ctx.getLevelRecord().getKillCount().set(ctx.getLevelRecord().getKillCount().get() + 1);
+                CollisionEvent event = new CollisionEvent(player, monster);
+                eventManager.fireEvent(event);
             }
-        }
-        for (BaseMonster monster : delList) { // 测试版
-            monsterList.remove(monster);
         }
     }
 
-    private void checkIsGameOver() { // 检查游戏是否结束，例如时间结束或者玩家死亡等条件
+    private void checkIsGameOver() {
+        checkIsGameFail();
+        checkIsGamePass();
+    }
+
+    private void checkIsGamePass() { // 检查游戏是否失败，例如玩家死亡等条件
+        if (ctx.getLevelRecord().getRemainDuration().get() <= 0) {
+            stopEngine(true);
+        }
+    }
+
+    private void checkIsGameFail() { // 检查游戏是否结束，例如玩家死亡等条件
         if (player.isDie()) {
             PlayerDieEvent event = new PlayerDieEvent(player); // 触发玩家死亡事件，记录数据等操作
             eventManager.fireEvent(event);
-            stopEngine();
-        }
-        if (ctx.getLevelRecord().getRemainDuration().get() <= 0) {
-            stopEngine();
+            stopEngine(false);
         }
     }
     // ================================= EngineState Control Section =================================
@@ -187,11 +185,12 @@ public class NormalImpl implements ModeLogic {
         startMonsterGenTimer();
     }
 
-    private void stopEngine() { // 游戏结束时调用，关闭引擎并且清空实体们
+    private void stopEngine(boolean isPassLevel) { // 游戏结束时调用，关闭引擎并且清空实体们
         stopMonsterGenTimer();
         stopCountDownTimer();
         clearAllEntity();
-        listener.stopEngine();
+        ObjectPoolManager.getInstance().close(); // 关闭对象池，释放内存
+        listener.stopEngine(isPassLevel);
     }
 
     private void startCountDownTimer() {

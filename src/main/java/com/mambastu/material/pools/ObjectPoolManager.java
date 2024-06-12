@@ -53,4 +53,9 @@ public class ObjectPoolManager {
         return objectPool;
     }
 
+    public void close() { // 抛弃所有池的引用, 进行垃圾回收
+        pools.clear();
+        System.gc();
+    }
+
 }

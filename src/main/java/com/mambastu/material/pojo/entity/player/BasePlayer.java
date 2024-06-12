@@ -13,7 +13,8 @@ import lombok.Setter;
 @Setter
 public abstract class BasePlayer extends BaseEntity {
     protected double speed = 5;
-    protected SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
+    protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
+    protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
 
     public void move(Set<GameInput> activeInputs) { // TODO: 边界问题
         double deltaX = 0, deltaY = 0;

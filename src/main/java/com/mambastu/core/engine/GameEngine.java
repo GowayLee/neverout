@@ -29,6 +29,7 @@ public class GameEngine {
 
     private final LogicManager logicManager;
 
+    private final StackPane root;
     private final EngineProps engineProps;
     private AnimationTimer timer;
     private Long lastUpdateTime = System.nanoTime();
@@ -38,7 +39,6 @@ public class GameEngine {
     public class EngineProps { // 成员内部类 引擎属性将贯穿引擎层与逻辑层
         private final Context ctx;
 
-        private final StackPane root;
         private final Pane gamePane;
 
         private final BasePlayer player;
@@ -46,9 +46,8 @@ public class GameEngine {
         private final LinkedList<BaseBullet> bulletList;
         private final LinkedList<BaseBarrier> barrierList;
 
-        public EngineProps(Context ctx, StackPane root) {
+        public EngineProps(Context ctx) {
             this.ctx = ctx; // 引擎配置参数
-            this.root = root; // 根节点 用于挂载游戏画布节点 以及游戏UI节点等
             this.gamePane = new Pane();
             this.player = ctx.getLevelConfig().getPlayer();
             this.monsterList = new LinkedList<>();
@@ -62,8 +61,8 @@ public class GameEngine {
     public GameEngine(Context ctx, StackPane root, EngineLayerListener listener) {
         this.listener = listener;
         this.logicLayerHandler = new LogicLayerHandler();
-        this.engineProps = new EngineProps(ctx, root);
-        root.getChildren().add(engineProps.getGamePane()); // 将游戏画布节点压入StackPane
+        this.root = root;
+        this.engineProps = new EngineProps(ctx);
         this.logicManager = new LogicManager(engineProps, logicLayerHandler); // 传递引擎参数初始化逻辑管理器
         logger.info("Game Engine successfully initialized!");
     }
@@ -82,13 +81,23 @@ public class GameEngine {
         }
 
         @Override
-        public void stopEngine() {
+        public void stopEngine(boolean isPassLevel) {
             timer.stop();
-            listener.stopGame();
+            // TODO: 回收引擎中的资源
+            listener.stopGame(isPassLevel);
         }
     }
 
     // ================================= Control Section =================================
+    public void showGamePane() { // 显示游戏画布
+        root.getChildren().remove(engineProps.getGamePane());
+        root.getChildren().add(engineProps.getGamePane()); // 将游戏画布节点压入StackPane
+    }
+
+    public void hideGamePane() { // 隐藏游戏画布
+        root.getChildren().remove(engineProps.getGamePane());
+    }
+
     public void pauseThisEngine() { // 暂停引擎
         timer.stop();
     }
