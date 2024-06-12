@@ -118,6 +118,7 @@ public class LevelController {
                 levelMenu.show();
                 logger.error("LevelManager: Level is past.");
             } else {
+                ctxManager.recordBeforeOver();
                 gameOverMenu.show();
                 logger.error("LevelManager: Game is over.");
             }

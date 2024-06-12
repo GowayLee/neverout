@@ -22,6 +22,10 @@ public class ObjectPoolManager {
     private ObjectPoolManager() {
     }
 
+    
+    /** 
+     * @return ObjectPoolManager
+     */
     public static ObjectPoolManager getInstance() {
         return INSTANCE;
     }

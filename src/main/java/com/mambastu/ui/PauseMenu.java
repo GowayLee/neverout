@@ -29,6 +29,10 @@ public class PauseMenu {
         this.menuPane = new Pane();
     }
 
+    
+    /** 
+     * @param show(
+     */
     public void init() { // 初始化
         bindProperties();
         buildLayout();
