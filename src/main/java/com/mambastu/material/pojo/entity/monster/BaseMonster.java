@@ -12,6 +12,8 @@ import javafx.beans.property.SimpleDoubleProperty;
 public abstract class BaseMonster extends BaseEntity implements Movable {
     protected double speed;
     abstract public void move(double targX, double targY); // 怪物的移动需要参照目标
+    public enum State{OMEN,IDLE,MOVING,SHAKING};
+    private State state;
 
     public void setPos(double sceneWidth, double sceneHeight, BasePlayer player) { // 默认在地图中随机生成 TODO: 避开玩家
         Random rand = new Random();
@@ -59,5 +61,6 @@ public abstract class BaseMonster extends BaseEntity implements Movable {
         prevY = y.get();
     }
 
-
+    public State getState() {return state;}
+    public void setState(State state) {this.state = state;}
 }

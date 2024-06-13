@@ -146,10 +146,12 @@ public class NormalImpl implements ModeLogic {
     }
 
     private void checkCollision() {
-        for (BaseMonster monster : monsterList) {
-            if (player.getBounds().collisionState(monster.getBounds())== CollisionState.TRUE) { // 触发事件
-                CollisionEvent event = new CollisionEvent(player, monster);
-                eventManager.fireEvent(event);
+        for (BaseMonster monster : monsterList) {//预警状态无伤害
+            if(monster.getState()!= BaseMonster.State.OMEN) {
+                if (player.getBounds().collisionState(monster.getBounds()) == CollisionState.TRUE) { // 触发事件
+                    CollisionEvent event = new CollisionEvent(player, monster);
+                    eventManager.fireEvent(event);
+                }
             }
         }
     }

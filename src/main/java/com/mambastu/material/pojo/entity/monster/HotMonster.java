@@ -9,26 +9,29 @@ import javafx.util.Duration;
 
 public class HotMonster extends BaseMonster {
     private final Image bornImage;
+    private final Image omenImage;
+    private Timeline timeline;
 
-    private enum State {
-        IDLE, MOVING
-    }
-    private State state;
+
 
     public HotMonster() {
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "HotMonster");
+        this.omenImage = ResourceManager.getInstance().getImg("omenImage", "Monster", "HotMonster");
+        timeline = new Timeline(
+                new KeyFrame(Duration.seconds(1), event ->{
+                    setState(State.MOVING);
+                    showingImage.set(bornImage);
+                })
+        );
+        timeline.setCycleCount(1);
     }
 
     @Override
     public void init() {
-        showingImage.set(bornImage);
+        timeline.playFromStart();
+        showingImage.set(omenImage);
         showingImageView.imageProperty().bind(showingImage);
-        this.state = HotMonster.State.IDLE;
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), event ->this.state = State.MOVING)
-        );
-        timeline.setCycleCount(1);
-        timeline.play();
+        setState(State.OMEN);
     }
 
 
@@ -36,7 +39,7 @@ public class HotMonster extends BaseMonster {
     @Override
     public void move(double targetX, double targetY) {
         savePreviousFrame();
-        if (state == HotMonster.State.MOVING){
+        if (getState() == HotMonster.State.MOVING){
             speed = 1.2;
         double dx = targetX - x.get();
         double dy = targetY - y.get();

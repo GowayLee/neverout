@@ -1,10 +1,12 @@
 {
   "Monster": {
     "BossMonster": {
+      "omenImage": "/static/image/omen.gif",
       "bornImage": "/static/image/boss.png",
       "attackImage": "/static/image/bossAttack.png"
     },
     "HotMonster": {
+      "omenImage": "/static/image/omen.gif",
       "bornImage": "/static/image/fever.png"
     }
   },
