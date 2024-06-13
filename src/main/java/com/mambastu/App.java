@@ -58,7 +58,7 @@ public class App extends Application {
         // 设置初始场景
         StackPane root = new StackPane();
         root.getChildren().add(webView); // 将WebView添加到根节点
-        scene = new Scene(root, 800, 800);
+        scene = new Scene(root, 1920, 1080);
         stage.setScene(scene);
         stage.setTitle("Never Out");
         stage.getIcons().add(ImgCache.getImage("/static/image/player1.png"));

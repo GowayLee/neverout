@@ -6,5 +6,6 @@ public enum GameInput {
     MOVE_LEFT,
     MOVE_RIGHT,
     MOVE_BOOST,
-    SKILL
+    SKILL,
+    FIRE
 }

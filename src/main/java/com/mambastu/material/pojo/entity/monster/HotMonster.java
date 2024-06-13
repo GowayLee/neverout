@@ -9,6 +9,7 @@ import javafx.util.Duration;
 
 public class HotMonster extends BaseMonster {
     private final Image bornImage;
+    private final Image dieImage;
 
     private enum State {
         IDLE, MOVING
@@ -17,10 +18,12 @@ public class HotMonster extends BaseMonster {
 
     public HotMonster() {
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "HotMonster");
+        this.dieImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
     }
 
     @Override
     public void init() {
+        HP.set(100);
         showingImage.set(bornImage);
         showingImageView.imageProperty().bind(showingImage);
         this.state = HotMonster.State.IDLE;
@@ -30,8 +33,6 @@ public class HotMonster extends BaseMonster {
         timeline.setCycleCount(1);
         timeline.play();
     }
-
-
 
     @Override
     public void move(double targetX, double targetY) {
@@ -49,5 +50,9 @@ public class HotMonster extends BaseMonster {
         }
     }
 
+    @Override
+    public void die() {
+        showingImage.set(dieImage);
+    }
 
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <style>
         body {
@@ -12,17 +13,16 @@
             align-items: center;
 
             /* Dark mode colors and gradient */
-            background: #121212; /* Fallback for browsers that don't support gradients */
-            background: linear-gradient(
-                    135deg,
+            background: #121212;
+            /* Fallback for browsers that don't support gradients */
+            background: linear-gradient(135deg,
                     #121212 25%,
                     #1a1a1a 25%,
                     #1a1a1a 50%,
                     #121212 50%,
                     #121212 75%,
                     #1a1a1a 75%,
-                    #1a1a1a
-            );
+                    #1a1a1a);
             background-size: 40px 40px;
 
             /* Animation */
@@ -54,19 +54,21 @@
             white-space: nowrap;
             color: rgba(52, 83, 185, 0.6);
         }
+
         .characterImage {
             position: fixed;
-            top:40%;
+            top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 35vh;
             height: 35vh;
-            background: url('static/image/boss.png') ;
+            background: url('static/image/boss.png');
             background-size: cover;
             z-index: 1;
         }
 
-        .leftOptions, .rightOptions {
+        .leftOptions,
+        .rightOptions {
             position: absolute;
             display: flex;
             flex-direction: column;
@@ -77,14 +79,17 @@
             width: 30vw;
             z-index: 2;
         }
+
         .leftOptions {
             left: 2vw;
-            align-items:start ;
+            align-items: start;
         }
+
         .rightOptions {
             right: 2vw;
-            align-items:end ;
+            align-items: end;
         }
+
         /*按钮*/
         /* === removing default button style ===*/
         .button {
@@ -112,9 +117,12 @@
             color: transparent;
             -webkit-text-stroke: 1px var(--text-stroke-color);
             box-sizing: border-box;
-            white-space: nowrap; /* 防止换行 */
-            overflow: hidden; /* 确保内容不溢出 */
+            white-space: nowrap;
+            /* 防止换行 */
+            overflow: hidden;
+            /* 确保内容不溢出 */
         }
+
         /* this is the text, when you hover on button */
         /* 左边*/
         .hover-text-left {
@@ -130,6 +138,7 @@
             -webkit-text-stroke: 1px var(--animation-color);
             will-change: width, filter;
         }
+
         .button:hover .hover-text-left {
             width: 100%;
             filter: drop-shadow(0 0 23px var(--animation-color))
@@ -150,6 +159,7 @@
             transform: translateX(100%);
             will-change: transform, filter;
         }
+
         .button:hover .hover-text-right {
             transform: translateX(0);
             width: 100%;
@@ -158,37 +168,38 @@
     </style>
     <title></title>
 </head>
+
 <body>
 
-<div class="title">LaoDaChuanShuo</div>
-<div class="characterImage"></div>
+    <div class="title">LaoDaChuanShuo</div>
+    <div class="characterImage"></div>
 
 
-<div class="leftOptions">
-    <button class="button" data-text="Awesome" onclick="startGame()">
-        <span class="actual-text">&nbsp;Start game&nbsp;</span>
-        <span aria-hidden="true" class="hover-text-left">&nbsp;Start game&nbsp;</span>
-    </button>
-    <button class="button" data-text="Awesome">
-        <span class="actual-text-left">&nbsp;Stage Select&nbsp;</span>
-        <span aria-hidden="true" class="hover-text-left">&nbsp;Stage Select&nbsp;</span>
-    </button>
-    <button class="button" data-text="Awesome">
-        <span class="actual-text-left">&nbsp;Quit Game&nbsp;</span>
-        <span aria-hidden="true" class="hover-text-left">&nbsp;Quit Game&nbsp;</span>
-    </button>
-</div>
+    <div class="leftOptions">
+        <button class="button" data-text="Awesome" onclick="startGame()">
+            <span class="actual-text">&nbsp;Start game&nbsp;</span>
+            <span aria-hidden="true" class="hover-text-left">&nbsp;Start game&nbsp;</span>
+        </button>
+        <button class="button" data-text="Awesome">
+            <span class="actual-text-left">&nbsp;Stage Select&nbsp;</span>
+            <span aria-hidden="true" class="hover-text-left">&nbsp;Stage Select&nbsp;</span>
+        </button>
+        <button class="button" data-text="Awesome">
+            <span class="actual-text-left">&nbsp;Quit Game&nbsp;</span>
+            <span aria-hidden="true" class="hover-text-left">&nbsp;Quit Game&nbsp;</span>
+        </button>
+    </div>
 
-<div class="rightOptions">
-    <button class="button" data-text="Awesome">
-        <span class="actual-text">&nbsp;Char Select&nbsp;</span>
-        <span aria-hidden="true" class="hover-text-right">&nbsp;Char Select&nbsp;</span>
-    </button>
-    <button class="button" data-text="Awesome">
-        <span class="actual-text">&nbsp;Developers&nbsp;</span>
-        <span aria-hidden="true" class="hover-text-right">&nbsp;Developers&nbsp;</span>
-    </button>
-</div>
+    <div class="rightOptions">
+        <button class="button" data-text="Awesome">
+            <span class="actual-text">&nbsp;Char Select&nbsp;</span>
+            <span aria-hidden="true" class="hover-text-right">&nbsp;Char Select&nbsp;</span>
+        </button>
+        <button class="button" data-text="Awesome">
+            <span class="actual-text">&nbsp;Developers&nbsp;</span>
+            <span aria-hidden="true" class="hover-text-right">&nbsp;Developers&nbsp;</span>
+        </button>
+    </div>
 
 </body>
 <script>

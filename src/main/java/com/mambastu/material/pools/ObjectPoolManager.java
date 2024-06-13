@@ -33,7 +33,7 @@ public class ObjectPoolManager {
     @SuppressWarnings("unchecked")
     public  <T extends BaseEntity> ObjectPool<T> getObjectPool(Class<T> objectClass) {
         if (!pools.containsKey(objectClass)) { // 如果不存在该池，则新建一个
-            createObjectPool(objectClass, 10);
+            createObjectPool(objectClass, 20);
         }
         return (ObjectPool<T>) pools.get(objectClass);
     }

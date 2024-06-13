@@ -5,12 +5,25 @@ import java.util.Random;
 import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 
+import javafx.beans.property.SimpleIntegerProperty;
+
 
 public abstract class BaseMonster extends BaseEntity{
+    protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(); // 怪物血量
     protected double speed;
     abstract public void move(double targX, double targY); // 怪物的移动需要参照目标
 
     abstract public void init();
+
+    abstract public void die();
+
+    public void getHurt(Integer damage) {
+        HP.set(HP.get() - damage); // 怪物受到伤害
+    }
+
+    public boolean isDie() { // 判断是否死亡
+        return HP.get() <= 0;
+    }
 
     public void setPos(double sceneWidth, double sceneHeight, BasePlayer player) { // 默认在地图中随机生成 TODO: 避开玩家
         Random rand = new Random();

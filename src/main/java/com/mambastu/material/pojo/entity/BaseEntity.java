@@ -18,7 +18,7 @@ public abstract class BaseEntity {
     protected double prevX; // 用于碰撞检测的变量，记录上一次的位置
     protected double prevY;
 
-    abstract public void init(); // 更新实体的位置和状态等
+    abstract public void init();
 
     public void setImageSize(double width, double height) {
         showingImageView.setFitWidth(width);

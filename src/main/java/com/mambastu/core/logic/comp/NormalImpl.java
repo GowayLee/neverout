@@ -2,14 +2,18 @@ package com.mambastu.core.logic.comp;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.mambastu.controller.input.InputManager;
 import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.core.engine.GameEngine.EngineProps;
 import com.mambastu.core.event.EventManager;
+import com.mambastu.core.event.comp.event.BulletHitMonsterEvent;
 import com.mambastu.core.event.comp.event.CollisionEvent;
+import com.mambastu.core.event.comp.event.MonsterDieEvent;
 import com.mambastu.core.event.comp.event.PlayerDieEvent;
+import com.mambastu.factories.BulletFactory;
 import com.mambastu.factories.MonsterFactory;
 import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
@@ -47,7 +51,7 @@ public class NormalImpl implements ModeLogic {
 
     // ================================= Init Section =================================
 
-    public NormalImpl(EngineProps engineProps, LogicLayerListener listener) {
+    public NormalImpl(EngineProps engineProps, LogicLayerListener listener) { // TODO: 优化事件处理方式, 每次都要new一个事件实例对性能影响较大
         this.listener = listener;
         this.inputListener = new InputHandler();
         this.ctx = engineProps.getCtx();
@@ -85,6 +89,7 @@ public class NormalImpl implements ModeLogic {
 
     public void initPlayer() { // 初始化玩家位置和属性，并将其添加到游戏画布中。
         try {
+            player.init();
             player.setPos(gamePane.getWidth(), gamePane.getHeight());
             player.putOnPane(gamePane);
         } catch (Exception e) {
@@ -127,8 +132,11 @@ public class NormalImpl implements ModeLogic {
 
     public void update(long elapsedTime) { // 游戏循环更新
         checkCollision();
+        checkBullletHitMonster();
         playerMove();
         monsterMove();
+        bulletMove();
+        playerFire();
         checkIsGameOver();
     }
 
@@ -142,12 +150,60 @@ public class NormalImpl implements ModeLogic {
         player.move(InputManager.getInstance().getActiveInputs());
     }
 
+    private void bulletMove() {
+        for (BaseBullet bullet : bulletList) {
+            bullet.move(); // 子弹移动逻辑
+        }
+    }
+
+    private void playerFire() {
+        if (player.getWeapon() != null) {
+            BaseBullet newBullet = player.getWeapon().fire(player.getX().get(), player.getY().get(), monsterList, InputManager.getInstance().getActiveInputs(), gamePane);
+            if (newBullet != null) {
+                bulletList.add(newBullet);
+            }
+        }
+    }
+
     private void checkCollision() {
         for (BaseMonster monster : monsterList) {
             if (player.getBounds().isColliding(monster.getBounds())) { // 触发事件
                 CollisionEvent event = new CollisionEvent(player, monster);
                 eventManager.fireEvent(event);
             }
+        }
+    }
+
+    private void checkBullletHitMonster() { // 检查子弹是否击中怪物，触发事件等操作
+        List<BaseBullet> removeList = new ArrayList<>(); // 记录需要移除的子弹列表，因为不能在循环中直接移除元素，会导致并发修改异常
+        for (BaseBullet bullet : bulletList) {
+            for (BaseMonster monster : monsterList) {
+                if (bullet.getBounds().isColliding(monster.getBounds())) {
+                    BulletHitMonsterEvent event = new BulletHitMonsterEvent(bullet, monster); // 触发子弹击中怪物事件，记录数据等操作
+                    eventManager.fireEvent(event);
+                    removeList.add(bullet);
+                    checkMonsterDie(monster);
+                    break;
+                }
+                if (bullet.isHitTarget()) { // 如果子弹已经到达目标位置但是没有命中目标，说明目标已经死亡并被对象池回收，该子弹也应该被回收
+                    removeList.add(bullet);
+                    break;
+                }
+            }
+        }
+        for (BaseBullet removBullet : removeList) {
+            bulletList.remove(removBullet); // 移除子弹
+            removBullet.removeFromPane(gamePane);
+            BulletFactory.getInstance().delete(removBullet);
+        }
+    }
+
+    private void checkMonsterDie(BaseMonster monster) {
+        if (monster.isDie()) {
+            MonsterDieEvent event = new MonsterDieEvent(monster, gamePane); // 因为怪物有死亡延迟效果，为了保证对象池中对象的可用性
+            eventManager.fireEvent(event);                                  // 在怪物死亡效果结束后再放回对象池
+            monsterList.remove(monster); // 移除怪物
+            ctx.getLevelRecord().getKillCount().set(ctx.getLevelRecord().getKillCount().get() + 1);
         }
     }
 

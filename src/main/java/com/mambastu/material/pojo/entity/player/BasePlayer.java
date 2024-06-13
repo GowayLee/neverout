@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.pojo.entity.BaseEntity;
+import com.mambastu.material.pojo.weapon.BaseWeapon;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import lombok.Getter;
@@ -15,6 +16,7 @@ public abstract class BasePlayer extends BaseEntity {
     protected double speed = 5;
     protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
+    protected BaseWeapon weapon;
 
     abstract public void init();
 

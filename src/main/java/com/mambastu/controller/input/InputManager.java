@@ -148,7 +148,7 @@ public class InputManager {
                     activeInputs.add(GameInput.MOVE_BOOST);
                     break;
                 case K:
-                    activeInputs.add(GameInput.SKILL);
+                    activeInputs.add(GameInput.FIRE);
                     break;
                 // case P:
                 // listener.switchPausenResume();
@@ -174,7 +174,7 @@ public class InputManager {
                     activeInputs.remove(GameInput.MOVE_BOOST);
                     break;
                 case K:
-                    activeInputs.remove(GameInput.SKILL);
+                    activeInputs.remove(GameInput.FIRE);
                     break;
                 case P:
                     listener.switchPausenResume();

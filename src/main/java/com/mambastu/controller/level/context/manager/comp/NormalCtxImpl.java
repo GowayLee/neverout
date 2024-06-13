@@ -21,15 +21,20 @@ public class NormalCtxImpl implements ModeCtxLogic{
         firstLevelConfig.getMonsterEggList().put(MonsterTypes.HotMonster, 1.0);
         firstLevelConfig.setMonsterScalDensity(2000);
         firstLevelConfig.setDuration(10); // 基础关卡时长30秒。
+
     }
 
     @Override
-    public void updateLevelConfig() { // 更新下一关的配置信息，例如怪物密度、怪物伤害等。s
-        // TODO: 实现逻辑...
-        // 例如，增加怪物密度和伤害：ctx.setMonsterDensity(ctx.getMonsterDensity() + 0.1f); ctx.setMonsterDamage(ctx.getMonsterDamage() + 10f);  // 假设 ctx 是 Context 类型的实例。
-        // 或者，增加关卡难度：ctx.setLevelDifficulty(ctx.getLevelDifficulty() + 1); // 假设 ctx 是 Context 类型的实例。
-        // 等等...
+    public void updateLevelConfig() { // 更新下一关的配置信息，例如怪物密度、怪物伤害等
+        ctx.getLevelConfig().getMonsterEggList().computeIfPresent(MonsterTypes.HotMonster, (key, value) -> value > 0.5 ? value - 0.1 : value);
+        ctx.getLevelConfig().getMonsterEggList().computeIfPresent(MonsterTypes.BossMonster, (key, value) -> value > 1.0 ? value - 0.1 : value);
         ctx.getLevelConfig().setDuration(ctx.getLevelConfig().getDuration() + 10); // 增加关卡时长10s
+    }
+
+    @Override
+    public void updatePlayerProp() {
+        ctx.getLevelRecord().getPlayer().getHP().set(ctx.getLevelRecord().getPlayer().getMaxHP().get()); // 玩家生命值恢复到上限。
+        // 更新玩家属性，例如生命值、攻击力、防御力等。
     }
 
     @Override
@@ -50,7 +55,6 @@ public class NormalCtxImpl implements ModeCtxLogic{
 
     @Override
     public void refreshLevelRecord() { // 刷新当前关卡的记录，例如玩家得分、剩余生命值等。
-        ctx.setLevelRecord(new LevelRecord(ctx.getLevelRecord().getLevelNum().get() + 1, ctx.getLevelRecord().getPlayer())); // 关卡号+1, 传递玩家信息。
-        ctx.getLevelRecord().getPlayer().getHP().set(ctx.getLevelRecord().getPlayer().getMaxHP().get()); // 玩家生命值恢复到上限。
+        ctx.setLevelRecord(new LevelRecord(ctx.getLevelRecord().getLevelNum().get() + 1, ctx.getLevelConfig().getPlayer())); // 关卡号+1, 传递玩家信息。
     }
 }

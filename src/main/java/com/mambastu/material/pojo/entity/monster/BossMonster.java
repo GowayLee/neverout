@@ -13,12 +13,14 @@ public class BossMonster extends BaseMonster {
 
     private final Image bornImage;
     private final Image attackImage;
+    private final Image dieImage;
 
     private State state;
 
     public BossMonster() {
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "BossMonster");
         this.attackImage = ResourceManager.getInstance().getImg("attackImage", "Monster", "BossMonster");
+        this.dieImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
         this.state = State.IDLE;
         this.timeline = new Timeline(
                 new KeyFrame(Duration.seconds(4.0), event -> {
@@ -35,6 +37,7 @@ public class BossMonster extends BaseMonster {
 
     @Override
     public void init() {
+        HP.set(200);
         timeline.playFromStart();
         setState(State.IDLE);
         showingImage.set(bornImage);
@@ -68,7 +71,8 @@ public class BossMonster extends BaseMonster {
 
     }
 
-    public State getState() {
-        return state;
+    @Override
+    public void die() {
+        showingImage.set(dieImage);
     }
 }
