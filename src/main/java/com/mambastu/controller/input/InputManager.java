@@ -145,10 +145,10 @@ public class InputManager {
                     activeInputs.add(GameInput.MOVE_RIGHT);
                     break;
                 case SHIFT:
-                    activeInputs.add(GameInput.MOVE_BOOST);
+                    activeInputs.add(GameInput.SKILL);
                     break;
                 case K:
-                    activeInputs.add(GameInput.SKILL);
+                    activeInputs.add(GameInput.SHOOT);
                     break;
                 // case P:
                 // listener.switchPausenResume();
@@ -171,10 +171,10 @@ public class InputManager {
                     activeInputs.remove(GameInput.MOVE_RIGHT);
                     break;
                 case SHIFT:
-                    activeInputs.remove(GameInput.MOVE_BOOST);
+                    activeInputs.remove(GameInput.SKILL);
                     break;
                 case K:
-                    activeInputs.remove(GameInput.SKILL);
+                    activeInputs.remove(GameInput.SHOOT);
                     break;
                 case P:
                     listener.switchPausenResume();

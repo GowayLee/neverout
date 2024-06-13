@@ -19,30 +19,15 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
     protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
 
-    public void move(Set<GameInput> activeInputs) {
-        double deltaX = 0, deltaY = 0;
-        savePreviousFrame();
-        if (activeInputs.contains(GameInput.MOVE_UP))
-            deltaY -= speed;
-        if (activeInputs.contains(GameInput.MOVE_DOWN))
-            deltaY += speed;
-        if (activeInputs.contains(GameInput.MOVE_LEFT))
-            deltaX -= speed;
-        if (activeInputs.contains(GameInput.MOVE_RIGHT))
-            deltaX += speed;
+    public enum State {MOVING,SKILL}
+    public enum SkillState {READY, ACTIVE, COOLDOWN}
+    public enum InjuryState {NORMAL,INVINCIBLE}
+    private State state;
+    private SkillState skillState;
+    private InjuryState injuryState;
 
-        if (deltaX != 0 && deltaY != 0) {
-            deltaX /= Math.sqrt(2);
-            deltaY /= Math.sqrt(2);
-        }
 
-        x.set(x.get() + deltaX);
-        y.set(y.get() + deltaY);
-
-        showingImageView.setX(x.get());
-        showingImageView.setY(y.get());
-        crossedBoundary();
-    }
+    abstract public void move(Set<GameInput> activeInputs);
 
     public void setPos(double sceneWidth, double sceneHeight) { // 默认出生在屏幕中央
         this.x.set(sceneWidth / 2);
@@ -87,4 +72,16 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
         prevX = x.get();
         prevY = y.get();
     }
+
+    public State getState() {return state;}
+
+    public void setState(State state) {this.state = state;}
+
+    public SkillState getSkillState() {return skillState;}
+
+    public void setSkillState(SkillState skillState) {this.skillState = skillState;}
+
+    public InjuryState getInjuryState() {return injuryState;}
+
+    public void setInjuryState(InjuryState injuryState) {this.injuryState = injuryState;}
 }
