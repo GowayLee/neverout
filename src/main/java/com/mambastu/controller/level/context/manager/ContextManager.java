@@ -27,21 +27,28 @@ public class ContextManager {
         ctx.initGlobalRecord();
     }
 
-    private void pickLogicImpl(GameMode mode) {
-        switch (mode) {
+    /**
+     * Select the implementation class of Context updating based on the game mode.
+     * @param gameMode   
+     * @return void
+     * @throws IllegalArgumentException if the game mode is not defined.
+     */
+    private void pickLogicImpl(GameMode gameMode) {
+        switch (gameMode) {
             case NORMAL:
                 modeCtxLogic = new NormalCtxImpl(ctx);
                 break;
         
             default:
-                break;
+                throw new IllegalArgumentException("Game mode not defined: " + gameMode);
         }
     }
 
     // ================================= Update Section =================================
     public void updateCtx() {
         modeCtxLogic.updateGlobalRecord();
-        modeCtxLogic.updateLevelConfig(); // 更新下一关关卡参数。
+        modeCtxLogic.updateLevelConfig(); // 更新下一关关卡参数
+        modeCtxLogic.updatePlayerProp();
         modeCtxLogic.refreshLevelRecord(); // 刷新关卡记录。
     }
 

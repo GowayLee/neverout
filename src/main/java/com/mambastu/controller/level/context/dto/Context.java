@@ -36,7 +36,6 @@ public class Context {
 
     public void initPlayer() {
         BasePlayer player =  PlayerFactory.getInstance().create(playerType.get());
-        player.init();
         levelConfig.setPlayer(player); // 设置玩家到关卡配置中
     }
 

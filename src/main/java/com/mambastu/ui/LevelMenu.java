@@ -2,6 +2,7 @@ package com.mambastu.ui;
 
 import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.listener.LevelMenuListener;
+import com.mambastu.material.pojo.weapon.StandardRifle;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.Button;
@@ -57,13 +58,6 @@ public class LevelMenu {
         passText.setLayoutX((root.getWidth() - passText.getLayoutBounds().getWidth()) / 2); // 居中
         passText.setLayoutY(root.getHeight() / 2); // 居中
 
-        Button nextLevelBtn = new Button("Next Level!");
-        nextLevelBtn.setLayoutX(root.getWidth() / 2);
-        nextLevelBtn.setLayoutY(root.getHeight() / 2 + 100);
-        nextLevelBtn.setOnAction(e -> {
-            listener.startLevel();
-        });
-    
         Label killCountLabel = new Label();
         killCountLabel.textProperty().bind(killCount.asString("Kill: %d "));
         killCountLabel.setStyle("-fx-text-fill: red;"); // 设置文本颜色为红色
@@ -71,6 +65,20 @@ public class LevelMenu {
         killCountLabel.setLayoutX(500);
         killCountLabel.setLayoutY(100);
 
-        menuPane.getChildren().addAll(passText, nextLevelBtn, killCountLabel);
+        Button nextLevelBtn = new Button("Next Level!");
+        nextLevelBtn.setLayoutX(root.getWidth() / 2);
+        nextLevelBtn.setLayoutY(root.getHeight() / 2 + 100);
+        nextLevelBtn.setOnAction(e -> {
+            listener.startLevel();
+        });
+
+        Button weaponBtn = new Button("点我送一刀999!");
+        weaponBtn.setLayoutX(root.getWidth() / 2 + 100);
+        weaponBtn.setLayoutY(root.getHeight() / 2 + 100);
+        weaponBtn.setOnAction(e -> {
+            ctx.getLevelConfig().getPlayer().setWeapon(new StandardRifle());
+        });
+
+        menuPane.getChildren().addAll(passText, nextLevelBtn, weaponBtn, killCountLabel);
     }
 }

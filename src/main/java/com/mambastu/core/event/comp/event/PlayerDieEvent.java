@@ -1,25 +1,24 @@
 package com.mambastu.core.event.comp.event;
 
-import java.util.LinkedList;
-
-import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 
-import javafx.scene.layout.Pane;
 import lombok.Getter;
 
-public class PlayerDieEvent extends BaseEvent{
-    @Getter
-    private final BasePlayer player;
+public class PlayerDieEvent extends BaseEvent {
+    private final static PlayerDieEvent INSTANCE = new PlayerDieEvent();
 
     @Getter
-    private LinkedList<BaseMonster> monsterList;
+    private BasePlayer player;
 
-    @Getter
-    private Pane root;
+    public static PlayerDieEvent getInstance() {
+        return INSTANCE;
+    }
 
-    public PlayerDieEvent(BasePlayer player) {
+    private PlayerDieEvent() {
         super("PlayerDieEvent");
+    }
+
+    public void setProperty(BasePlayer player) {
         this.player = player;
     }
 }

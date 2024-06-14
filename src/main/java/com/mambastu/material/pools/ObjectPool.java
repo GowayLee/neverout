@@ -20,19 +20,15 @@ public class ObjectPool<T extends BaseEntity> {
 
     private final Stack<T> pool;
     private final Class<T> objectClass;
-    private int maxCapacity;
+    private double maxCapacity;
+    private double curCapacity;
+    private boolean readyForEnlarge = true; // 是否可以扩容(线程安全)
 
-    /**
-     *
-     * @param resourceFactory : 该元素对应的工厂类
-     * @param v               : 枚举类包含的一个元素,同时也是这个线程池的具体生成类型
-     * @param initCapacity
-     * @param maxCapacity
-     */
     public ObjectPool(Class<T> objectClass, int maxCapacity) {
         this.pool = new Stack<>();
         this.objectClass = objectClass;
         this.maxCapacity = maxCapacity;
+        this.curCapacity = maxCapacity; // 当前池中的可使用对象数量
         init();
     }
 
@@ -44,27 +40,21 @@ public class ObjectPool<T extends BaseEntity> {
                 logger.error("Error in initializing object pool!");
                 e.printStackTrace();
             }
-
         }
     }
 
-    // public static <T, V extends Enum<V>> ObjectPool<T, V> createPool(ResourceFactory<T, V> resourceFactory, V v,
-    //         int initCapacity, int maxCapacity) {
-    //     return new ObjectPool<>(resourceFactory, v, initCapacity, maxCapacity);
-    // }
-
-    /**
-     * 当池中元素不够时自动扩容
-     *
-     * @return : 返回的超类
-     */
     public T borrowObject() {
         if (!pool.isEmpty()) { // 如果池中有元素，直接返回
-            return pool.pop();
-        } else { // 如果池中没有元素，创建新元素并返回，同时增加池的容量
-            try {
+            if (curCapacity / maxCapacity < 0.3 && readyForEnlarge) { // 如果池中元素数量小于总容量的30%，扩容
                 enlargePool();
-                logger.info("Enlarge obejct pool! Current Capacity: " + maxCapacity);
+            }
+            curCapacity--;
+            return pool.pop();
+        } else { // 如果池中没有元素，立刻创建新元素并返回，同时增加池的容量
+            try {
+                pool.push(objectClass.getDeclaredConstructor().newInstance());
+                maxCapacity++;
+                logger.warn("Object pool reaches upper limit!");
                 return pool.pop();
             } catch (Exception e) {
                 logger.error("Error in enlarging object pool!");
@@ -76,18 +66,26 @@ public class ObjectPool<T extends BaseEntity> {
 
     public void returnObject(T obj) {
         pool.push(obj);
-        logger.info("Return object to pool! ");
+        curCapacity++;
+        // logger.info("Return object to pool! ");
     }
 
-    private void enlargePool() { // 扩容池子，增加池容量
-        for (int i = 0; i < maxCapacity; i++) { // 扩容一倍最大容量, 实际容量*2
-            try {
-                pool.push(objectClass.getDeclaredConstructor().newInstance());
-            } catch (Exception e) {
-                logger.error("Error in enlarging object pool!");
-                e.printStackTrace();
+    private void enlargePool() {
+        new Thread(() -> { // 异步扩容，避免阻塞主线程
+            readyForEnlarge = false;
+            for (int i = 0; i < maxCapacity; i++) {
+                try {
+                    pool.push(objectClass.getDeclaredConstructor().newInstance());
+                } catch (Exception e) {
+                    logger.error("Error in enlarging object pool!");
+                    e.printStackTrace();
+                }
             }
-        }
-        maxCapacity += maxCapacity;
+            logger.info("Enlarge the object pool for " + objectClass.getSimpleName() + "! Current Capacity: "
+                    + maxCapacity);
+            readyForEnlarge = true;
+            curCapacity += maxCapacity; // 扩容后，池中元素数量也增加
+            maxCapacity += maxCapacity;
+        }).start();
     }
 }
