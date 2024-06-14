@@ -4,7 +4,6 @@ import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.resource.ResourceManager;
 
 import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -28,7 +27,6 @@ public class LaughPlayer extends BasePlayer {
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Player1");
         this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
         this.invincibleTimer.setOnFinished(e -> {
-            System.out.println("Invincible timer finished.");
             setInjuryState(InjuryState.NORMAL);
         });
     }
@@ -80,7 +78,7 @@ public class LaughPlayer extends BasePlayer {
 
     @Override
     public void getHurt(Integer damage) {
-        if (injuryState != InjuryState.INVINCIBLE) {
+        if (injuryState != InjuryState.INVINCIBLE && damage > 0) {
             HP.set(HP.get() - damage); // 受到伤害，扣除生命值
             setInjuryState(InjuryState.INVINCIBLE); // 进入无敌状态
             invincibleTimer.playFromStart();

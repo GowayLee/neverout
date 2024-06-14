@@ -88,6 +88,7 @@ public class BossMonster extends BaseMonster {
 
     @Override
     public void die(Pane root) {
+        moveTimer.stop();
         showingImage.set(dieImage);
         Timeline rmTimer = new Timeline(new KeyFrame(Duration.seconds(1), e ->{
             removeFromPane(root); // Remove from pane after 1 second.

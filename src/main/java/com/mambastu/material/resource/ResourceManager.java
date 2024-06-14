@@ -37,7 +37,7 @@ public class ResourceManager {
         }
     }
 
-    public Image getImg(String caseType, String... paths) { // TODO: 通过缓存获取图片资源
+    public Image getImg(String caseType, String... paths) {
         return ImgCache.getImage(parseURL(caseType, paths));
     }
 

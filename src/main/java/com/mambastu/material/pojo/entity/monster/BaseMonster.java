@@ -51,6 +51,10 @@ public abstract class BaseMonster extends BaseEntity implements Movable {
         hurtFXTimer.play();
     }
 
+    public boolean isOmen() {
+        return state == State.OMEN; // 判断怪物是否处于预兆阶段，预兆阶段不造成伤害，也不被攻击
+    }
+
     public boolean isDie() { // 判断是否死亡
         return HP.get() <= 0;
     }

@@ -52,6 +52,10 @@ public class ContextManager {
         modeCtxLogic.refreshLevelRecord(); // 刷新关卡记录。
     }
 
+    public void updateCoin() {
+        modeCtxLogic.updateCoin(); // 更新金币数量。
+    }
+
     public void recordBeforeOver() {
         modeCtxLogic.recordBeforeOver(); // 记录关卡结束前的数据。
     }

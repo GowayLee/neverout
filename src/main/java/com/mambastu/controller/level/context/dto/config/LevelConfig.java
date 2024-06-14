@@ -17,7 +17,7 @@ public class LevelConfig { // TODO: 增加玩家属性，例如玩家的道具�
     private double monsterScalSpeed;
     private double monsterScalHP;
     private double monsterScalDamage;
-    private double monsterScalGold;
+    private double monsterScalCoin;
 
     private int duration;
 

@@ -14,6 +14,8 @@ public interface ModeCtxLogic {
 
     void updateGlobalRecord();
 
+    void updateCoin();
+
     void recordBeforeOver();
 
     void refreshLevelRecord();

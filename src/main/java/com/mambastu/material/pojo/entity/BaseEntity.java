@@ -1,10 +1,8 @@
 package com.mambastu.material.pojo.entity;
 
 import com.mambastu.material.pojo.enums.CollisionState;
-import javafx.animation.PauseTransition;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;

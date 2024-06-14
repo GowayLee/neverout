@@ -20,5 +20,18 @@
     "RectangleBarrier": {
       "bornImage": "/static/image/stone.png"
     }
+  },
+  "Prop": {
+    "DamageBuff": {
+      "displayImage": "/static/image/player1.png"
+    },
+    "FireCDBuff": {
+      "displayImage": "/static/image/player_die.png"
+    }
+  },
+  "System": {
+    "LevelMenu": {
+      "noItemImage": "/static/image/chacha.png"
+    }
   }
 }

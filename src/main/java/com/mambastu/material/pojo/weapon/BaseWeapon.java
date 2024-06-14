@@ -10,15 +10,22 @@ import com.mambastu.material.pojo.entity.bullet.BulletType;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 
 import javafx.animation.PauseTransition;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.Pane;
+import lombok.Getter;
 
 public abstract class BaseWeapon {
     protected enum Status {READY, COOLDOWN}; // 武器的状态，可以是准备就绪或冷却中。
 
-    protected int damage; // 子弹的伤害值
-    protected double bulletSpeed;
-    protected double coolTime;
-    protected double range; // 武器的射程
+    @Getter
+    protected final SimpleIntegerProperty damage = new SimpleIntegerProperty(); // 子弹的伤害值
+    @Getter
+    protected final SimpleDoubleProperty bulletSpeed = new SimpleDoubleProperty();
+    @Getter
+    protected final SimpleDoubleProperty coolTime = new SimpleDoubleProperty();
+    @Getter
+    protected final SimpleDoubleProperty range = new SimpleDoubleProperty(); // 武器的射程
 
     protected BulletType bulletType;
     protected Status coolStatus;

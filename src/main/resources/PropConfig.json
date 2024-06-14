@@ -1,0 +1,16 @@
+{
+  "Props": [
+    {
+        "name": "DamageBuff",
+        "image": "https://example.com/item1.png",
+        "buffValue": "10.0",
+        "price": "5"
+    },
+    {
+        "name": "FireCDBuff",
+        "image": "https://example.com/item2.png",
+        "buffValue": "-20.0",
+        "price": "10"
+    }
+  ]
+}
