@@ -9,14 +9,11 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-
-public abstract class BaseMonster extends BaseEntity{
+public abstract class BaseMonster extends BaseEntity {
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(); // 怪物血量
     protected double speed;
 
     abstract public void move(double targX, double targY); // 怪物的移动需要参照目标
-
-    abstract public void init();
 
     abstract public void die(Pane root);
 
@@ -25,7 +22,7 @@ public abstract class BaseMonster extends BaseEntity{
 
         colorAdjust.setBrightness(0.9); // 将亮度设置为最大，变成白色
         showingImageView.setEffect(colorAdjust);
-        
+
         FXTimer.setDuration(Duration.millis(50));
         FXTimer.setOnFinished(event -> showingImageView.setEffect(null));
         FXTimer.play();
@@ -45,8 +42,7 @@ public abstract class BaseMonster extends BaseEntity{
         } while (isInAvoidRange(player.getX().get(), player.getY().get(), avoidRadius));
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-        showingImageView.setFitWidth(50);
-        showingImageView.setFitHeight(50);
+        setImageSize(50, 50);
     }
 
     private boolean isInAvoidRange(double playerX, double playerY, double avoidRadius) {
@@ -57,9 +53,9 @@ public abstract class BaseMonster extends BaseEntity{
     }
 
     @Override
-    public Bounds getBounds() {//返回圆形bound类
+    public Bounds getBounds() {// 返回圆形bound类
         double radius = Math.max(showingImageView.getFitWidth(), showingImageView.getFitHeight()) / 2;
-        return new CircleBounds(x, y, radius);
+        return new CircleBounds(x, y, radius, prevX, prevY);
     }
 
 }

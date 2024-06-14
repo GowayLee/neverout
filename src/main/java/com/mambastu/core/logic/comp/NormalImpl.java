@@ -19,6 +19,7 @@ import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
+import com.mambastu.material.pojo.entity.enums.CollisionState;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
@@ -164,7 +165,7 @@ public class NormalImpl implements ModeLogic {
 
     private void checkCollision() {
         for (BaseMonster monster : monsterList) {
-            if (player.getBounds().isColliding(monster.getBounds())) { // 触发事件
+            if (player.getBounds().collisionState(monster.getBounds()) == CollisionState.TRUE) { // 触发事件
                 CollisionEvent event = CollisionEvent.getInstance();
                 event.setProperty(player, monster);
                 EventManager.getInstance().fireEvent(event);
@@ -176,7 +177,7 @@ public class NormalImpl implements ModeLogic {
         List<BaseBullet> removeList = new ArrayList<>(); // 记录需要移除的子弹列表，因为不能在循环中直接移除元素，会导致并发修改异常
         for (BaseBullet bullet : bulletList) {
             for (BaseMonster monster : monsterList) {
-                if (bullet.getBounds().isColliding(monster.getBounds())) {
+                if (bullet.getBounds().collisionState(monster.getBounds()) == CollisionState.TRUE) {
                     BulletHitMonsterEvent event = BulletHitMonsterEvent.getInstance(); // 触发子弹击中怪物事件，记录数据等操作
                     event.setProperty(bullet, monster);
                     EventManager.getInstance().fireEvent(event);

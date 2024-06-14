@@ -4,7 +4,7 @@ import com.mambastu.material.pojo.entity.BaseEntity;
 
 import lombok.Getter;
 
-public abstract class BaseBullet extends BaseEntity{
+public abstract class BaseBullet extends BaseEntity {
     @Getter
     protected int damage; // 子弹的伤害值
     protected double speed;
@@ -12,7 +12,7 @@ public abstract class BaseBullet extends BaseEntity{
     // 以上参数需要由Weapon来赋予
 
     protected BaseEntity target; // 子弹的目标实体，用于追踪
-    
+
     abstract public void move(); // 移动子弹的方法
 
     abstract public boolean isHitTarget();
@@ -39,9 +39,9 @@ public abstract class BaseBullet extends BaseEntity{
     }
 
     @Override
-    public Bounds getBounds() {//返回圆形类
+    public Bounds getBounds() {// 返回圆形类
         double radius = Math.max(showingImageView.getFitWidth(), showingImageView.getFitHeight()) / 2;
-        return new CircleBounds(x, y, radius);
+        return new CircleBounds(x, y, radius, prevX, prevY);
     }
 
 }
