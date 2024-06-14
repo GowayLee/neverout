@@ -7,8 +7,17 @@ import java.util.Map;
 import com.mambastu.core.event.comp.event.BaseEvent;
 import com.mambastu.core.event.comp.handler.BaseEventHandler;
 
-public class EventManager { // TODO: 探索单例模式
+public class EventManager {
+    private static EventManager INSTANCE = new EventManager();
+
     private final Map<Class<? extends BaseEvent>, BaseEventHandler<? extends BaseEvent>> handlerMap = new HashMap<>();
+
+    private EventManager() {
+    }
+
+    public static EventManager getInstance() {
+        return INSTANCE;
+    }
 
     public <T extends BaseEvent> void register(Class<T> eventType, BaseEventHandler<T> handler) {
         handlerMap.put(eventType, handler);

@@ -35,8 +35,6 @@ public class NormalImpl implements ModeLogic {
     private final LogicLayerListener listener;
     private final InputHandler inputListener;
 
-    private final EventManager eventManager;
-
     private final Context ctx;
     private final Pane gamePane;
 
@@ -62,7 +60,6 @@ public class NormalImpl implements ModeLogic {
         this.bulletList = engineProps.getBulletList();
         this.barrierList = engineProps.getBarrierList();
         this.gamePane = engineProps.getGamePane();
-        this.eventManager = new EventManager();
         InputManager.getInstance().addListener(inputListener);
     }
 
@@ -169,7 +166,7 @@ public class NormalImpl implements ModeLogic {
         for (BaseMonster monster : monsterList) {
             if (player.getBounds().isColliding(monster.getBounds())) { // 触发事件
                 CollisionEvent event = new CollisionEvent(player, monster);
-                eventManager.fireEvent(event);
+                EventManager.getInstance().fireEvent(event);
             }
         }
     }
@@ -180,7 +177,7 @@ public class NormalImpl implements ModeLogic {
             for (BaseMonster monster : monsterList) {
                 if (bullet.getBounds().isColliding(monster.getBounds())) {
                     BulletHitMonsterEvent event = new BulletHitMonsterEvent(bullet, monster); // 触发子弹击中怪物事件，记录数据等操作
-                    eventManager.fireEvent(event);
+                    EventManager.getInstance().fireEvent(event);
                     removeList.add(bullet);
                     checkMonsterDie(monster);
                     break;
@@ -201,7 +198,7 @@ public class NormalImpl implements ModeLogic {
     private void checkMonsterDie(BaseMonster monster) {
         if (monster.isDie()) {
             MonsterDieEvent event = new MonsterDieEvent(monster, gamePane); // 因为怪物有死亡延迟效果，为了保证对象池中对象的可用性
-            eventManager.fireEvent(event);                                  // 在怪物死亡效果结束后再放回对象池
+            EventManager.getInstance().fireEvent(event);                                  // 在怪物死亡效果结束后再放回对象池
             monsterList.remove(monster); // 移除怪物
             ctx.getLevelRecord().getKillCount().set(ctx.getLevelRecord().getKillCount().get() + 1);
         }
@@ -221,7 +218,7 @@ public class NormalImpl implements ModeLogic {
     private void checkIsGameFail() { // 检查游戏是否结束，例如玩家死亡等条件
         if (player.isDie()) {
             PlayerDieEvent event = new PlayerDieEvent(player); // 触发玩家死亡事件，记录数据等操作
-            eventManager.fireEvent(event);
+            EventManager.getInstance().fireEvent(event);
             stopEngine(false);
         }
     }

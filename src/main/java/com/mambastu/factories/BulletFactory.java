@@ -10,7 +10,7 @@ import com.mambastu.material.pools.ObjectPool;
 import com.mambastu.material.pools.ObjectPoolManager;
 
 public class BulletFactory implements EntityFactory<BaseBullet, BulletType>{
-private static final Logger logger = LogManager.getLogger(BulletFactory.class);
+    private static final Logger logger = LogManager.getLogger(BulletFactory.class);
 
     private static BulletFactory INSTANCE = new BulletFactory();;
 
