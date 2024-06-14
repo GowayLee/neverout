@@ -12,7 +12,13 @@
   },
   "Player": {
     "Player1": {
-      "bornImage": "/static/image/player1.png",
+      "bornImage": "/static/image/laughPlayerWhite.png",
+      "readyImage": "/static/image/player1.png",
+      "dieImage": "/static/image/player_die.png"
+    },
+    "Joker": {
+      "bornImage": "/static/image/JokerWhite.png",
+      "readyImage": "/static/image/Joker.png",
       "dieImage": "/static/image/player_die.png"
     }
   },

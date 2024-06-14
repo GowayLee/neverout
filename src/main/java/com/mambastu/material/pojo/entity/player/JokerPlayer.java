@@ -12,27 +12,28 @@ import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Random;
 import java.util.Set;
 
 @Getter
 @Setter
-public class LaughPlayer extends BasePlayer {
+public class JokerPlayer extends BasePlayer {
     private Image bornImage;
     private Image readyImage;
     private Image dieImage;
-    private double skillCD = 2;//second
+    private double skillCD = 3; // second
     private double skillDeltaX;
     private double skillDeltaY;
+    private Random random = new Random();
 
-
-    public LaughPlayer() {
-        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
-        this.readyImage = ResourceManager.getInstance().getImg("readyImage", "Player", "Player1");
-        this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Player1");
+    public JokerPlayer() {
+        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Joker");
+        this.readyImage = ResourceManager.getInstance().getImg("readyImage", "Player", "Joker");
+        this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Joker");
     }
 
     @Override
-    public void init() {//初始化为移动状态，技能预备，可受伤
+    public void init() { // 初始化为移动状态，技能预备，可受伤
         setState(State.MOVING);
         setSkillState(SkillState.READY);
         setInjuryState(InjuryState.NORMAL);
@@ -67,7 +68,7 @@ public class LaughPlayer extends BasePlayer {
             deltaY /= Math.sqrt(2);
         }
 
-        if (getState()==State.SKILL) {
+        if (getState() == State.SKILL) {
             createDashTrail();
         }
 
@@ -79,41 +80,56 @@ public class LaughPlayer extends BasePlayer {
         crossedBoundary();
     }
 
-
-
-    private void activateSkill(Set<GameInput> activeInputs) {//技能：根据玩家的输入向前免伤冲刺
+    private void activateSkill(Set<GameInput> activeInputs) { // 技能：随机进入一种状态
         setState(State.SKILL);
         setSkillState(SkillState.ACTIVE);
-        setInjuryState(InjuryState.INVINCIBLE);
+
         skillDeltaX = 0;
         skillDeltaY = 0;
 
-        if (activeInputs.contains(GameInput.MOVE_UP))
-            skillDeltaY -= speed * 7;
-        if (activeInputs.contains(GameInput.MOVE_DOWN))
-            skillDeltaY += speed * 7;
-        if (activeInputs.contains(GameInput.MOVE_LEFT))
-            skillDeltaX -= speed * 7;
-        if (activeInputs.contains(GameInput.MOVE_RIGHT))
-            skillDeltaX += speed * 7;
-        //平衡斜向移动时的距离
-        if ((activeInputs.contains(GameInput.MOVE_UP) ||activeInputs.contains(GameInput.MOVE_DOWN)) && (activeInputs.contains(GameInput.MOVE_LEFT) || activeInputs.contains(GameInput.MOVE_RIGHT))) {
-            skillDeltaX *= 1 / Math.sqrt(2);
-            skillDeltaY *= 1 / Math.sqrt(2);
+        boolean moveUp = activeInputs.contains(GameInput.MOVE_UP);
+        boolean moveDown = activeInputs.contains(GameInput.MOVE_DOWN);
+        boolean moveLeft = activeInputs.contains(GameInput.MOVE_LEFT);
+        boolean moveRight = activeInputs.contains(GameInput.MOVE_RIGHT);
+
+        if (moveUp)
+            skillDeltaY -= speed;
+        if (moveDown)
+            skillDeltaY += speed;
+        if (moveLeft)
+            skillDeltaX -= speed;
+        if (moveRight)
+            skillDeltaX += speed;
+
+        if (moveUp && moveLeft || moveUp && moveRight || moveDown && moveLeft || moveDown && moveRight) {
+            double scale = 1 / Math.sqrt(2);
+            skillDeltaX *= scale;
+            skillDeltaY *= scale;
         }
 
+        int skillType = random.nextInt(2);
+        if (skillType == 0) {
+            // 状态1：速度减慢至原速度的0.75倍，不会受到伤害，背后有红色虚影
+            speed *= 0.75;
+            setInjuryState(InjuryState.INVINCIBLE);
+        } else {
+            // 状态2：速度加快至2倍，会受到伤害，背后有蓝色虚影
+            speed *= 2;
+            setInjuryState(InjuryState.NORMAL);
+        }
 
-        PauseTransition skillTimeline = new PauseTransition(Duration.seconds(0.1));
+        PauseTransition skillTimeline = new PauseTransition(Duration.seconds(3));
         skillTimeline.setOnFinished(event -> {
             setState(State.MOVING);
             setSkillState(SkillState.COOLDOWN);
             setInjuryState(InjuryState.NORMAL);
+            speed = 5; // 重置速度为原始值
             startSkillCooldown();
         });
         skillTimeline.play();
     }
 
-    private void startSkillCooldown() {//进入技能冷却
+    private void startSkillCooldown() { // 进入技能冷却
         skillCDTimer.setDuration(Duration.seconds(skillCD));
         skillCDTimer.setOnFinished(event -> setSkillState(SkillState.READY));
         skillCDTimer.play();
@@ -129,31 +145,39 @@ public class LaughPlayer extends BasePlayer {
         setStateImage();
     }
 
-    public void setStateImage() {//根据技能的状态来设置图像
+    public void setStateImage() { // 根据技能的状态来设置图像
         ColorAdjust colorAdjust = new ColorAdjust();
         if (getSkillState() == SkillState.ACTIVE) {
-            colorAdjust.setHue(1);
+            if (speed < 5) {
+                colorAdjust.setHue(0); // 红色
+            } else if (speed > 5) {
+                colorAdjust.setHue(0.5); // 蓝色
+            }
             showingImageView.setEffect(colorAdjust);
-        } else if(getSkillState() == SkillState.READY) {
+        } else if (getSkillState() == SkillState.READY) {
             showingImage.set(readyImage);
-            showingImageView.setEffect(colorAdjust);
+            showingImageView.setEffect(null);
         } else {
             showingImage.set(bornImage);
             showingImageView.setEffect(null);
         }
     }
 
-    private void createDashTrail() {//冲刺生成虚影
-        //根据玩家位置生成虚影
+    private void createDashTrail() { // 冲刺生成虚影
+        // 根据玩家位置生成虚影
         ImageView trail = new ImageView(showingImageView.getImage());
         trail.setFitWidth(showingImageView.getFitWidth());
         trail.setFitHeight(showingImageView.getFitHeight());
         trail.setX(showingImageView.getX());
         trail.setY(showingImageView.getY());
 
-        //虚影特性： 变蓝  0.5透明度 淡出（时间0.5秒）
+        // 虚影特性：根据技能状态设置颜色，0.5透明度，淡出（时间0.5秒）
         ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setHue(0.5);
+        if (speed < 5) {
+            colorAdjust.setHue(0); // 红色
+        } else if (speed > 5) {
+            colorAdjust.setHue(0.5); // 蓝色
+        }
         trail.setEffect(colorAdjust);
         trail.setOpacity(0.5);
         FadeTransition fade = new FadeTransition(Duration.seconds(0.5), trail);
@@ -163,6 +187,5 @@ public class LaughPlayer extends BasePlayer {
         fade.play();
 
         root.getChildren().add(trail);
-
     }
 }
