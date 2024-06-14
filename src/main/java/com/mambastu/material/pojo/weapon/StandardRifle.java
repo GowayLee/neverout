@@ -12,7 +12,6 @@ import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.bullet.BulletType;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 
-import javafx.animation.KeyFrame;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
@@ -25,10 +24,11 @@ public class StandardRifle extends BaseWeapon{
         coolTime = 70;
         bulletType = BulletType.StandardBullet;
         coolStatus = Status.READY;
-        coolTimer.getKeyFrames().add(new KeyFrame(Duration.millis(coolTime), event ->{
+        coolTimer.setDuration(Duration.millis(coolTime));
+        coolTimer.setOnFinished(event ->{
             setStatus(Status.READY);
-            coolTimer.stop();
-        }));
+            coolTimer.stop(); // 停止冷却计时器。
+        });
     }
 
     @Override
@@ -41,7 +41,7 @@ public class StandardRifle extends BaseWeapon{
                 newBullet.setPos(x, y);
                 newBullet.putOnPane(root);
                 setStatus(Status.COOLDOWN);
-                coolTimer.playFromStart(); // 开始冷却计时器。
+                coolTimer.play(); // 开始冷却计时器。
                 return newBullet;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -51,7 +51,7 @@ public class StandardRifle extends BaseWeapon{
     }
 
     @Override
-    public BaseEntity selectTarget(double x, double y, LinkedList<BaseMonster> monsters) { // 选择目标，并传入当前武器的位置信息。
+    public BaseEntity selectTarget(double x, double y, LinkedList<BaseMonster> monsters) { // 选择目标，并传入当前武器的位置信息。TODO: 改进算法
         List<Double> distList = new ArrayList<>();
         for (BaseEntity entity : monsters) {
             distList.add((entity.getX().get() - x) * (entity.getX().get() - x) + (entity.getY().get() - y) * (entity.getY().get() - y)); // 计算距离，并平方。

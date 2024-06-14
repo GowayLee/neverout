@@ -9,9 +9,13 @@ import com.mambastu.material.pojo.weapon.BaseWeapon;
 
 import com.mambastu.material.pojo.enums.CollisionState;
 
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,25 +26,36 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
     protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
     protected final PauseTransition skillCDTimer = new PauseTransition(); // 技能冷却时间计时器
+    protected final Timeline invincibleTimer = new Timeline( // 无敌帧效果
+            new KeyFrame(Duration.ZERO, e -> {
+                showingImageView.setOpacity(1.0);
+            }),
+            new KeyFrame(Duration.millis(25), e -> {
+                showingImageView.setOpacity(0.0);
+            }),
+            new KeyFrame(Duration.millis(50), e -> {
+                showingImageView.setOpacity(1.0);
+            }));
+
     protected BaseWeapon weapon;
 
-    public enum State {
+    protected enum State {
         MOVING, SKILL
     }
 
-    public enum SkillState {
+    protected enum SkillState {
         READY, ACTIVE, COOLDOWN
     }
 
-    public enum InjuryState {
+    protected enum InjuryState {
         NORMAL, INVINCIBLE
     }
 
-    private State state;
-    private SkillState skillState;
-    private InjuryState injuryState;
+    protected State state;
+    protected SkillState skillState;
+    protected InjuryState injuryState;
 
-    public void move(Set<GameInput> activeInputs) { // TODO: 边界问题
+    public void move(Set<GameInput> activeInputs, Pane root) { // TODO: 边界问题
         double deltaX = 0, deltaY = 0;
 
         if (activeInputs.contains(GameInput.MOVE_UP))
@@ -62,6 +77,7 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
 
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
+        crossedBoundary(root);
     }
 
     public void setPos(double sceneWidth, double sceneHeight) { // 默认出生在屏幕中央
@@ -70,6 +86,10 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
         setImageSize(50, 50);
+    }
+
+    public void getHurt(Integer damage) {
+        HP.set(HP.get() - damage); // 受到伤害，扣除生命值
     }
 
     public boolean isDie() { // 判断玩家是否死亡
@@ -88,7 +108,7 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
     }
 
     @Override
-    public void crossedBoundary() {
+    public void crossedBoundary(Pane root) {
         double sceneWidth = root.getWidth();
         double sceneHeight = root.getHeight();
         RectangleOutBounds sceneBounds = new RectangleOutBounds(new SimpleDoubleProperty(0.0),

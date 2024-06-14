@@ -4,7 +4,9 @@ import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.resource.ResourceManager;
 
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,13 +22,19 @@ public class LaughPlayer extends BasePlayer {
     private double skillDeltaX;
     private double skillDeltaY;
 
+
     public LaughPlayer() {
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Player1");
+        this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
+        this.invincibleTimer.setOnFinished(e -> {
+            System.out.println("Invincible timer finished.");
+            setInjuryState(InjuryState.NORMAL);
+        });
     }
 
     @Override
-    public void init() {
+    public void init() { // 初始化方法，设置初始状态和图片等属性
         setState(State.MOVING);
         setSkillState(SkillState.READY);
         setInjuryState(InjuryState.NORMAL);
@@ -37,7 +45,7 @@ public class LaughPlayer extends BasePlayer {
     }
 
     @Override
-    public void move(Set<GameInput> activeInputs) {
+    public void move(Set<GameInput> activeInputs, Pane root) {
         double deltaX = 0, deltaY = 0;
         savePreviousFrame();
         if (getState() == State.MOVING) {
@@ -66,13 +74,23 @@ public class LaughPlayer extends BasePlayer {
 
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-        crossedBoundary();
+        
+        crossedBoundary(root);
+    }
+
+    @Override
+    public void getHurt(Integer damage) {
+        if (injuryState != InjuryState.INVINCIBLE) {
+            HP.set(HP.get() - damage); // 受到伤害，扣除生命值
+            setInjuryState(InjuryState.INVINCIBLE); // 进入无敌状态
+            invincibleTimer.playFromStart();
+        }
     }
 
     private void activateSkill(Set<GameInput> activeInputs) {
         setState(State.SKILL);
         setSkillState(SkillState.ACTIVE);
-        setInjuryState(InjuryState.INVINCIBLE);
+        setInjuryState(InjuryState.INVINCIBLE); // 无敌状态，不受伤害
         skillDeltaX = 0;
         skillDeltaY = 0;
 

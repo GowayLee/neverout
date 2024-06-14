@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class GlobalRecord {
     private final SimpleIntegerProperty totalLevelNum; // 关卡编号
-    private final SimpleIntegerProperty totalDuration;// 剩余时间
+    private final SimpleIntegerProperty totalDuration;
     private final SimpleIntegerProperty totalKillCount; // 击杀数量
 
     public GlobalRecord() {

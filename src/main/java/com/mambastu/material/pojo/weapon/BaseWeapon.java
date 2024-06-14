@@ -9,7 +9,7 @@ import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.bullet.BulletType;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 
-import javafx.animation.Timeline;
+import javafx.animation.PauseTransition;
 import javafx.scene.layout.Pane;
 
 public abstract class BaseWeapon {
@@ -22,7 +22,7 @@ public abstract class BaseWeapon {
 
     protected BulletType bulletType;
     protected Status coolStatus;
-    protected final Timeline coolTimer = new Timeline();
+    protected final PauseTransition coolTimer = new PauseTransition();
 
     protected void setStatus(Status status) {
         coolStatus = status;

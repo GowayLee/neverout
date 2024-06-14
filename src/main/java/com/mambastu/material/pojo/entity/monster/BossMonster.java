@@ -24,6 +24,7 @@ public class BossMonster extends BaseMonster {
         this.attackImage = ResourceManager.getInstance().getImg("attackImage", "Monster", "BossMonster");
         this.dieImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
         this.omenImage = ResourceManager.getInstance().getImg("omenImage", "Monster", "BossMonster");
+        this.damage = 20;
         this.moveTimer = new Timeline(
                 new KeyFrame(Duration.seconds(4.0), event -> {
                     setState(State.SHAKING);
@@ -53,7 +54,7 @@ public class BossMonster extends BaseMonster {
     }
 
     @Override
-    public void move(double targetX, double targetY) {
+    public void move(double targetX, double targetY, Pane root) {
         speed = 10.0;
         savePreviousFrame();
         if (getState() == State.MOVING) {
@@ -72,9 +73,17 @@ public class BossMonster extends BaseMonster {
             y.set(y.get() + shakingDistance * showingImageView.getFitHeight() * 0.4);
             showingImageView.setX(x.get());
             showingImageView.setY(y.get());
-            crossedBoundary();
+            crossedBoundary(root);
         }
 
+    }
+
+    @Override
+    public Integer releaseDamage() {
+        if (state != State.OMEN) {
+            return damage;
+        }
+        return 0;
     }
 
     @Override
