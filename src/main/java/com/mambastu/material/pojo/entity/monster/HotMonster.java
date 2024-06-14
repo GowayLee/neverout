@@ -11,34 +11,38 @@ import javafx.util.Duration;
 
 public class HotMonster extends BaseMonster {
     private final Image bornImage;
+    private final Image omenImage;
+    private Timeline timeline;
+
     private final Image dieImage;
 
-    private enum State {
-        IDLE, MOVING
-    }
-    private State state;
 
     public HotMonster() {
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "HotMonster");
+        this.omenImage = ResourceManager.getInstance().getImg("omenImage", "Monster", "HotMonster");
+        timeline = new Timeline(
+                new KeyFrame(Duration.seconds(1), event ->{
+                    setState(State.MOVING);
+                    showingImage.set(bornImage);
+                })
+        );
+        timeline.setCycleCount(1);
         this.dieImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
     }
 
     @Override
     public void init() {
+        timeline.playFromStart();
         HP.set(100);
-        showingImage.set(bornImage);
+        showingImage.set(omenImage);
         showingImageView.imageProperty().bind(showingImage);
-        this.state = HotMonster.State.IDLE;
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), event ->this.state = State.MOVING)
-        );
-        timeline.setCycleCount(1);
-        timeline.play();
+        setState(State.OMEN);
     }
 
     @Override
     public void move(double targetX, double targetY) {
-        if (state == HotMonster.State.MOVING){
+        savePreviousFrame();
+        if (getState() == HotMonster.State.MOVING){
             speed = 1.2;
         double dx = targetX - x.get();
         double dy = targetY - y.get();
@@ -50,6 +54,7 @@ public class HotMonster extends BaseMonster {
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
         }
+        crossedBoundary();
     }
 
     @Override
