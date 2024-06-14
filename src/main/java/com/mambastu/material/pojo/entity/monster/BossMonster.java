@@ -1,20 +1,18 @@
 package com.mambastu.material.pojo.entity.monster;
 
-import com.mambastu.material.pojo.Interface.Movable;
-import com.mambastu.material.pojo.enums.CollisionState;
 import com.mambastu.factories.MonsterFactory;
 import com.mambastu.material.resource.ResourceManager;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 public class BossMonster extends BaseMonster {
-    private final Timeline timeline;
-    private final Timeline initTimeline;
+    private final PauseTransition initTimer; 
+    private final Timeline moveTimer;
     private final Image omenImage;
     private final Image bornImage;
     private final Image attackImage;
@@ -26,7 +24,7 @@ public class BossMonster extends BaseMonster {
         this.attackImage = ResourceManager.getInstance().getImg("attackImage", "Monster", "BossMonster");
         this.dieImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
         this.omenImage = ResourceManager.getInstance().getImg("omenImage", "Monster", "BossMonster");
-        this.timeline = new Timeline(
+        this.moveTimer = new Timeline(
                 new KeyFrame(Duration.seconds(4.0), event -> {
                     setState(State.SHAKING);
                     showingImage.set(attackImage);
@@ -36,22 +34,19 @@ public class BossMonster extends BaseMonster {
                     setState(State.IDLE);
                     showingImage.set(bornImage);
                 }));
-
-        this.initTimeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), event -> {
-                    setState(State.IDLE);
-                    showingImage.set(bornImage);
-                    timeline.playFromStart();
-                })
-        );
-        initTimeline.setCycleCount(1);
-        timeline.setCycleCount(Timeline.INDEFINITE);
+        moveTimer.setCycleCount(Timeline.INDEFINITE);
+        this.initTimer = new PauseTransition(Duration.seconds(1));
+        this.initTimer.setOnFinished(event -> {
+            setState(State.IDLE);
+            moveTimer.playFromStart();
+            showingImage.set(bornImage);
+        });
     }
 
     @Override
     public void init() {
         HP.set(200);
-        initTimeline.playFromStart();
+        initTimer.playFromStart();
         setState(State.OMEN);
         showingImage.set(omenImage);
         showingImageView.imageProperty().bind(showingImage);

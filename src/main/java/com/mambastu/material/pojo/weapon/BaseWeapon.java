@@ -13,7 +13,7 @@ import javafx.animation.Timeline;
 import javafx.scene.layout.Pane;
 
 public abstract class BaseWeapon {
-    protected enum Status {READY, COOLING}; // 武器的状态，可以是准备就绪或冷却中。
+    protected enum Status {READY, COOLDOWN}; // 武器的状态，可以是准备就绪或冷却中。
 
     protected int damage; // 子弹的伤害值
     protected double bulletSpeed;

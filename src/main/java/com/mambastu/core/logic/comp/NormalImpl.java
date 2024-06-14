@@ -20,7 +20,7 @@ import com.mambastu.listener.LogicLayerListener;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.enums.CollisionState;
-import com.mambastu.material.pojo.entity.enums.CollisionState;
+
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
@@ -91,7 +91,7 @@ public class NormalImpl implements ModeLogic {
             player.init();
             player.setPos(gamePane.getWidth(), gamePane.getHeight());
             player.setRoot(gamePane);
-            player.putOnPane();
+            player.putOnPane(gamePane);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -120,7 +120,7 @@ public class NormalImpl implements ModeLogic {
                     BaseMonster monster = MonsterFactory.getInstance().create(eggType);
                     monster.setRoot(gamePane);
                     monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
-                    monster.putOnPane();
+                    monster.putOnPane(gamePane);
                     monsterList.add(monster);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -276,7 +276,7 @@ public class NormalImpl implements ModeLogic {
 
     private void clearAllEntity() {
         for (BaseMonster monster : monsterList) {
-            monster.removeFromPane();
+            monster.removeFromPane(gamePane);
         }
         monsterList.clear();
         monsterEggTimerList.clear();

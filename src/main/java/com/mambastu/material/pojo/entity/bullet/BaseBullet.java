@@ -51,17 +51,20 @@ public abstract class BaseBullet extends BaseEntity implements Movable {
     public void crossedBoundary() {
         double sceneWidth = root.getWidth();
         double sceneHeight = root.getHeight();
-        RectangleOutBounds sceneBounds = new RectangleOutBounds(new SimpleDoubleProperty(0.0),new SimpleDoubleProperty(0.0),sceneWidth,sceneHeight);
+        RectangleOutBounds sceneBounds = new RectangleOutBounds(new SimpleDoubleProperty(0.0),
+                new SimpleDoubleProperty(0.0), sceneWidth, sceneHeight);
         CollisionState collisionState = sceneBounds.collisionState(this.getBounds());
-        if(collisionState== CollisionState.HORIZONTAL)x=new SimpleDoubleProperty(prevX);
-        if(collisionState==CollisionState.VERTICAL)y=new SimpleDoubleProperty(prevY);
-        if(collisionState==CollisionState.BOTH){
-            x=new SimpleDoubleProperty(prevX);
-            y=new SimpleDoubleProperty(prevY);
+        if (collisionState == CollisionState.HORIZONTAL)
+            x = new SimpleDoubleProperty(prevX);
+        if (collisionState == CollisionState.VERTICAL)
+            y = new SimpleDoubleProperty(prevY);
+        if (collisionState == CollisionState.BOTH) {
+            x = new SimpleDoubleProperty(prevX);
+            y = new SimpleDoubleProperty(prevY);
         }
     }
 
-    public void savePreviousFrame(){
+    public void savePreviousFrame() {
         prevX = x.get();
         prevY = y.get();
     }

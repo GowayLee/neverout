@@ -40,7 +40,7 @@ public class StandardRifle extends BaseWeapon{
                 newBullet.setTarget(selectTarget(x, y, monsters));
                 newBullet.setPos(x, y);
                 newBullet.putOnPane(root);
-                setStatus(Status.COOLING);
+                setStatus(Status.COOLDOWN);
                 coolTimer.playFromStart(); // 开始冷却计时器。
                 return newBullet;
             } catch (Exception e) {

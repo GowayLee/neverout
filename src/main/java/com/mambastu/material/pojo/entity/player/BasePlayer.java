@@ -8,6 +8,8 @@ import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.weapon.BaseWeapon;
 
 import com.mambastu.material.pojo.enums.CollisionState;
+
+import javafx.animation.PauseTransition;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import lombok.Getter;
@@ -19,11 +21,21 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
     protected double speed = 5;
     protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
+    protected final PauseTransition skillCDTimer = new PauseTransition(); // 技能冷却时间计时器
     protected BaseWeapon weapon;
 
-    public enum State {MOVING,SKILL}
-    public enum SkillState {READY, ACTIVE, COOLDOWN}
-    public enum InjuryState {NORMAL,INVINCIBLE}
+    public enum State {
+        MOVING, SKILL
+    }
+
+    public enum SkillState {
+        READY, ACTIVE, COOLDOWN
+    }
+
+    public enum InjuryState {
+        NORMAL, INVINCIBLE
+    }
+
     private State state;
     private SkillState skillState;
     private InjuryState injuryState;
@@ -79,30 +91,22 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
     public void crossedBoundary() {
         double sceneWidth = root.getWidth();
         double sceneHeight = root.getHeight();
-        RectangleOutBounds sceneBounds = new RectangleOutBounds(new SimpleDoubleProperty(0.0), new SimpleDoubleProperty(0.0), sceneWidth, sceneHeight);
+        RectangleOutBounds sceneBounds = new RectangleOutBounds(new SimpleDoubleProperty(0.0),
+                new SimpleDoubleProperty(0.0), sceneWidth, sceneHeight);
         CollisionState collisionState = sceneBounds.collisionState(this.getBounds());
-        if (collisionState == CollisionState.HORIZONTAL) x = new SimpleDoubleProperty(prevX);
-        if (collisionState == CollisionState.VERTICAL) y = new SimpleDoubleProperty(prevY);
+        if (collisionState == CollisionState.HORIZONTAL)
+            x = new SimpleDoubleProperty(prevX);
+        if (collisionState == CollisionState.VERTICAL)
+            y = new SimpleDoubleProperty(prevY);
         if (collisionState == CollisionState.BOTH) {
             x = new SimpleDoubleProperty(prevX);
             y = new SimpleDoubleProperty(prevY);
         }
     }
 
+    @Override
     public void savePreviousFrame() {
         prevX = x.get();
         prevY = y.get();
     }
-
-    public State getState() {return state;}
-
-    public void setState(State state) {this.state = state;}
-
-    public SkillState getSkillState() {return skillState;}
-
-    public void setSkillState(SkillState skillState) {this.skillState = skillState;}
-
-    public InjuryState getInjuryState() {return injuryState;}
-
-    public void setInjuryState(InjuryState injuryState) {this.injuryState = injuryState;}
 }
