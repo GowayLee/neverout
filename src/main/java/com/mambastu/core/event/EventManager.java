@@ -1,6 +1,5 @@
 package com.mambastu.core.event;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +34,6 @@ public class EventManager {
             loadHandlerForEvent(event.getClass());
             handler = handlerMap.get(event.getClass());
         }
-
         if (handler != null) {
             try {
                 @SuppressWarnings("unchecked")
@@ -54,7 +52,7 @@ public class EventManager {
             @SuppressWarnings("unchecked")
             BaseEventHandler<T> handlerInstance = (BaseEventHandler<T>) handlerClass.getDeclaredConstructor().newInstance(); // 强制向下转型，类型不安全
             register(eventType, handlerInstance);
-        } catch (ClassCastException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

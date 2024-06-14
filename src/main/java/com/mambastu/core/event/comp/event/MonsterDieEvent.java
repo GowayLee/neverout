@@ -5,15 +5,24 @@ import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import javafx.scene.layout.Pane;
 import lombok.Getter;
 
-public class MonsterDieEvent extends BaseEvent{
-    @Getter
-    private final BaseMonster monster;
+public class MonsterDieEvent extends BaseEvent {
+    private final static MonsterDieEvent INSTANCE = new MonsterDieEvent();
 
     @Getter
-    private final Pane root; // 用于移除怪物节点
+    private BaseMonster monster;
 
-    public MonsterDieEvent(BaseMonster monster, Pane root) {
+    @Getter
+    private Pane root; // 用于移除怪物节点
+
+    public static MonsterDieEvent getInstance() {
+        return INSTANCE;
+    }
+
+    private MonsterDieEvent() {
         super("MonsterDieEvent");
+    }
+
+    public void setProperty(BaseMonster monster, Pane root) {
         this.monster = monster;
         this.root = root;
     }

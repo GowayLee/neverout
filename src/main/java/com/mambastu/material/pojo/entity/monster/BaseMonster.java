@@ -6,6 +6,7 @@ import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.layout.Pane;
 
 
 public abstract class BaseMonster extends BaseEntity{
@@ -15,7 +16,7 @@ public abstract class BaseMonster extends BaseEntity{
 
     abstract public void init();
 
-    abstract public void die();
+    abstract public void die(Pane root);
 
     public void getHurt(Integer damage) {
         HP.set(HP.get() - damage); // 怪物受到伤害

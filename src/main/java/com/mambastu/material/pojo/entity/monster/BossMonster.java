@@ -1,10 +1,12 @@
 package com.mambastu.material.pojo.entity.monster;
 
+import com.mambastu.factories.MonsterFactory;
 import com.mambastu.material.resource.ResourceManager;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 public class BossMonster extends BaseMonster {
@@ -72,7 +74,12 @@ public class BossMonster extends BaseMonster {
     }
 
     @Override
-    public void die() {
+    public void die(Pane root) {
         showingImage.set(dieImage);
+        Timeline rmTimer = new Timeline(new KeyFrame(Duration.seconds(1), e ->{
+            removeFromPane(root); // Remove from pane after 1 second.
+            MonsterFactory.getInstance().delete(this);
+        }));
+        rmTimer.play();
     }
 }
