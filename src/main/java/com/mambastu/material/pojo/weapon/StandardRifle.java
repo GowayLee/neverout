@@ -21,7 +21,7 @@ public class StandardRifle extends BaseWeapon{
     public StandardRifle() {
         damage = 8;
         bulletSpeed = 20;
-        range = 100;
+        range = 600;
         coolTime = 70;
         bulletType = BulletType.StandardBullet;
         coolStatus = Status.READY;

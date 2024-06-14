@@ -7,11 +7,13 @@ import com.mambastu.material.pojo.entity.player.BasePlayer;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
 
 public abstract class BaseMonster extends BaseEntity{
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(); // 怪物血量
     protected double speed;
+
     abstract public void move(double targX, double targY); // 怪物的移动需要参照目标
 
     abstract public void init();
@@ -20,6 +22,13 @@ public abstract class BaseMonster extends BaseEntity{
 
     public void getHurt(Integer damage) {
         HP.set(HP.get() - damage); // 怪物受到伤害
+
+        colorAdjust.setBrightness(0.9); // 将亮度设置为最大，变成白色
+        showingImageView.setEffect(colorAdjust);
+        
+        FXTimer.setDuration(Duration.millis(50));
+        FXTimer.setOnFinished(event -> showingImageView.setEffect(null));
+        FXTimer.play();
     }
 
     public boolean isDie() { // 判断是否死亡

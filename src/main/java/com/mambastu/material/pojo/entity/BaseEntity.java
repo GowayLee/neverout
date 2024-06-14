@@ -1,7 +1,9 @@
 package com.mambastu.material.pojo.entity;
 
+import javafx.animation.PauseTransition;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -17,6 +19,8 @@ public abstract class BaseEntity {
     protected SimpleDoubleProperty y = new SimpleDoubleProperty();
     protected double prevX; // 用于碰撞检测的变量，记录上一次的位置
     protected double prevY;
+    protected final ColorAdjust colorAdjust = new ColorAdjust(); // 特效
+    protected final PauseTransition FXTimer = new PauseTransition(); // 特效计时器
 
     abstract public void init();
 

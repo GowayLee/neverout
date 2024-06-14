@@ -184,7 +184,7 @@ public class NormalImpl implements ModeLogic {
                     checkMonsterDie(monster);
                     break;
                 }
-                if (bullet.isHitTarget()) { // 如果子弹已经到达目标位置但是没有命中目标，说明目标已经死亡并被对象池回收，该子弹也应该被回收
+                if (bullet.isHitTarget() || bullet.isOutRange()) { // 如果子弹已经到达目标位置但是没有命中目标，说明目标已经死亡并被对象池回收，该子弹也应该被回收
                     removeList.add(bullet);
                     break;
                 }

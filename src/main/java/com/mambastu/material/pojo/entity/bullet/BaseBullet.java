@@ -17,6 +17,10 @@ public abstract class BaseBullet extends BaseEntity{
 
     abstract public boolean isHitTarget();
 
+    public boolean isOutRange() {
+        return range <= 0; // 判断子弹是否超出射程，超出射程后消失
+    }
+
     public void setProps(int damage, double speed, double range) {
         this.damage = damage;
         this.speed = speed;

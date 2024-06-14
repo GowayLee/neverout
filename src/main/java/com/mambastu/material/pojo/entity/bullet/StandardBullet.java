@@ -34,6 +34,7 @@ public class StandardBullet extends BaseBullet{
             double scale = speed / Math.sqrt(squaredDistance);
             currentX += dx * scale;
             currentY += dy * scale;
+            range -= speed; // 减少子弹的射程
         } else if (squaredDistance > 0) { // 到达目标位置
             currentX = targetX;
             currentY = targetY;
