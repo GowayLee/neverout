@@ -21,10 +21,9 @@ public class LaughPlayer extends BasePlayer {
     private Image bornImage;
     private Image readyImage;
     private Image dieImage;
-    private double skillCD = 2;//second
+    private double skillCD = 2;// second
     private double skillDeltaX;
     private double skillDeltaY;
-
 
     public LaughPlayer() {
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
@@ -37,7 +36,7 @@ public class LaughPlayer extends BasePlayer {
     }
 
     @Override
-    public void init() {//初始化为移动状态，技能预备，可受伤
+    public void init() {// 初始化为移动状态，技能预备，可受伤
         setState(State.MOVING);
         setSkillState(SkillState.READY);
         setInjuryState(InjuryState.NORMAL);
@@ -72,7 +71,7 @@ public class LaughPlayer extends BasePlayer {
             deltaY /= Math.sqrt(2);
         }
 
-        if (getState()==State.SKILL) {
+        if (getState() == State.SKILL) {
             createDashTrail(root);
         }
 
@@ -81,7 +80,7 @@ public class LaughPlayer extends BasePlayer {
 
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-        
+
         crossedBoundary(root);
     }
 
@@ -94,9 +93,7 @@ public class LaughPlayer extends BasePlayer {
         }
     }
 
-
-
-    private void activateSkill(Set<GameInput> activeInputs) {//技能：根据玩家的输入向前免伤冲刺
+    private void activateSkill(Set<GameInput> activeInputs) {// 技能：根据玩家的输入向前免伤冲刺
         setState(State.SKILL);
         setSkillState(SkillState.ACTIVE);
         setInjuryState(InjuryState.INVINCIBLE); // 无敌状态，不受伤害
@@ -108,13 +105,16 @@ public class LaughPlayer extends BasePlayer {
         boolean moveLeft = activeInputs.contains(GameInput.MOVE_LEFT);
         boolean moveRight = activeInputs.contains(GameInput.MOVE_RIGHT);
 
-
-        if (moveUp) skillDeltaY -= speed * 7;
-        if (moveDown) skillDeltaY += speed * 7;
-        if (moveLeft) skillDeltaX -= speed * 7;
-        if (moveRight) skillDeltaX += speed * 7;
-        //平衡斜向移动时的距离
-        if ((moveUp||moveDown) && (moveLeft || moveRight)) {
+        if (moveUp)
+            skillDeltaY -= speed * 7;
+        if (moveDown)
+            skillDeltaY += speed * 7;
+        if (moveLeft)
+            skillDeltaX -= speed * 7;
+        if (moveRight)
+            skillDeltaX += speed * 7;
+        // 平衡斜向移动时的距离
+        if ((moveUp || moveDown) && (moveLeft || moveRight)) {
             skillDeltaX *= 1 / Math.sqrt(2);
             skillDeltaY *= 1 / Math.sqrt(2);
         }
@@ -129,7 +129,7 @@ public class LaughPlayer extends BasePlayer {
         skillTimeline.play();
     }
 
-    private void startSkillCooldown() {//进入技能冷却
+    private void startSkillCooldown() {// 进入技能冷却
         skillCDTimer.setDuration(Duration.seconds(skillCD));
         skillCDTimer.setOnFinished(event -> setSkillState(SkillState.READY));
         skillCDTimer.play();
@@ -145,12 +145,12 @@ public class LaughPlayer extends BasePlayer {
         setStateImage();
     }
 
-    public void setStateImage() {//根据技能的状态来设置图像
+    public void setStateImage() {// 根据技能的状态来设置图像，CD条替代物
         ColorAdjust colorAdjust = new ColorAdjust();
         if (getSkillState() == SkillState.ACTIVE) {
             colorAdjust.setHue(1);
             showingImageView.setEffect(colorAdjust);
-        } else if(getSkillState() == SkillState.READY) {
+        } else if (getSkillState() == SkillState.READY) {
             showingImage.set(readyImage);
             showingImageView.setEffect(colorAdjust);
         } else {
@@ -159,15 +159,15 @@ public class LaughPlayer extends BasePlayer {
         }
     }
 
-    private void createDashTrail(Pane root) {//冲刺生成虚影
-        //根据玩家位置生成虚影
+    private void createDashTrail(Pane root) {// 冲刺生成虚影
+        // 根据玩家位置生成虚影
         ImageView trail = new ImageView(showingImageView.getImage());
         trail.setFitWidth(showingImageView.getFitWidth());
         trail.setFitHeight(showingImageView.getFitHeight());
         trail.setX(showingImageView.getX());
         trail.setY(showingImageView.getY());
 
-        //虚影特性： 变蓝  0.5透明度 淡出（时间0.5秒）
+        // 虚影特性： 变蓝 0.5透明度 淡出（时间0.5秒）
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setHue(0.5);
         trail.setEffect(colorAdjust);

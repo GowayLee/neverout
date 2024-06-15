@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class BaseEntity {
+    protected boolean isOnStage; // 是否在舞台上，Otherwise就在对象池中
     protected final ImageView showingImageView = new ImageView(); // 正在被展示的图片节点
     protected final SimpleObjectProperty<Image> showingImage = new SimpleObjectProperty<>(); // 正在被绑定展示的图片
     protected SimpleDoubleProperty x = new SimpleDoubleProperty();

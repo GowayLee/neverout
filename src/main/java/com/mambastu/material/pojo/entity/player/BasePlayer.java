@@ -55,7 +55,7 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
     private SkillState skillState;
     private InjuryState injuryState;
 
-    public void move(Set<GameInput> activeInputs, Pane root) { // TODO: 边界问题
+    public void move(Set<GameInput> activeInputs, Pane root) {
         double deltaX = 0, deltaY = 0;
 
         if (activeInputs.contains(GameInput.MOVE_UP))
@@ -115,12 +115,12 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
                 new SimpleDoubleProperty(0.0), sceneWidth, sceneHeight);
         CollisionState collisionState = sceneBounds.collisionState(this.getBounds());
         if (collisionState == CollisionState.HORIZONTAL)
-            x = new SimpleDoubleProperty(prevX);
+            x.set(prevX);
         if (collisionState == CollisionState.VERTICAL)
-            y = new SimpleDoubleProperty(prevY);
+            y.set(prevY);
         if (collisionState == CollisionState.BOTH) {
-            x = new SimpleDoubleProperty(prevX);
-            y = new SimpleDoubleProperty(prevY);
+            x.set(prevX);
+            y.set(prevY);
         }
     }
 

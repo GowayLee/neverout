@@ -16,10 +16,18 @@ public abstract class BaseBullet extends BaseEntity implements Movable {
 
     protected BaseEntity target; // 子弹的目标实体，用于追踪
 
-    abstract public void move(); // 移动子弹的方法
+    abstract public void move(Pane root); // 移动子弹的方法
 
-    abstract public boolean isHitTarget();
+    /**
+     * 子弹击中目标后的处理方法，例如爆炸效果等
+     * @return boolean 子弹是否继续存在，如果返回false，则子弹消失
+     */
+    abstract public boolean afterHitTarget();
 
+    public boolean isTargetAlive() { // 判断目标是否存活，用于追踪
+        return target.isOnStage();
+    }
+    
     public boolean isOutRange() {
         return range <= 0; // 判断子弹是否超出射程，超出射程后消失
     }
@@ -68,6 +76,7 @@ public abstract class BaseBullet extends BaseEntity implements Movable {
         }
     }
 
+    @Override
     public void savePreviousFrame() {
         prevX = x.get();
         prevY = y.get();

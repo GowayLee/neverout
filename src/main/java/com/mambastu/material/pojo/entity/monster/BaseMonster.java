@@ -34,6 +34,8 @@ public abstract class BaseMonster extends BaseEntity implements Movable {
     protected final ColorAdjust colorAdjust = new ColorAdjust(); // 特效
     protected final PauseTransition hurtFXTimer = new PauseTransition(); // 受伤特效计时器
 
+    abstract public void init();
+
     abstract public void omen(List<BaseMonster> monsterList);
 
     abstract public void move(double targX, double targY, Pane root); // 怪物的移动需要参照目标

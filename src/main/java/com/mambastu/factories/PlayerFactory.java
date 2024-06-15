@@ -29,7 +29,7 @@ public class PlayerFactory implements EntityFactory<BasePlayer, PlayerTypes>  {
             case LaughPlayer:
                 try {
                     LaughPlayer laughPlayer = (LaughPlayer) LaughPlayer.class.getDeclaredConstructor().newInstance();
-                    // 玩家初始化逻辑与怪物不同, 需要在关卡管理器中初始化
+                    laughPlayer.setOnStage(true);
                     return laughPlayer;
                 } catch (Exception e) {
                     logger.error("Error in creating Monster! Unknown player type: " + playerTypes);
