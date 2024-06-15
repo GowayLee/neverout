@@ -183,7 +183,6 @@ public class NormalImpl implements ModeLogic {
                     event.setProperty(bullet, monster, gamePane);
                     EventManager.getInstance().fireEvent(event);
                     checkMonsterDie(monster);
-                    break;
                 }
                 if (!bullet.isValid()) { // 如果子弹无效，则需要移除该子弹
                     removeList.add(bullet);

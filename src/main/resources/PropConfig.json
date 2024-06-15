@@ -2,12 +2,12 @@
   "Props": [
     {
         "name": "DamageBuff",
-        "buffValue": "10.0",
+        "buffValue": "1.2",
         "price": "10"
     },
     {
         "name": "FireCDBuff",
-        "buffValue": "-20.0",
+        "buffValue": "0.8",
         "price": "5"
     },
     {

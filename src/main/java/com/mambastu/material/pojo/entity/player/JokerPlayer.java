@@ -10,43 +10,41 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Random;
 import java.util.Set;
 
-@Getter
-@Setter
 public class JokerPlayer extends BasePlayer {
     private Image bornImage;
     private Image readyImage;
     private Image dieImage;
-    private double skillCD = 3; // second
     private Random random = new Random();
 
     public enum JokerSkillState {
         RED, BLUE
     };
 
-    JokerSkillState jokerSkillState;
+    private JokerSkillState jokerSkillState;
 
     public JokerPlayer() {
+        super();
+        super.skillCD.set(2);
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Joker");
         this.readyImage = ResourceManager.getInstance().getImg("readyImage", "Player", "Joker");
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Joker");
         setImageSize(50, 50);
+        this.jokerSkillState = JokerSkillState.BLUE;
         this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
         this.invincibleTimer.setOnFinished(e -> {
-            setInjuryState(InjuryState.NORMAL);
+            super.injuryState = InjuryState.NORMAL;
         });
     }
 
     @Override
     public void init() { // 初始化为移动状态，技能预备，可受伤
-        setState(State.MOVING);
-        setSkillState(SkillState.READY);
-        setInjuryState(InjuryState.NORMAL);
+        state = State.MOVING;
+        skillState = SkillState.READY;
+        injuryState = InjuryState.NORMAL;
         showingImage.set(bornImage);
         showingImageView.imageProperty().bind(showingImage);
     }
@@ -54,6 +52,7 @@ public class JokerPlayer extends BasePlayer {
     @Override
     public void move(Set<GameInput> activeInputs, Pane root) {
         double deltaX = 0, deltaY = 0;
+        double speed = this.speed.get();
         if (getState() == State.MOVING || getState() == State.SKILL) {
             if (activeInputs.contains(GameInput.MOVE_UP))
                 deltaY -= speed;
@@ -66,50 +65,46 @@ public class JokerPlayer extends BasePlayer {
             if (activeInputs.contains(GameInput.SKILL) && getSkillState() == SkillState.READY)
                 activateSkill(activeInputs);
         }
-
         if (deltaX != 0 && deltaY != 0 && getState() == State.MOVING) {
             deltaX /= Math.sqrt(2);
             deltaY /= Math.sqrt(2);
         }
-
         if (getState() == State.SKILL) {
             createDashTrail(root);
         }
-
         x.set(x.get() + deltaX);
         y.set(y.get() + deltaY);
-
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
         trappedInStage();
     }
 
     private void activateSkill(Set<GameInput> activeInputs) { // 技能：随机进入一种状态
-        setState(State.SKILL);
-        setSkillState(SkillState.ACTIVE);
-
+        state = State.SKILL;
+        skillState = SkillState.ACTIVE;
+        setStateImage();
+        
         int skillType = random.nextInt(2);
         if (skillType == 0) { // 状态1：速度减慢至原速度的0.75倍，不会受到伤害，背后有红色虚影
-            setJokerSkillState(JokerSkillState.RED);
-            setInjuryState(InjuryState.INVINCIBLE);
-            speed *= 0.5;
-        } else { // 状态2：速度加快至2倍，会受到伤害，背后有蓝色虚影
-            setJokerSkillState(JokerSkillState.BLUE);
-            setInjuryState(InjuryState.NORMAL);
-            speed *= 2;
+            jokerSkillState = JokerSkillState.RED;
+            injuryState = InjuryState.INVINCIBLE;
+            speed.set(this.speed.get() / 2);
+        } else {
+            jokerSkillState = JokerSkillState.BLUE;
+            injuryState = InjuryState.NORMAL;
+            speed.set(this.speed.get() * 2);
         }
 
         PauseTransition skillTimeline = new PauseTransition(Duration.seconds(2));
         skillTimeline.setOnFinished(event -> {
-            setState(State.MOVING);
-            setSkillState(SkillState.COOLDOWN);
-            setInjuryState(InjuryState.NORMAL);
-
+            state = State.MOVING;
+            skillState = SkillState.COOLDOWN;
+            injuryState = InjuryState.NORMAL;
             // 重置速度为原始值
             if (this.jokerSkillState == JokerSkillState.BLUE) {
-                speed /= 2;
+                speed.set(this.speed.get() / 2);
             } else if (this.jokerSkillState == JokerSkillState.RED) {
-                speed /= 0.5;
+                speed.set(this.speed.get() * 2);
             }
 
             startSkillCooldown();
@@ -118,8 +113,8 @@ public class JokerPlayer extends BasePlayer {
     }
 
     private void startSkillCooldown() { // 进入技能冷却
-        skillCDTimer.setDuration(Duration.seconds(skillCD));
-        skillCDTimer.setOnFinished(event -> setSkillState(SkillState.READY));
+        skillCDTimer.setDuration(Duration.seconds(skillCD.get()));
+        skillCDTimer.setOnFinished(event -> skillState = SkillState.READY);
         skillCDTimer.play();
     }
 
@@ -131,15 +126,9 @@ public class JokerPlayer extends BasePlayer {
     public void getHurt(Integer damage) {
         if (super.getInjuryState() != InjuryState.INVINCIBLE) {
             HP.set(HP.get() - damage); // 受到伤害，扣除生命值
-            setInjuryState(InjuryState.INVINCIBLE); // 进入无敌状态
+            injuryState = InjuryState.INVINCIBLE; // 进入无敌状态
             invincibleTimer.playFromStart();
         }
-    }
-
-    @Override
-    public void setSkillState(SkillState state) {
-        super.setSkillState(state);
-        setStateImage();
     }
 
     public void setStateImage() { // 根据技能的状态来设置图像

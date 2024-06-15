@@ -3,14 +3,9 @@ package com.mambastu.material.pojo.entity.player;
 import java.util.Set;
 
 import com.mambastu.controller.input.comp.GameInput;
-import com.mambastu.material.pojo.Interface.Movable;
 import com.mambastu.material.pojo.bound.CircleBound;
-import com.mambastu.material.pojo.bound.RectangleOutBound;
-import com.mambastu.material.pojo.bound.ScreenBound;
 import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.weapon.BaseWeapon;
-
-import com.mambastu.material.pojo.enums.CollisionState;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -23,10 +18,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 public abstract class BasePlayer extends BaseEntity{
-    protected double speed = 5;
-    private double skillCD;
+    protected final SimpleDoubleProperty speed = new SimpleDoubleProperty(5.0);
+    protected final SimpleDoubleProperty skillCD = new SimpleDoubleProperty(); // 秒
     protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
     protected final PauseTransition skillCDTimer = new PauseTransition(); // 技能冷却时间计时器
@@ -40,7 +34,7 @@ public abstract class BasePlayer extends BaseEntity{
             new KeyFrame(Duration.millis(50), e -> {
                 showingImageView.setOpacity(1.0);
             }));
-
+    @Setter
     protected BaseWeapon weapon;
 
     protected enum State {
@@ -55,9 +49,9 @@ public abstract class BasePlayer extends BaseEntity{
         NORMAL, INVINCIBLE
     }
 
-    private State state;
-    private SkillState skillState;
-    private InjuryState injuryState;
+    protected State state;
+    protected SkillState skillState;
+    protected InjuryState injuryState;
 
     public BasePlayer() { // 默认构造函数内设置玩家的碰撞箱
         this.bound = new CircleBound(x, y, 50, prevX, prevY);
@@ -65,7 +59,7 @@ public abstract class BasePlayer extends BaseEntity{
 
     public void move(Set<GameInput> activeInputs, Pane root) {
         double deltaX = 0, deltaY = 0;
-
+        double speed = this.speed.get(); // 获取玩家速度属性值
         if (activeInputs.contains(GameInput.MOVE_UP))
             deltaY -= speed;
         if (activeInputs.contains(GameInput.MOVE_DOWN))

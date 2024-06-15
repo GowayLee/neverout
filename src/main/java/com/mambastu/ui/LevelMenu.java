@@ -213,7 +213,17 @@ public class LevelMenu {
         MaxHPLabel.setStyle("-fx-text-fill: Green;");
         MaxHPLabel.setFont(new Font("Arial", 24));
 
-        dataLayout.getChildren().addAll(coinLabel, MaxHPLabel); // 将金币和最大生命值标签添加到数据布局中
+        Label speedLabel = new Label();
+        speedLabel.textProperty().bind(ctx.getLevelConfig().getPlayer().getSpeed().asString("Speed: %.1f"));
+        speedLabel.setStyle("-fx-text-fill: Red;");
+        speedLabel.setFont(new Font("Arial", 24));
+
+        Label skillCDLabel = new Label();
+        skillCDLabel.textProperty().bind(ctx.getLevelConfig().getPlayer().getSpeed().asString("SkillCD: %.2fs"));
+        skillCDLabel.setStyle("-fx-text-fill: yellow;");
+        skillCDLabel.setFont(new Font("Arial", 24));
+
+        dataLayout.getChildren().addAll(coinLabel, MaxHPLabel, speedLabel, skillCDLabel); // 将金币和最大生命值标签添加到数据布局中
 
         if (weapon != null) {
             Label damageLabel = new Label();
@@ -222,7 +232,7 @@ public class LevelMenu {
             damageLabel.setFont(new Font("Arial", 24));
 
             Label coolTimeLabel = new Label();
-            coolTimeLabel.textProperty().bind(weapon.getCoolTime().asString("WeaponCD: %.2f"));
+            coolTimeLabel.textProperty().bind(weapon.getCoolTime().asString("WeaponCD: %.2fms"));
             coolTimeLabel.setStyle("-fx-text-fill: white;");
             coolTimeLabel.setFont(new Font("Arial", 24));
     

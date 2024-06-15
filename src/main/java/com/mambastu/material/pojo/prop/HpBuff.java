@@ -1,10 +1,9 @@
 package com.mambastu.material.pojo.prop;
 
 import com.mambastu.material.pojo.entity.player.BasePlayer;
-import com.mambastu.material.pojo.weapon.BaseWeapon;
 import com.mambastu.material.resource.ResourceManager;
 
-public class HpBuff extends BaseProp{
+public class HpBuff extends BaseProp {
 
     public HpBuff() {
         this.displayImage = ResourceManager.getInstance().getImg("displayImage", "Prop", "HpBuff");
@@ -14,6 +13,6 @@ public class HpBuff extends BaseProp{
 
     @Override
     public void updateValue(BasePlayer player) {
-        player.getMaxHP().set(player.getMaxHP().get()+(int)buffValue);
+        player.getMaxHP().set(player.getMaxHP().get() + (int) buffValue);
     }
 }

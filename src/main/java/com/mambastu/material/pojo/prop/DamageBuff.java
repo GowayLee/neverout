@@ -9,14 +9,14 @@ public class DamageBuff extends BaseProp {
     public DamageBuff() {
         this.displayImage = ResourceManager.getInstance().getImg("displayImage", "Prop", "DamageBuff");
         this.price = 10;
-        this.buffValue = 10.0;
+        this.buffValue = 1.2;
     }
 
     @Override
     public void updateValue(BasePlayer player) {
         BaseWeapon weapon = player.getWeapon();
         if (weapon != null) {
-            weapon.getDamage().set(weapon.getDamage().get() + (int) buffValue); // 增加攻击力
+            weapon.getDamage().set((int) (weapon.getDamage().get() * buffValue)); // 增加攻击力
         }
     }
 

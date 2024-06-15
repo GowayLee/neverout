@@ -9,14 +9,14 @@ public class FireCDBuff extends BaseProp{
     public FireCDBuff() {
         this.displayImage = ResourceManager.getInstance().getImg("displayImage", "Prop", "FireCDBuff");
         this.price = 5;
-        this.buffValue = -20.0;
+        this.buffValue = 0.8;
     }
 
     @Override
     public void updateValue(BasePlayer player) {
         BaseWeapon weapon = player.getWeapon();
         if (weapon != null) {
-            weapon.getCoolTime().set(weapon.getCoolTime().get() > 20 ? weapon.getCoolTime().get() + buffValue : weapon.getCoolTime().get()); // 增加攻击力, 下限为20ms
+            weapon.getCoolTime().set(weapon.getCoolTime().get() > 20 ? weapon.getCoolTime().get() * buffValue : weapon.getCoolTime().get()); // 增加攻击力, 下限为20ms
         }
     }
 }
