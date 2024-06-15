@@ -19,13 +19,14 @@ public class StandardBullet extends BaseBullet{
 
     @Override
     public void init() {
+        isValid = true;
         showingImage.set(bornImage);
         showingImageView.imageProperty().bind(showingImage);
     }
 
     @Override
     public void move(Pane root) {
-        if (isTargetAlive()) { // 如果目标还活着，继续追踪目标移动子弹
+        if (target.isOnStage()) { // 如果目标还活着，继续追踪目标移动子弹
             double targetX = target.getX().get();
             double targetY = target.getY().get();
             double currentX = x.get();
@@ -60,12 +61,12 @@ public class StandardBullet extends BaseBullet{
             showingImageView.setX(currentX);
             showingImageView.setY(currentY);
         }
-        trappedInStage();
+        isValid = !trappedInStage() && target.isOnStage() && range > 0 ; // 判断子弹是否有效
     }
 
     @Override
-    public boolean afterHitTarget() {
-        return true;
+    public void afterHitTarget() {
+        isValid = false;
     }
 
 }

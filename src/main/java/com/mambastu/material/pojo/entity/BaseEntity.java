@@ -40,17 +40,32 @@ public abstract class BaseEntity {
         root.getChildren().remove(showingImageView);
     }
 
-    public void trappedInStage() { // 防止实体超出舞台范围，并触发碰撞检测
+    /**
+     * 防止实体超出舞台范围，并触发碰撞检测
+     * @return boolean 
+     * 如果实体碰到在舞台边界，返回true，否则返回false
+     */
+    public boolean trappedInStage() {
         CollisionState collisionState = ScreenBound.collisionState(this.getBound());
-        if (collisionState == CollisionState.HORIZONTAL)
-            x.set(prevX);
-        if (collisionState == CollisionState.VERTICAL)
-            y.set(prevY);
-        if (collisionState == CollisionState.BOTH) {
-            x.set(prevX);
-            y.set(prevY);
+        switch (collisionState) {
+            case HORIZONTAL:
+                x.set(prevX);
+                break;
+            case VERTICAL:
+                y.set(prevY);
+                break;
+            case BOTH:
+                x.set(prevX);
+                y.set(prevY);
+                break;
+            case FALSE:
+                savePreviousFrame();
+                return false;
+            default:
+                return false;
         }
         savePreviousFrame();
+        return true;
     }
 
     public void savePreviousFrame() { // 保存上一次的位置，用于碰撞检测

@@ -18,11 +18,11 @@ import javafx.util.Duration;
 public class StandardRifle extends BaseWeapon{
 
     public StandardRifle() {
-        damage.set(80);
+        damage.set(10);
         bulletSpeed.set(20);
         range.set(1000);
         coolTime.set(80);
-        bulletType = BulletType.StandardBullet;
+        bulletType = BulletType.NailBullet;
         coolStatus = Status.READY;
         coolTimer.setDuration(Duration.millis(coolTime.get()));
         coolTimer.setOnFinished(event ->{

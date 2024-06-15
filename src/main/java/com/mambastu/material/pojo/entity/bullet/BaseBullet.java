@@ -13,6 +13,8 @@ public abstract class BaseBullet extends BaseEntity{
     // 以上参数需要由Weapon来赋予
 
     protected BaseEntity target; // 子弹的目标实体，用于追踪
+    @Getter
+    protected boolean isValid; // 子弹是否有效，用于判断是否需要移除子弹
 
     public BaseBullet() {
         this.bound = new CircleBound(x, y, 50, prevX, prevY);
@@ -22,17 +24,8 @@ public abstract class BaseBullet extends BaseEntity{
 
     /**
      * 子弹击中目标后的处理方法，例如爆炸效果等
-     * @return boolean 子弹是否继续存在，如果返回false，则子弹消失
      */
-    abstract public boolean afterHitTarget();
-
-    public boolean isTargetAlive() { // 判断目标是否存活，用于追踪
-        return target.isOnStage();
-    }
-    
-    public boolean isOutRange() {
-        return range <= 0; // 判断子弹是否超出射程，超出射程后消失
-    }
+    abstract public void afterHitTarget();
 
     public void setProps(int damage, double speed, double range) {
         this.damage = damage;

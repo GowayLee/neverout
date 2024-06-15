@@ -182,13 +182,10 @@ public class NormalImpl implements ModeLogic {
                     BulletHitMonsterEvent event = BulletHitMonsterEvent.getInstance(); // 触发子弹击中怪物事件，记录数据等操作
                     event.setProperty(bullet, monster, gamePane);
                     EventManager.getInstance().fireEvent(event);
-                    if (bullet.afterHitTarget()) { // 如果子弹击中目标后消失，则移除子弹，否则子弹会继续移动直到超出范围
-                        removeList.add(bullet);
-                    }
                     checkMonsterDie(monster);
                     break;
                 }
-                if (bullet.isOutRange()) { // 如果子弹已经到达目标位置但是没有命中目标，说明目标已经死亡并被对象池回收，该子弹也应该被回收
+                if (!bullet.isValid()) { // 如果子弹无效，则需要移除该子弹
                     removeList.add(bullet);
                     break;
                 }

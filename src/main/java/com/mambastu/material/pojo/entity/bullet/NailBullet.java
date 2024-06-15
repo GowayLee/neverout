@@ -20,6 +20,7 @@ public class NailBullet extends BaseBullet{
 
     @Override
     public void init() {
+        isValid = true;
         showingImage.set(bornImage);
         showingImageView.imageProperty().bind(showingImage);
     }
@@ -41,11 +42,11 @@ public class NailBullet extends BaseBullet{
         y.set(currentY);
         showingImageView.setX(currentX);
         showingImageView.setY(currentY);
-        trappedInStage();
+        isValid = !trappedInStage() && range > 0 ; // 判断子弹是否有效
     }
 
     @Override
-    public boolean afterHitTarget() {
-        return false;
+    public void afterHitTarget() {
+        isValid = true;
     }
 }
