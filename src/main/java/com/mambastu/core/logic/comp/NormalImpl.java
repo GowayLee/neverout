@@ -117,9 +117,9 @@ public class NormalImpl implements ModeLogic {
             public void handle(ActionEvent event) {
                 try {
                     BaseMonster monster = MonsterFactory.getInstance().create(eggType);
+                    monster.omen(monsterList); // 生成预警
                     monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
                     monster.putOnPane(gamePane);
-                    monsterList.add(monster);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

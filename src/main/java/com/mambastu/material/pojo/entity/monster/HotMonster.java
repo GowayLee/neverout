@@ -1,11 +1,11 @@
 package com.mambastu.material.pojo.entity.monster;
 
+import java.util.List;
+
 import com.mambastu.factories.MonsterFactory;
 import com.mambastu.material.resource.ResourceManager;
 
-import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -13,8 +13,6 @@ import javafx.util.Duration;
 public class HotMonster extends BaseMonster {
     private final Image bornImage;
     private final Image omenImage;
-    private PauseTransition initTimer;
-
     private final Image dieImage;
 
     public HotMonster() {
@@ -22,20 +20,25 @@ public class HotMonster extends BaseMonster {
         this.omenImage = ResourceManager.getInstance().getImg("omenImage", "Monster", "HotMonster");
         this.dieImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
         this.damage = 10;
-        this.initTimer = new PauseTransition(Duration.seconds(1));
-        this.initTimer.setOnFinished(event -> {
-            setState(State.MOVING);
-            showingImage.set(bornImage);
-        });
+        this.initTimer.setDuration(Duration.seconds(1));
     }
 
     @Override
     public void init() {
-        initTimer.playFromStart();
         HP.set(100);
         showingImage.set(omenImage);
         showingImageView.imageProperty().bind(showingImage);
         setState(State.OMEN);
+    }
+
+    @Override
+    public void omen(List<BaseMonster> monsterList) {
+        initTimer.setOnFinished(event -> {
+            setState(State.MOVING);
+            showingImage.set(bornImage);
+            monsterList.add(this);
+        });
+        initTimer.playFromStart();
     }
 
     @Override
@@ -67,10 +70,11 @@ public class HotMonster extends BaseMonster {
     @Override
     public void die(Pane root) {
         showingImage.set(dieImage);
-        Timeline rmTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+        PauseTransition rmTimer = new PauseTransition(Duration.seconds(1));
+        rmTimer.setOnFinished( e ->{
             removeFromPane(root); // Remove from pane after 1 second.
             MonsterFactory.getInstance().delete(this);
-        }));
+        });
         rmTimer.play();
     }
 

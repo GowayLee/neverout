@@ -1,5 +1,6 @@
 package com.mambastu.material.pojo.entity.monster;
 
+import java.util.List;
 import java.util.Random;
 
 import com.mambastu.material.pojo.Interface.Movable;
@@ -24,12 +25,16 @@ public abstract class BaseMonster extends BaseEntity implements Movable {
     protected double speed;
     protected int damage;
     protected State state;
+    @Getter
+    protected final PauseTransition initTimer = new PauseTransition(); 
     protected enum State {
         OMEN, IDLE, MOVING, SHAKING
     };
 
     protected final ColorAdjust colorAdjust = new ColorAdjust(); // 特效
     protected final PauseTransition hurtFXTimer = new PauseTransition(); // 受伤特效计时器
+
+    abstract public void omen(List<BaseMonster> monsterList);
 
     abstract public void move(double targX, double targY, Pane root); // 怪物的移动需要参照目标
 
@@ -51,15 +56,11 @@ public abstract class BaseMonster extends BaseEntity implements Movable {
         hurtFXTimer.play();
     }
 
-    public boolean isOmen() {
-        return state == State.OMEN; // 判断怪物是否处于预兆阶段，预兆阶段不造成伤害，也不被攻击
-    }
-
     public boolean isDie() { // 判断是否死亡
         return HP.get() <= 0;
     }
 
-    public void setPos(double sceneWidth, double sceneHeight, BasePlayer player) { // 默认在地图中随机生成 TODO: 避开玩家
+    public void setPos(double sceneWidth, double sceneHeight, BasePlayer player) {
         Random rand = new Random();
         // 怪物避开玩家的半径
         double avoidRadius = 50;

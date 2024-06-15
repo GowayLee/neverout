@@ -78,7 +78,7 @@ public class LaughPlayer extends BasePlayer {
 
     @Override
     public void getHurt(Integer damage) {
-        if (injuryState != InjuryState.INVINCIBLE && damage > 0) {
+        if (injuryState != InjuryState.INVINCIBLE) {
             HP.set(HP.get() - damage); // 受到伤害，扣除生命值
             setInjuryState(InjuryState.INVINCIBLE); // 进入无敌状态
             invincibleTimer.playFromStart();

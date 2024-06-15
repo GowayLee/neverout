@@ -1,5 +1,7 @@
 package com.mambastu.material.pojo.entity.monster;
 
+import java.util.List;
+
 import com.mambastu.factories.MonsterFactory;
 import com.mambastu.material.resource.ResourceManager;
 
@@ -11,7 +13,6 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 public class BossMonster extends BaseMonster {
-    private final PauseTransition initTimer; 
     private final Timeline moveTimer;
     private final Image omenImage;
     private final Image bornImage;
@@ -36,21 +37,26 @@ public class BossMonster extends BaseMonster {
                     showingImage.set(bornImage);
                 }));
         moveTimer.setCycleCount(Timeline.INDEFINITE);
-        this.initTimer = new PauseTransition(Duration.seconds(1));
-        this.initTimer.setOnFinished(event -> {
-            setState(State.IDLE);
-            moveTimer.playFromStart();
-            showingImage.set(bornImage);
-        });
+        this.initTimer.setDuration(Duration.seconds(1));
     }
 
     @Override
     public void init() {
         HP.set(200);
-        initTimer.playFromStart();
         setState(State.OMEN);
         showingImage.set(omenImage);
         showingImageView.imageProperty().bind(showingImage);
+    }
+
+    @Override
+    public void omen(List<BaseMonster> monsterList) {
+        initTimer.setOnFinished(event -> {
+            setState(State.IDLE);
+            moveTimer.playFromStart();
+            showingImage.set(bornImage);
+            monsterList.add(this);
+        });
+        initTimer.playFromStart();
     }
 
     @Override
@@ -90,10 +96,11 @@ public class BossMonster extends BaseMonster {
     public void die(Pane root) {
         moveTimer.stop();
         showingImage.set(dieImage);
-        Timeline rmTimer = new Timeline(new KeyFrame(Duration.seconds(1), e ->{
+        PauseTransition rmTimer = new PauseTransition(Duration.seconds(1));
+        rmTimer.setOnFinished( e ->{
             removeFromPane(root); // Remove from pane after 1 second.
             MonsterFactory.getInstance().delete(this);
-        }));
+        });
         rmTimer.play();
     }
 }
