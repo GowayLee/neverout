@@ -23,7 +23,7 @@ public class Context {
     @Getter
     private final LevelConfig levelConfig; // 每个关卡的参数
 
-    @Getter @Setter
+    @Getter
     private GlobalRecord globalRecord;
     @Getter @Setter
     private LevelRecord levelRecord; // 每个关卡的记录器, 在关卡开始前将实例化一个新的对象来引用
@@ -32,7 +32,7 @@ public class Context {
         this.globalRecord = new GlobalRecord();
         this.levelConfig = new LevelConfig();
         this.gameMode = new SimpleObjectProperty<>(GameMode.NORMAL); // 默认普通模式
-        this.playerType = new SimpleObjectProperty<>(PlayerTypes.JokerPlayer); // 默认普通玩家
+        this.playerType = new SimpleObjectProperty<>(PlayerTypes.LaughPlayer); // 默认普通玩家
     }
 
     public void initPlayer() {

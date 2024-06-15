@@ -91,6 +91,7 @@ public class LevelMenu {
     }
 
     private void buildLayout() {
+        menuPane.getChildren().clear();
         bulidShopLayout();
         bulidDataLayout();
         Text passText = new Text("Level Clear!");

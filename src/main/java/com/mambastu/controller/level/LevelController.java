@@ -68,7 +68,7 @@ public class LevelController {
     private void updateDynamicMenu() { // 更新动态资源ctx, 动态菜单，如游戏内HUD、暂停菜单等，这些菜单需要根据关卡配置信息来显示不同的内容。
         pauseMenu.update();
         inGameHud.update();
-        levelMenu.update();
+        // levelMenu.update();
     }
 
     private void initDynamicMenu() { // 初始化动态菜单，如游戏内HUD、暂停菜单等，这些菜单需要根据关卡配置信息来显示不同的内容。
@@ -122,6 +122,7 @@ public class LevelController {
             inGameHud.hide();
             if (isPassLevel) { // 如果通过关卡，则显示下一关卡菜单，否则显示游戏结束菜单。
                 ctxManager.updateCoin(); // 更新玩家当前关卡获得的硬币数。
+                levelMenu.update();
                 levelMenu.show();
                 logger.error("LevelManager: Level is past.");
             } else {
