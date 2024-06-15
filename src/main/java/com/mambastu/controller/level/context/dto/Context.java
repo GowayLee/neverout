@@ -31,7 +31,7 @@ public class Context {
         this.globalRecord = new GlobalRecord();
         this.levelConfig = new LevelConfig();
         this.gameMode = new SimpleObjectProperty<>(GameMode.NORMAL); // 默认普通模式
-        this.playerType = new SimpleObjectProperty<>(PlayerTypes.LaughPlayer); // 默认普通玩家
+        this.playerType = new SimpleObjectProperty<>(PlayerTypes.JokerPlayer); // 默认普通玩家
     }
 
     public void initPlayer() {
