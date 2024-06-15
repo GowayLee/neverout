@@ -125,9 +125,9 @@ public class LevelMenu {
 
     private void bulidShopLayout() { // 创建商店布局
         storeLayout.getChildren().clear(); // 确保每次调用时清除之前的商品。
-        VBox item1 = createShopItem(prop1.getDisplayImage(), prop1.getClass().toString(), prop1.getPrice(), prop1);
-        VBox item2 = createShopItem(prop2.getDisplayImage(), prop2.getClass().toString(), prop2.getPrice(), prop2);
-        VBox item3 = createShopItem(prop3.getDisplayImage(), prop3.getClass().toString(), prop3.getPrice(), prop3);
+        VBox item1 = createShopItem(prop1.getDisplayImage(), prop1.getDescription(), prop1.getPrice(), prop1);
+        VBox item2 = createShopItem(prop2.getDisplayImage(), prop2.getDescription(), prop2.getPrice(), prop2);
+        VBox item3 = createShopItem(prop3.getDisplayImage(), prop3.getDescription(), prop3.getPrice(), prop3);
 
         // 将三个商品添加到水平布局
         storeLayout.getChildren().addAll(item1, item2, item3);
@@ -140,21 +140,22 @@ public class LevelMenu {
                 .bind(menuPane.heightProperty().subtract(storeLayout.heightProperty()).divide(2).subtract(50));
     }
 
-    private VBox createShopItem(Image displayImage, String name, Integer price, BaseProp prop) {
+    private VBox createShopItem(Image displayImage, String description, Integer price, BaseProp prop) {
         VBox itemLayout = new VBox();
 
         ImageView imageView = new ImageView(displayImage);
         imageView.setFitWidth(150);
         imageView.setFitHeight(150);
 
-        Label descriptionLabel = new Label(name);
-        descriptionLabel.setStyle("-fx-text-fill: white;");
+        Label descriptionLabel = new Label(description);
+        descriptionLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
         descriptionLabel.setWrapText(true);
         descriptionLabel.setMaxWidth(150);
+        descriptionLabel.setAlignment(Pos.CENTER); // 确保文本居中显示。
 
         Label priceLabel = new Label("Price: " + Integer.toString(price));
         priceLabel.setStyle("-fx-text-fill: white;");
-        priceLabel.setFont(new Font("Segoe Script", 16)); // 设置字体大小和样式
+        priceLabel.setFont(new Font("Segoe Script", 20)); // 设置字体大小和样式
 
         Button buyButton = new Button("Buy it!");
         buyButton.setOnAction(e -> { // 购买按钮的点击事件处理程序
@@ -170,7 +171,7 @@ public class LevelMenu {
 
         // 将所有组件添加到垂直布局
         itemLayout.getChildren().addAll(imageView, descriptionLabel, priceLabel, buyButton);
-        itemLayout.setSpacing(20);
+        itemLayout.setSpacing(30);
         itemLayout.setAlignment(Pos.CENTER);
 
         return itemLayout;

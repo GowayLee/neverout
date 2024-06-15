@@ -2,6 +2,7 @@ package com.mambastu.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,8 @@ public class PropStore {
         String JsonUrl = "PropConfig.json";
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(JsonUrl)) {
             if (inputStream != null) { 
-                propResources = new JSONObject(new JSONTokener(inputStream));
+                String jsonText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                propResources = new JSONObject(new JSONTokener(jsonText));
                 loadProps();
             } else {
                 System.out.println("Unable to load " + JsonUrl);
@@ -49,20 +51,21 @@ public class PropStore {
         for (int i = 0; i < propArray.length(); i++) {
             JSONObject propJsonObj = propArray.getJSONObject(i);
             String name = propJsonObj.getString("name");
+            String description = propJsonObj.getString("description");
             Integer price = Integer.parseInt(propJsonObj.getString("price"));
             Double buffValue = Double.parseDouble(propJsonObj.getString("buffValue"));
-            BaseProp prop = getPropObj(name, price, buffValue);
+            BaseProp prop = getPropObj(name, description, price, buffValue);
             if (prop != null) {
                 propList.add(prop);
             }
         }
     }
 
-    private BaseProp getPropObj(String propName, Integer price, Double buffValue) {
+    private BaseProp getPropObj(String propName, String description, Integer price, Double buffValue) {
         String className = "com.mambastu.material.pojo.prop." + propName;
         try {
             BaseProp prop = (BaseProp) Class.forName(className).getDeclaredConstructor().newInstance();
-            prop.loadValues(buffValue, price);
+            prop.loadValues(description, buffValue, price);
             return prop;
         } catch (Exception e) {
             e.printStackTrace();
