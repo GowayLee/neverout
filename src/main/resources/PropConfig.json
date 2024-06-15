@@ -2,15 +2,38 @@
   "Props": [
     {
         "name": "DamageBuff",
-        "image": "https://example.com/item1.png",
         "buffValue": "10.0",
-        "price": "5"
+        "price": "10"
     },
     {
         "name": "FireCDBuff",
-        "image": "https://example.com/item2.png",
         "buffValue": "-20.0",
-        "price": "10"
+        "price": "5"
+    },
+    {
+      "name": "HpBuff",
+      "buffValue": "10.0",
+      "price": "10"
+    },
+    {
+      "name": "SkillCDBuff",
+      "buffValue": "0.8",
+      "price": "20"
+    },
+    {
+      "name": "SpeedBuff",
+      "buffValue": "1",
+      "price": "10"
+    },
+    {
+      "name": "BulletSpeedBuff",
+      "buffValue": "5",
+      "price": "5"
+    },
+    {
+      "name": "BulletRangeBuff",
+      "buffValue": "100",
+      "price": "5"
     }
   ]
 }
