@@ -8,12 +8,14 @@ import lombok.Setter;
 @Setter
 public class GlobalRecord {
     private final SimpleIntegerProperty totalLevelNum; // 关卡编号
-    private final SimpleIntegerProperty totalDuration;// 剩余时间
+    private final SimpleIntegerProperty totalDuration;
     private final SimpleIntegerProperty totalKillCount; // 击杀数量
+    private final SimpleIntegerProperty coins; // 金币数量
 
     public GlobalRecord() {
         this.totalDuration = new SimpleIntegerProperty(0);
         this.totalKillCount = new SimpleIntegerProperty(0);
         this.totalLevelNum = new SimpleIntegerProperty(0);
+        this.coins = new SimpleIntegerProperty(0);
     }
 }

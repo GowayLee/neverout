@@ -33,6 +33,10 @@ public class InGameHud {
         buildLayout();
     }
 
+    public void update() {
+        bindProperties();
+    }
+
     public void show() {
         root.getChildren().remove(menuPane);
         root.getChildren().add(menuPane); // 确保菜单在游戏场景之上(StackPane的栈顶)

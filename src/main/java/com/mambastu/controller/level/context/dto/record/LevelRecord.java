@@ -15,7 +15,6 @@ public class LevelRecord { // LevelRecord类用于存储关卡游戏实时信息
     private final SimpleIntegerProperty killCount; // 击杀数量
     private final SimpleIntegerProperty totalEnemies; // 总敌人数量
     private final SimpleIntegerProperty remainingEnemies; // 剩余敌人数量
-    private final SimpleIntegerProperty coins; // 金币数量
 
     public LevelRecord(int levelNum, BasePlayer player) { // 构造函数，初始化关卡信息
         this.levelNum = new SimpleIntegerProperty(levelNum); // 设置关卡编号
@@ -23,7 +22,6 @@ public class LevelRecord { // LevelRecord类用于存储关卡游戏实时信息
         this.killCount = new SimpleIntegerProperty(0); // 初始化击杀数量为0
         this.totalEnemies = new SimpleIntegerProperty(0); // 初始化总敌人数量为0
         this.remainingEnemies = new SimpleIntegerProperty(0); // 初始化剩余敌人数量为0
-        this.coins = new SimpleIntegerProperty(0); // 初始化金币数量为0
         this.player = player;
     }
 }

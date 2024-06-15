@@ -65,6 +65,12 @@ public class LevelController {
         initDynamicMenu();
     }
 
+    private void updateDynamicMenu() { // 更新动态资源ctx, 动态菜单，如游戏内HUD、暂停菜单等，这些菜单需要根据关卡配置信息来显示不同的内容。
+        pauseMenu.update();
+        inGameHud.update();
+        levelMenu.update();
+    }
+
     private void initDynamicMenu() { // 初始化动态菜单，如游戏内HUD、暂停菜单等，这些菜单需要根据关卡配置信息来显示不同的内容。
         pauseMenu.init();
         inGameHud.init();
@@ -89,7 +95,7 @@ public class LevelController {
     private void startNextLevel() { // 生成新的LevelConfig与LevelRecord, 初始化引擎层,
         // 开始关卡逻辑，与startFirstLevel类似，但需要从上下文中获取关卡信息，并更新上下文中的关卡记录信息。
         ctxManager.updateCtx();
-        initDynamicMenu();
+        updateDynamicMenu();
         gameEngine = new GameEngine(ctx, root, engineLayerListener);
         gameEngine.start();
         gameEngine.showGamePane();
@@ -115,6 +121,7 @@ public class LevelController {
             gameEngine.hideGamePane(); // 隐藏游戏界面，显示游戏结束菜单。
             inGameHud.hide();
             if (isPassLevel) { // 如果通过关卡，则显示下一关卡菜单，否则显示游戏结束菜单。
+                ctxManager.updateCoin(); // 更新玩家当前关卡获得的硬币数。
                 levelMenu.show();
                 logger.error("LevelManager: Level is past.");
             } else {
