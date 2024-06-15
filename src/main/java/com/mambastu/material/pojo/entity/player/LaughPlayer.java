@@ -26,9 +26,11 @@ public class LaughPlayer extends BasePlayer {
     private double skillDeltaY;
 
     public LaughPlayer() {
+        super();
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
         this.readyImage = ResourceManager.getInstance().getImg("readyImage", "Player", "Player1");
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Player1");
+        setImageSize(50, 50);
         this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
         this.invincibleTimer.setOnFinished(e -> {
             setInjuryState(InjuryState.NORMAL);
@@ -81,7 +83,7 @@ public class LaughPlayer extends BasePlayer {
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
 
-        crossedBoundary(root);
+        crossedBoundary();
     }
 
     @Override

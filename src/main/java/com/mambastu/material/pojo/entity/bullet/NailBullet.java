@@ -13,14 +13,15 @@ public class NailBullet extends BaseBullet{
     private double scale;
 
     public NailBullet() {
+        super();
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
+        setImageSize(15, 15);
     }
 
     @Override
     public void init() {
         showingImage.set(bornImage);
         showingImageView.imageProperty().bind(showingImage);
-        setImageSize(15, 15);
     }
 
     @Override
@@ -29,7 +30,7 @@ public class NailBullet extends BaseBullet{
         dy = target.getY().get() - y.get();
         scale = speed / Math.sqrt(dx * dx + dy * dy); // 计算缩放比例，使得子弹移动速度为speed
     }
-    
+
     @Override
     public void move(Pane root) {
         double currentX = x.get() + dx * scale;
@@ -40,6 +41,8 @@ public class NailBullet extends BaseBullet{
         y.set(currentY);
         showingImageView.setX(currentX);
         showingImageView.setY(currentY);
+        savePreviousFrame();
+        crossedBoundary();
     }
 
     @Override

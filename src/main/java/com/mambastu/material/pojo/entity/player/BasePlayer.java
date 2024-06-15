@@ -4,6 +4,9 @@ import java.util.Set;
 
 import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.pojo.Interface.Movable;
+import com.mambastu.material.pojo.bound.CircleBound;
+import com.mambastu.material.pojo.bound.RectangleOutBound;
+import com.mambastu.material.pojo.bound.ScreenBound;
 import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.weapon.BaseWeapon;
 
@@ -21,7 +24,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class BasePlayer extends BaseEntity implements Movable {
+public abstract class BasePlayer extends BaseEntity{
     protected double speed = 5;
     protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
@@ -55,6 +58,10 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
     private SkillState skillState;
     private InjuryState injuryState;
 
+    public BasePlayer() { // 默认构造函数内设置玩家的碰撞箱
+        this.bound = new CircleBound(x, y, 50, prevX, prevY);
+    }
+
     public void move(Set<GameInput> activeInputs, Pane root) {
         double deltaX = 0, deltaY = 0;
 
@@ -77,7 +84,7 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
 
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-        crossedBoundary(root);
+        crossedBoundary();
     }
 
     public void setPos(double sceneWidth, double sceneHeight) { // 默认出生在屏幕中央
@@ -85,7 +92,7 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
         this.y.set(sceneHeight / 2);
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-        setImageSize(50, 50);
+
     }
 
     public void getHurt(Integer damage) {
@@ -100,33 +107,4 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
     }
 
     abstract public void die(); // 设置玩家死亡状态
-
-    @Override
-    public Bounds getBounds() {// 返回圆形bound类
-        double radius = Math.max(showingImageView.getFitWidth(), showingImageView.getFitHeight()) / 2;
-        return new CircleBounds(x, y, radius, prevX, prevY);
-    }
-
-    @Override
-    public void crossedBoundary(Pane root) {
-        double sceneWidth = root.getWidth();
-        double sceneHeight = root.getHeight();
-        RectangleOutBounds sceneBounds = new RectangleOutBounds(new SimpleDoubleProperty(0.0),
-                new SimpleDoubleProperty(0.0), sceneWidth, sceneHeight);
-        CollisionState collisionState = sceneBounds.collisionState(this.getBounds());
-        if (collisionState == CollisionState.HORIZONTAL)
-            x.set(prevX);
-        if (collisionState == CollisionState.VERTICAL)
-            y.set(prevY);
-        if (collisionState == CollisionState.BOTH) {
-            x.set(prevX);
-            y.set(prevY);
-        }
-    }
-
-    @Override
-    public void savePreviousFrame() {
-        prevX = x.get();
-        prevY = y.get();
-    }
 }

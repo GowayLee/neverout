@@ -35,6 +35,7 @@ public class JokerPlayer extends BasePlayer {
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Joker");
         this.readyImage = ResourceManager.getInstance().getImg("readyImage", "Player", "Joker");
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Joker");
+        setImageSize(50, 50);
         this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
         this.invincibleTimer.setOnFinished(e -> {
             setInjuryState(InjuryState.NORMAL);
@@ -81,7 +82,7 @@ public class JokerPlayer extends BasePlayer {
 
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-        crossedBoundary(root);
+        crossedBoundary();
     }
 
     private void activateSkill(Set<GameInput> activeInputs) { // 技能：随机进入一种状态

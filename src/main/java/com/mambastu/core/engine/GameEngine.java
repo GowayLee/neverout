@@ -9,6 +9,7 @@ import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.core.logic.LogicManager;
 import com.mambastu.listener.EngineLayerListener;
 import com.mambastu.listener.LogicLayerListener;
+import com.mambastu.material.pojo.bound.ScreenBound;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
@@ -49,6 +50,7 @@ public class GameEngine {
         public EngineProps(Context ctx) {
             this.ctx = ctx; // 引擎配置参数
             this.gamePane = new Pane();
+            ScreenBound.init(gamePane); // 初始化游戏画布边界
             this.player = ctx.getLevelConfig().getPlayer();
             this.monsterList = new LinkedList<>();
             this.bulletList = new LinkedList<>();

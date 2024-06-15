@@ -12,14 +12,15 @@ public class StandardBullet extends BaseBullet{
     private double scale;
 
     public StandardBullet() {
+        super();
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
+        setImageSize(20, 20);
     }
 
     @Override
     public void init() {
         showingImage.set(bornImage);
         showingImageView.imageProperty().bind(showingImage);
-        setImageSize(20, 20);
     }
 
     @Override
@@ -59,6 +60,8 @@ public class StandardBullet extends BaseBullet{
             showingImageView.setX(currentX);
             showingImageView.setY(currentY);
         }
+        savePreviousFrame();
+        crossedBoundary();
     }
 
     @Override

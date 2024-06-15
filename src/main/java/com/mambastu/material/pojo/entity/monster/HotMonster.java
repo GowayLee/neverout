@@ -16,9 +16,11 @@ public class HotMonster extends BaseMonster {
     private final Image dieImage;
 
     public HotMonster() {
+        super();
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "HotMonster");
         this.omenImage = ResourceManager.getInstance().getImg("omenImage", "Monster", "HotMonster");
         this.dieImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
+        setImageSize(50, 50);
         this.damage = 10;
         this.initTimer.setDuration(Duration.seconds(1));
     }
@@ -42,7 +44,7 @@ public class HotMonster extends BaseMonster {
     }
 
     @Override
-    public void move(double targetX, double targetY, Pane root) {
+    public void move(double targetX, double targetY) {
         savePreviousFrame();
         if (getState() == HotMonster.State.MOVING) {
             speed = 1.2;
@@ -56,7 +58,7 @@ public class HotMonster extends BaseMonster {
             showingImageView.setX(x.get());
             showingImageView.setY(y.get());
         }
-        crossedBoundary(root);
+        crossedBoundary();
     }
 
     @Override

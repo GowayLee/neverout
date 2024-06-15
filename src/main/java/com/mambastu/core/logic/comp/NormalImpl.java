@@ -141,7 +141,7 @@ public class NormalImpl implements ModeLogic {
 
     private void monsterMove() {
         for (BaseMonster monster : monsterList) {
-            monster.move(player.getX().get(), player.getY().get(), gamePane);
+            monster.move(player.getX().get(), player.getY().get());
         }
     }
 
@@ -166,7 +166,7 @@ public class NormalImpl implements ModeLogic {
 
     private void checkCollision() {
         for (BaseMonster monster : monsterList) {
-            if (player.getBounds().collisionState(monster.getBounds()) == CollisionState.TRUE) { // 触发事件
+            if (player.getBound().collisionState(monster.getBound()) == CollisionState.TRUE) { // 触发事件
                 CollisionEvent event = CollisionEvent.getInstance();
                 event.setProperty(player, monster);
                 EventManager.getInstance().fireEvent(event);
@@ -178,7 +178,7 @@ public class NormalImpl implements ModeLogic {
         List<BaseBullet> removeList = new ArrayList<>(); // 记录需要移除的子弹列表，因为不能在循环中直接移除元素，会导致并发修改异常
         for (BaseBullet bullet : bulletList) {
             for (BaseMonster monster : monsterList) {
-                if (bullet.getBounds().collisionState(monster.getBounds()) == CollisionState.TRUE) {
+                if (bullet.getBound().collisionState(monster.getBound()) == CollisionState.TRUE) {
                     BulletHitMonsterEvent event = BulletHitMonsterEvent.getInstance(); // 触发子弹击中怪物事件，记录数据等操作
                     event.setProperty(bullet, monster, gamePane);
                     EventManager.getInstance().fireEvent(event);
