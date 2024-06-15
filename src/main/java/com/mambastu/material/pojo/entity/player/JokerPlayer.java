@@ -22,9 +22,9 @@ public class JokerPlayer extends BasePlayer {
     private Image readyImage;
     private Image dieImage;
     private double skillCD = 3; // second
-    private double skillDeltaX;
-    private double skillDeltaY;
     private Random random = new Random();
+    public enum JokerSkillState { RED , BLUE };
+    JokerSkillState jokerSkillState;
 
     public JokerPlayer() {
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Joker");
@@ -37,8 +37,6 @@ public class JokerPlayer extends BasePlayer {
         setState(State.MOVING);
         setSkillState(SkillState.READY);
         setInjuryState(InjuryState.NORMAL);
-        skillDeltaX = 0;
-        skillDeltaY = 0;
         showingImage.set(bornImage);
         showingImageView.imageProperty().bind(showingImage);
     }
@@ -47,7 +45,7 @@ public class JokerPlayer extends BasePlayer {
     public void move(Set<GameInput> activeInputs) {
         double deltaX = 0, deltaY = 0;
         savePreviousFrame();
-        if (getState() == State.MOVING) {
+        if (getState() == State.MOVING||getState()==State.SKILL) {
             if (activeInputs.contains(GameInput.MOVE_UP))
                 deltaY -= speed;
             if (activeInputs.contains(GameInput.MOVE_DOWN))
@@ -58,9 +56,6 @@ public class JokerPlayer extends BasePlayer {
                 deltaX += speed;
             if (activeInputs.contains(GameInput.SKILL) && getSkillState() == SkillState.READY)
                 activateSkill(activeInputs);
-        } else if (getState() == State.SKILL) {
-            deltaX = skillDeltaX;
-            deltaY = skillDeltaY;
         }
 
         if (deltaX != 0 && deltaY != 0 && getState() == State.MOVING) {
@@ -84,50 +79,35 @@ public class JokerPlayer extends BasePlayer {
         setState(State.SKILL);
         setSkillState(SkillState.ACTIVE);
 
-        skillDeltaX = 0;
-        skillDeltaY = 0;
-
-        boolean moveUp = activeInputs.contains(GameInput.MOVE_UP);
-        boolean moveDown = activeInputs.contains(GameInput.MOVE_DOWN);
-        boolean moveLeft = activeInputs.contains(GameInput.MOVE_LEFT);
-        boolean moveRight = activeInputs.contains(GameInput.MOVE_RIGHT);
-
-        if (moveUp)
-            skillDeltaY -= speed;
-        if (moveDown)
-            skillDeltaY += speed;
-        if (moveLeft)
-            skillDeltaX -= speed;
-        if (moveRight)
-            skillDeltaX += speed;
-
-        if (moveUp && moveLeft || moveUp && moveRight || moveDown && moveLeft || moveDown && moveRight) {
-            double scale = 1 / Math.sqrt(2);
-            skillDeltaX *= scale;
-            skillDeltaY *= scale;
-        }
-
         int skillType = random.nextInt(2);
-        if (skillType == 0) {
-            // 状态1：速度减慢至原速度的0.75倍，不会受到伤害，背后有红色虚影
-            speed *= 0.75;
+        if (skillType == 0) { // 状态1：速度减慢至原速度的0.75倍，不会受到伤害，背后有红色虚影
+            setJokerSkillState(JokerSkillState.RED);
             setInjuryState(InjuryState.INVINCIBLE);
-        } else {
-            // 状态2：速度加快至2倍，会受到伤害，背后有蓝色虚影
-            speed *= 2;
+            speed *= 0.5;
+        } else { // 状态2：速度加快至2倍，会受到伤害，背后有蓝色虚影
+            setJokerSkillState(JokerSkillState.BLUE);
             setInjuryState(InjuryState.NORMAL);
+            speed *= 2;
         }
 
-        PauseTransition skillTimeline = new PauseTransition(Duration.seconds(3));
+        PauseTransition skillTimeline = new PauseTransition(Duration.seconds(2));
         skillTimeline.setOnFinished(event -> {
             setState(State.MOVING);
             setSkillState(SkillState.COOLDOWN);
             setInjuryState(InjuryState.NORMAL);
-            speed = 5; // 重置速度为原始值
+
+            // 重置速度为原始值
+            if (this.jokerSkillState == JokerSkillState.BLUE) {
+                speed /= 2;
+            } else if (this.jokerSkillState == JokerSkillState.RED) {
+                speed /= 0.5;
+            }
+
             startSkillCooldown();
         });
         skillTimeline.play();
     }
+
 
     private void startSkillCooldown() { // 进入技能冷却
         skillCDTimer.setDuration(Duration.seconds(skillCD));
@@ -148,10 +128,12 @@ public class JokerPlayer extends BasePlayer {
     public void setStateImage() { // 根据技能的状态来设置图像
         ColorAdjust colorAdjust = new ColorAdjust();
         if (getSkillState() == SkillState.ACTIVE) {
-            if (speed < 5) {
-                colorAdjust.setHue(0); // 红色
-            } else if (speed > 5) {
-                colorAdjust.setHue(0.5); // 蓝色
+            if (this.jokerSkillState==JokerSkillState.RED) {
+                colorAdjust.setHue(-0.5); // 红色
+                colorAdjust.setContrast(0.5);
+            } else if (this.jokerSkillState==JokerSkillState.BLUE) {
+                colorAdjust.setHue(0.5); //
+                colorAdjust.setContrast(0.5);
             }
             showingImageView.setEffect(colorAdjust);
         } else if (getSkillState() == SkillState.READY) {
@@ -173,11 +155,13 @@ public class JokerPlayer extends BasePlayer {
 
         // 虚影特性：根据技能状态设置颜色，0.5透明度，淡出（时间0.5秒）
         ColorAdjust colorAdjust = new ColorAdjust();
-        if (speed < 5) {
+        if (this.jokerSkillState==JokerSkillState.RED) {
             colorAdjust.setHue(0); // 红色
-        } else if (speed > 5) {
+        } else if (this.jokerSkillState==JokerSkillState.BLUE) {
             colorAdjust.setHue(0.5); // 蓝色
         }
+        colorAdjust.setContrast(0.5);
+        colorAdjust.setSaturation(0.5);
         trail.setEffect(colorAdjust);
         trail.setOpacity(0.5);
         FadeTransition fade = new FadeTransition(Duration.seconds(0.5), trail);

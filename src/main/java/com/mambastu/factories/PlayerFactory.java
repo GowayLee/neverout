@@ -1,5 +1,6 @@
 package com.mambastu.factories;
 
+import com.mambastu.material.pojo.entity.player.JokerPlayer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +32,16 @@ public class PlayerFactory implements EntityFactory<BasePlayer, PlayerTypes>  {
                     // 玩家初始化逻辑与怪物不同, 需要在关卡管理器中初始化
                     return laughPlayer;
                 } catch (Exception e) {
-                    logger.error("Error in creating Monster! Unknown monster type: " + playerTypes);
+                    logger.error("Error in creating Monster! Unknown player type: " + playerTypes);
+                    e.printStackTrace();
+                }
+            case JokerPlayer:
+                try {
+                    JokerPlayer jokerPlayer = (JokerPlayer) JokerPlayer.class.getDeclaredConstructor().newInstance();
+                    // 玩家初始化逻辑与怪物不同, 需要在关卡管理器中初始化
+                    return jokerPlayer;
+                } catch (Exception e) {
+                    logger.error("Error in creating Monster! Unknown player type: " + playerTypes);
                     e.printStackTrace();
                 }
             default:

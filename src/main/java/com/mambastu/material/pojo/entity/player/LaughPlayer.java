@@ -88,20 +88,21 @@ public class LaughPlayer extends BasePlayer {
         skillDeltaX = 0;
         skillDeltaY = 0;
 
-        if (activeInputs.contains(GameInput.MOVE_UP))
-            skillDeltaY -= speed * 7;
-        if (activeInputs.contains(GameInput.MOVE_DOWN))
-            skillDeltaY += speed * 7;
-        if (activeInputs.contains(GameInput.MOVE_LEFT))
-            skillDeltaX -= speed * 7;
-        if (activeInputs.contains(GameInput.MOVE_RIGHT))
-            skillDeltaX += speed * 7;
+        boolean moveUp = activeInputs.contains(GameInput.MOVE_UP);
+        boolean moveDown = activeInputs.contains(GameInput.MOVE_DOWN);
+        boolean moveLeft = activeInputs.contains(GameInput.MOVE_LEFT);
+        boolean moveRight = activeInputs.contains(GameInput.MOVE_RIGHT);
+
+
+        if (moveUp) skillDeltaY -= speed * 7;
+        if (moveDown) skillDeltaY += speed * 7;
+        if (moveLeft) skillDeltaX -= speed * 7;
+        if (moveRight) skillDeltaX += speed * 7;
         //平衡斜向移动时的距离
-        if ((activeInputs.contains(GameInput.MOVE_UP) ||activeInputs.contains(GameInput.MOVE_DOWN)) && (activeInputs.contains(GameInput.MOVE_LEFT) || activeInputs.contains(GameInput.MOVE_RIGHT))) {
+        if ((moveUp||moveDown) && (moveLeft || moveRight)) {
             skillDeltaX *= 1 / Math.sqrt(2);
             skillDeltaY *= 1 / Math.sqrt(2);
         }
-
 
         PauseTransition skillTimeline = new PauseTransition(Duration.seconds(0.1));
         skillTimeline.setOnFinished(event -> {
