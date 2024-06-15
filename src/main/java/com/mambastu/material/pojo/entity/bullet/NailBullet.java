@@ -6,11 +6,12 @@ import com.mambastu.material.resource.ResourceManager;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
-public class NailBullet extends BaseBullet{
+public class NailBullet extends BaseBullet {
     private Image bornImage;
     private double dx;
     private double dy;
-    private double scale;
+    private double sin;
+    private double cos;
 
     public NailBullet() {
         super();
@@ -26,23 +27,29 @@ public class NailBullet extends BaseBullet{
     }
 
     @Override
-    public void setTarget(BaseEntity target) {
+    public void setTarget(BaseEntity target, double offsetSin) {
         dx = target.getX().get() - x.get();
         dy = target.getY().get() - y.get();
-        scale = speed / Math.sqrt(dx * dx + dy * dy); // 计算缩放比例，使得子弹移动速度为speed
+        super.offsetSin = offsetSin;
+        super.offsetCos = Math.sqrt(1.0 - offsetSin * offsetSin); // 预先计算偏移夹角的Cos值，用于计算弹道
+        double dl = Math.sqrt(dx * dx + dy * dy);
+        double sina = dx / dl;
+        double cosa = dy / dl;
+        sin = offsetSin * cosa + sina * offsetCos;
+        cos = offsetCos * cosa - offsetSin * sina;
     }
 
     @Override
     public void move(Pane root) {
-        double currentX = x.get() + dx * scale;
-        double currentY = y.get() + dy * scale;
+        double currentX = x.get() + speed * sin;
+        double currentY = y.get() + speed * cos;
         range -= speed; // 减少子弹的射程
 
         x.set(currentX);
         y.set(currentY);
         showingImageView.setX(currentX);
         showingImageView.setY(currentY);
-        isValid = !trappedInStage() && range > 0 ; // 判断子弹是否有效
+        isValid = !trappedInStage() && range > 0; // 判断子弹是否有效
     }
 
     @Override

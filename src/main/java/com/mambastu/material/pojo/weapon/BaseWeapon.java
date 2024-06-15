@@ -1,6 +1,8 @@
 package com.mambastu.material.pojo.weapon;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import com.mambastu.controller.input.comp.GameInput;
@@ -30,13 +32,10 @@ public abstract class BaseWeapon {
     protected BulletType bulletType;
     protected Status coolStatus;
     protected final PauseTransition coolTimer = new PauseTransition();
-
-    protected void setStatus(Status status) {
-        coolStatus = status;
-    }
+    protected final List<BaseBullet> newBulletList = new ArrayList<>();
 
     abstract public BaseEntity selectTarget(double x, double y, LinkedList<BaseMonster> monsters); // 在一群实体中选择目标 TODO: 空间划分
 
-    abstract public BaseBullet fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs, Pane root);
+    abstract public List<BaseBullet> fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs, Pane root);
 
 }

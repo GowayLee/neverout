@@ -10,9 +10,11 @@ public abstract class BaseBullet extends BaseEntity{
     protected int damage; // 子弹的伤害值
     protected double speed;
     protected double range; // 子弹的射程，超出射程后消失
+    protected double offsetSin; // 弹道与枪-目标连线的偏移夹角的Sin值
+    protected double offsetCos;
+    protected BaseEntity target; // 子弹的目标实体，用于追踪
     // 以上参数需要由Weapon来赋予
 
-    protected BaseEntity target; // 子弹的目标实体，用于追踪
     @Getter
     protected boolean isValid; // 子弹是否有效，用于判断是否需要移除子弹
 
@@ -40,8 +42,10 @@ public abstract class BaseBullet extends BaseEntity{
         showingImageView.setY(y.get());
     }
 
-    public void setTarget(BaseEntity target) { // 设置目标实体，用于追踪
+    public void setTarget(BaseEntity target, double offsetSin) { // 设置目标实体，用于追踪
         this.target = target;
+        this.offsetSin = offsetSin;
+        this.offsetCos = Math.sqrt(1 - offsetSin * offsetSin); // 预先计算偏移夹角的Cos值，用于计算弹道
     }
 
     public Integer releaseDamage() {

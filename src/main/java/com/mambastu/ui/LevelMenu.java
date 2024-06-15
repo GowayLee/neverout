@@ -206,7 +206,7 @@ public class LevelMenu {
         
         Label coinLabel = new Label();
         coinLabel.textProperty().bind(coin.asString("Coin: %d"));
-        coinLabel.setStyle("-fx-text-fill: yellow;");
+        coinLabel.setStyle("-fx-text-fill: yellow; -fx-font-weight: bolder;");
         coinLabel.setFont(new Font("Arial", 28));
 
         Label MaxHPLabel = new Label();

@@ -21,7 +21,7 @@ public class NormalCtxImpl implements ModeCtxLogic{
         firstLevelConfig.getMonsterEggList().put(MonsterTypes.HotMonster, 1.0);
         firstLevelConfig.setMonsterScalDensity(2000);
         firstLevelConfig.setMonsterScalCoin(1.0);
-        firstLevelConfig.setDuration(10); // 基础关卡时长30秒。
+        firstLevelConfig.setDuration(100); // 基础关卡时长30秒。
 
     }
 

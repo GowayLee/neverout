@@ -22,30 +22,32 @@ public class StandardRifle extends BaseWeapon{
         bulletSpeed.set(10);
         range.set(700);
         coolTime.set(300);
-        bulletType = BulletType.StandardBullet;
+        bulletType = BulletType.NailBullet;
         coolStatus = Status.READY;
         coolTimer.setDuration(Duration.millis(coolTime.get()));
         coolTimer.setOnFinished(event ->{
-            setStatus(Status.READY);
+            coolStatus = Status.READY;
             coolTimer.stop(); // 停止冷却计时器。
         });
     }
 
     @Override
-    public BaseBullet fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs, Pane root) {
+    public List<BaseBullet> fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs, Pane root) {
         if (activeInputs.contains(GameInput.FIRE) && coolStatus == Status.READY && monsters.size() > 0){
+            newBulletList.clear();
             try {
                 BaseBullet newBullet = BulletFactory.getInstance().create(bulletType);
                 newBullet.setProps(damage.get(), bulletSpeed.get(), range.get());
                 newBullet.setPos(x, y);
-                newBullet.setTarget(selectTarget(x, y, monsters));
+                newBullet.setTarget(selectTarget(x, y, monsters), 0.5);
                 newBullet.putOnPane(root);
-                setStatus(Status.COOLDOWN);
+                coolStatus = Status.COOLDOWN;
                 coolTimer.play(); // 开始冷却计时器。
-                return newBullet;
+                newBulletList.add(newBullet);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return newBulletList;
         }
         return null;
     }
