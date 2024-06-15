@@ -8,7 +8,7 @@ public class FireCDBuff extends BaseProp{
 
     public FireCDBuff() {
         this.displayImage = ResourceManager.getInstance().getImg("displayImage", "Prop", "FireCDBuff");
-        this.price = 10;
+        this.price = 5;
         this.buffValue = -20.0;
     }
 

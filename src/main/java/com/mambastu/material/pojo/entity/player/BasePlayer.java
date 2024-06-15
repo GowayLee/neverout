@@ -23,6 +23,7 @@ import lombok.Setter;
 @Setter
 public abstract class BasePlayer extends BaseEntity implements Movable {
     protected double speed = 5;
+    private double skillCD;
     protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
     protected final PauseTransition skillCDTimer = new PauseTransition(); // 技能冷却时间计时器

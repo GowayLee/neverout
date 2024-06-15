@@ -29,10 +29,25 @@
   },
   "Prop": {
     "DamageBuff": {
-      "displayImage": "/static/image/player1.png"
+      "displayImage": "/static/image/PropImage/powerUp.png"
     },
     "FireCDBuff": {
-      "displayImage": "/static/image/player_die.png"
+      "displayImage": "/static/image/PropImage/FireCdUp.png"
+    },
+    "HpBuff": {
+      "displayImage": "/static/image/PropImage/HP_Up.png"
+    },
+    "SkillCDBuff": {
+      "displayImage": "/static/image/PropImage/SkillCDUp.png"
+    },
+    "SpeedBuff": {
+      "displayImage":"/static/image/PropImage/SpeedUp.png"
+    },
+    "BulletRangeBuff": {
+      "displayImage": "/static/image/PropImage/BulletRangeUp.png"
+    },
+    "BulletSpeedBuff": {
+      "displayImage" :"/static/image/PropImage/BulletSpeedUp.png"
     }
   },
   "System": {
