@@ -51,9 +51,9 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
         NORMAL, INVINCIBLE
     }
 
-    protected State state;
-    protected SkillState skillState;
-    protected InjuryState injuryState;
+    private State state;
+    private SkillState skillState;
+    private InjuryState injuryState;
 
     public void move(Set<GameInput> activeInputs, Pane root) { // TODO: 边界问题
         double deltaX = 0, deltaY = 0;

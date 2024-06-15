@@ -8,6 +8,7 @@ import javafx.animation.PauseTransition;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,13 +24,21 @@ public class JokerPlayer extends BasePlayer {
     private Image dieImage;
     private double skillCD = 3; // second
     private Random random = new Random();
-    public enum JokerSkillState { RED , BLUE };
+
+    public enum JokerSkillState {
+        RED, BLUE
+    };
+
     JokerSkillState jokerSkillState;
 
     public JokerPlayer() {
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Joker");
         this.readyImage = ResourceManager.getInstance().getImg("readyImage", "Player", "Joker");
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Joker");
+        this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
+        this.invincibleTimer.setOnFinished(e -> {
+            setInjuryState(InjuryState.NORMAL);
+        });
     }
 
     @Override
@@ -42,10 +51,10 @@ public class JokerPlayer extends BasePlayer {
     }
 
     @Override
-    public void move(Set<GameInput> activeInputs) {
+    public void move(Set<GameInput> activeInputs, Pane root) {
         double deltaX = 0, deltaY = 0;
         savePreviousFrame();
-        if (getState() == State.MOVING||getState()==State.SKILL) {
+        if (getState() == State.MOVING || getState() == State.SKILL) {
             if (activeInputs.contains(GameInput.MOVE_UP))
                 deltaY -= speed;
             if (activeInputs.contains(GameInput.MOVE_DOWN))
@@ -64,7 +73,7 @@ public class JokerPlayer extends BasePlayer {
         }
 
         if (getState() == State.SKILL) {
-            createDashTrail();
+            createDashTrail(root);
         }
 
         x.set(x.get() + deltaX);
@@ -72,7 +81,7 @@ public class JokerPlayer extends BasePlayer {
 
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-        crossedBoundary();
+        crossedBoundary(root);
     }
 
     private void activateSkill(Set<GameInput> activeInputs) { // 技能：随机进入一种状态
@@ -108,7 +117,6 @@ public class JokerPlayer extends BasePlayer {
         skillTimeline.play();
     }
 
-
     private void startSkillCooldown() { // 进入技能冷却
         skillCDTimer.setDuration(Duration.seconds(skillCD));
         skillCDTimer.setOnFinished(event -> setSkillState(SkillState.READY));
@@ -120,6 +128,15 @@ public class JokerPlayer extends BasePlayer {
     }
 
     @Override
+    public void getHurt(Integer damage) {
+        if (super.getInjuryState() != InjuryState.INVINCIBLE) {
+            HP.set(HP.get() - damage); // 受到伤害，扣除生命值
+            setInjuryState(InjuryState.INVINCIBLE); // 进入无敌状态
+            invincibleTimer.playFromStart();
+        }
+    }
+
+    @Override
     public void setSkillState(SkillState state) {
         super.setSkillState(state);
         setStateImage();
@@ -128,10 +145,10 @@ public class JokerPlayer extends BasePlayer {
     public void setStateImage() { // 根据技能的状态来设置图像
         ColorAdjust colorAdjust = new ColorAdjust();
         if (getSkillState() == SkillState.ACTIVE) {
-            if (this.jokerSkillState==JokerSkillState.RED) {
+            if (this.jokerSkillState == JokerSkillState.RED) {
                 colorAdjust.setHue(-0.5); // 红色
                 colorAdjust.setContrast(0.5);
-            } else if (this.jokerSkillState==JokerSkillState.BLUE) {
+            } else if (this.jokerSkillState == JokerSkillState.BLUE) {
                 colorAdjust.setHue(0.5); //
                 colorAdjust.setContrast(0.5);
             }
@@ -145,7 +162,7 @@ public class JokerPlayer extends BasePlayer {
         }
     }
 
-    private void createDashTrail() { // 冲刺生成虚影
+    private void createDashTrail(Pane root) { // 冲刺生成虚影
         // 根据玩家位置生成虚影
         ImageView trail = new ImageView(showingImageView.getImage());
         trail.setFitWidth(showingImageView.getFitWidth());
@@ -155,9 +172,9 @@ public class JokerPlayer extends BasePlayer {
 
         // 虚影特性：根据技能状态设置颜色，0.5透明度，淡出（时间0.5秒）
         ColorAdjust colorAdjust = new ColorAdjust();
-        if (this.jokerSkillState==JokerSkillState.RED) {
+        if (this.jokerSkillState == JokerSkillState.RED) {
             colorAdjust.setHue(0); // 红色
-        } else if (this.jokerSkillState==JokerSkillState.BLUE) {
+        } else if (this.jokerSkillState == JokerSkillState.BLUE) {
             colorAdjust.setHue(0.5); // 蓝色
         }
         colorAdjust.setContrast(0.5);

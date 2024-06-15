@@ -73,7 +73,7 @@ public class LaughPlayer extends BasePlayer {
         }
 
         if (getState()==State.SKILL) {
-            createDashTrail();
+            createDashTrail(root);
         }
 
         x.set(x.get() + deltaX);
@@ -87,7 +87,7 @@ public class LaughPlayer extends BasePlayer {
 
     @Override
     public void getHurt(Integer damage) {
-        if (injuryState != InjuryState.INVINCIBLE) {
+        if (super.getInjuryState() != InjuryState.INVINCIBLE) {
             HP.set(HP.get() - damage); // 受到伤害，扣除生命值
             setInjuryState(InjuryState.INVINCIBLE); // 进入无敌状态
             invincibleTimer.playFromStart();
@@ -159,7 +159,7 @@ public class LaughPlayer extends BasePlayer {
         }
     }
 
-    private void createDashTrail() {//冲刺生成虚影
+    private void createDashTrail(Pane root) {//冲刺生成虚影
         //根据玩家位置生成虚影
         ImageView trail = new ImageView(showingImageView.getImage());
         trail.setFitWidth(showingImageView.getFitWidth());
