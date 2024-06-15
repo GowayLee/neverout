@@ -84,7 +84,7 @@ public abstract class BasePlayer extends BaseEntity{
 
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-        crossedBoundary();
+        trappedInStage();
     }
 
     public void setPos(double sceneWidth, double sceneHeight) { // 默认出生在屏幕中央

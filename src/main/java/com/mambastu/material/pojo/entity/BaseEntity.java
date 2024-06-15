@@ -40,7 +40,7 @@ public abstract class BaseEntity {
         root.getChildren().remove(showingImageView);
     }
 
-    public void crossedBoundary() { // 检测与窗口边界的碰撞
+    public void trappedInStage() { // 防止实体超出舞台范围，并触发碰撞检测
         CollisionState collisionState = ScreenBound.collisionState(this.getBound());
         if (collisionState == CollisionState.HORIZONTAL)
             x.set(prevX);
@@ -50,6 +50,7 @@ public abstract class BaseEntity {
             x.set(prevX);
             y.set(prevY);
         }
+        savePreviousFrame();
     }
 
     public void savePreviousFrame() { // 保存上一次的位置，用于碰撞检测

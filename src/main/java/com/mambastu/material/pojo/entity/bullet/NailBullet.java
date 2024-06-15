@@ -41,8 +41,7 @@ public class NailBullet extends BaseBullet{
         y.set(currentY);
         showingImageView.setX(currentX);
         showingImageView.setY(currentY);
-        savePreviousFrame();
-        crossedBoundary();
+        trappedInStage();
     }
 
     @Override

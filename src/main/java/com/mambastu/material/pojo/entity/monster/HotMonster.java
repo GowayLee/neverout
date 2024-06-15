@@ -45,7 +45,6 @@ public class HotMonster extends BaseMonster {
 
     @Override
     public void move(double targetX, double targetY) {
-        savePreviousFrame();
         if (getState() == HotMonster.State.MOVING) {
             speed = 1.2;
             double dx = targetX - x.get();
@@ -58,7 +57,7 @@ public class HotMonster extends BaseMonster {
             showingImageView.setX(x.get());
             showingImageView.setY(y.get());
         }
-        crossedBoundary();
+        trappedInStage();
     }
 
     @Override

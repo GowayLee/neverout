@@ -60,8 +60,7 @@ public class StandardBullet extends BaseBullet{
             showingImageView.setX(currentX);
             showingImageView.setY(currentY);
         }
-        savePreviousFrame();
-        crossedBoundary();
+        trappedInStage();
     }
 
     @Override

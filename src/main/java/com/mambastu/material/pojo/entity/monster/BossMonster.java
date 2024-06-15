@@ -64,27 +64,30 @@ public class BossMonster extends BaseMonster {
     @Override
     public void move(double targetX, double targetY) {
         speed = 10.0;
-        savePreviousFrame();
-        if (getState() == State.MOVING) {
-            double dx = targetX - x.get();
-            double dy = targetY - y.get();
-            double distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance > 0) {
-                x.set(x.get() + speed * dx / distance);
-                y.set(y.get() + speed * dy / distance);
-            }
-            showingImageView.setX(x.get());
-            showingImageView.setY(y.get());
-            crossedBoundary();
-        } else if (getState() == State.SHAKING) {
-            double shakingDistance = Math.random() - 0.5;
-            x.set(x.get() + shakingDistance * showingImageView.getFitWidth() * 0.4);
-            y.set(y.get() + shakingDistance * showingImageView.getFitHeight() * 0.4);
-            showingImageView.setX(x.get());
-            showingImageView.setY(y.get());
-            crossedBoundary();
+        switch (getState()) {
+            case MOVING:
+                double dx = targetX - x.get();
+                double dy = targetY - y.get();
+                double distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance > 0) {
+                    x.set(x.get() + speed * dx / distance);
+                    y.set(y.get() + speed * dy / distance);
+                }
+                showingImageView.setX(x.get());
+                showingImageView.setY(y.get());
+                trappedInStage();
+                break;
+            case SHAKING:
+                double shakingDistance = Math.random() - 0.5;
+                x.set(x.get() + shakingDistance * showingImageView.getFitWidth() * 0.4);
+                y.set(y.get() + shakingDistance * showingImageView.getFitHeight() * 0.4);
+                showingImageView.setX(x.get());
+                showingImageView.setY(y.get());
+                trappedInStage();
+                break;
+            default:
+                break;
         }
-
     }
 
     @Override

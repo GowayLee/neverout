@@ -54,7 +54,6 @@ public class JokerPlayer extends BasePlayer {
     @Override
     public void move(Set<GameInput> activeInputs, Pane root) {
         double deltaX = 0, deltaY = 0;
-        savePreviousFrame();
         if (getState() == State.MOVING || getState() == State.SKILL) {
             if (activeInputs.contains(GameInput.MOVE_UP))
                 deltaY -= speed;
@@ -82,7 +81,7 @@ public class JokerPlayer extends BasePlayer {
 
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-        crossedBoundary();
+        trappedInStage();
     }
 
     private void activateSkill(Set<GameInput> activeInputs) { // 技能：随机进入一种状态

@@ -51,7 +51,6 @@ public class LaughPlayer extends BasePlayer {
     @Override
     public void move(Set<GameInput> activeInputs, Pane root) {
         double deltaX = 0, deltaY = 0;
-        savePreviousFrame();
         if (getState() == State.MOVING) {
             if (activeInputs.contains(GameInput.MOVE_UP))
                 deltaY -= speed;
@@ -83,7 +82,7 @@ public class LaughPlayer extends BasePlayer {
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
 
-        crossedBoundary();
+        trappedInStage();
     }
 
     @Override
