@@ -1,10 +1,8 @@
 package com.mambastu.material.pojo.entity;
 
 import com.mambastu.material.pojo.enums.CollisionState;
-import javafx.animation.PauseTransition;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -14,15 +12,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class BaseEntity {
-    protected Pane root;
     protected final ImageView showingImageView = new ImageView(); // 正在被展示的图片节点
     protected final SimpleObjectProperty<Image> showingImage = new SimpleObjectProperty<>(); // 正在被绑定展示的图片
     protected SimpleDoubleProperty x = new SimpleDoubleProperty();
     protected SimpleDoubleProperty y = new SimpleDoubleProperty();
     protected double prevX; // 用于碰撞检测的变量，记录上一次的位置
     protected double prevY;
-    protected final ColorAdjust colorAdjust = new ColorAdjust(); // 特效
-    protected final PauseTransition FXTimer = new PauseTransition(); // 特效计时器
+
 
     abstract public void init();
 
@@ -39,107 +35,11 @@ public abstract class BaseEntity {
         root.getChildren().remove(showingImageView);
     }
 
+
+
     // Bounds内部类,用于碰撞检测
     public abstract static class Bounds {
         public abstract CollisionState collisionState(Bounds other);
-    }
-
-    // 不可进入矩形Bounds类
-    public static class RectangleInBounds extends Bounds {
-        private final SimpleDoubleProperty x;
-        private final SimpleDoubleProperty y;
-        private final double width;
-        private final double height;
-
-        public RectangleInBounds(SimpleDoubleProperty x, SimpleDoubleProperty y, double width, double height) {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-        }
-
-        public SimpleDoubleProperty getX() {
-            return x;
-        }
-
-        public SimpleDoubleProperty getY() {
-            return y;
-        }
-
-        public double getWidth() {
-            return width;
-        }
-
-        public double getHeight() {
-            return height;
-        }
-
-        @Override
-        public CollisionState collisionState(Bounds aim) {
-
-            if (aim instanceof RectangleInBounds) {// 和矩形Bound碰撞
-                RectangleInBounds aimRectangle = (RectangleInBounds) aim;
-                boolean collision = x.get() < aimRectangle.getX().get() + aimRectangle.getWidth() &&
-                        x.get() + width > aimRectangle.getX().get() &&
-                        y.get() < aimRectangle.getY().get() + aimRectangle.getHeight() &&
-                        y.get() + height > aimRectangle.getY().get();
-                if (collision)
-                    return CollisionState.TRUE;
-            } else if (aim instanceof CircleBounds) {// 和圆形Bound碰撞
-                CircleBounds aimCircle = (CircleBounds) aim;
-                return aimCircle.collisionState(this);
-            }
-            return CollisionState.FALSE;
-        }
-    }
-
-    // 不可离开矩形Bounds类
-    public static class RectangleOutBounds extends Bounds {
-        private final SimpleDoubleProperty x;
-        private final SimpleDoubleProperty y;
-        private final double width;
-        private final double height;
-
-        public RectangleOutBounds(SimpleDoubleProperty x, SimpleDoubleProperty y, double width, double height) {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-        }
-
-        public SimpleDoubleProperty getX() {
-            return x;
-        }
-
-        public SimpleDoubleProperty getY() {
-            return y;
-        }
-
-        public double getWidth() {
-            return width;
-        }
-
-        public double getHeight() {
-            return height;
-        }
-
-        @Override
-        public CollisionState collisionState(Bounds aim) {
-
-            if (aim instanceof RectangleInBounds) {// 和矩形Bound碰撞
-                RectangleInBounds aimRectangle = (RectangleInBounds) aim;
-                boolean collision = x.get() < aimRectangle.getX().get() + aimRectangle.getWidth() &&
-                        x.get() + width > aimRectangle.getX().get() &&
-                        y.get() < aimRectangle.getY().get() + aimRectangle.getHeight() &&
-                        y.get() + height > aimRectangle.getY().get();
-                if (collision)
-                    return CollisionState.TRUE;
-            } else if (aim instanceof CircleBounds) {// 和圆形Bound碰撞
-                CircleBounds aimCircle = (CircleBounds) aim;
-                return aimCircle.collisionState(this);
-            }
-            return CollisionState.FALSE;
-        }
     }
 
     // 圆形Bounds
@@ -165,27 +65,21 @@ public abstract class BaseEntity {
         public SimpleDoubleProperty getCenterX() {
             return centerX;
         }
-
         public SimpleDoubleProperty getCenterY() {
             return centerY;
         }
-
         public SimpleDoubleProperty getX() {
             return x;
         }
-
         public SimpleDoubleProperty getY() {
             return y;
         }
-
         public double getPrevX() {
             return prevX;
         }
-
         public double getPrevY() {
             return prevY;
         }
-
         public double getRadius() {
             return radius;
         }
@@ -269,7 +163,7 @@ public abstract class BaseEntity {
         }
 
         public static boolean isImageViewCenterNearLine(double centerX, double centerY, double radius, double x1,
-                double y1, double x2, double y2) {
+                                                        double y1, double x2, double y2) {
             // 计算线段到圆心的距离
             double distance = pointToLineDistance(centerX, centerY, x1, y1, x2, y2);
 
@@ -305,6 +199,90 @@ public abstract class BaseEntity {
             double dx = px - nearestX;
             double dy = py - nearestY;
             return Math.sqrt(dx * dx + dy * dy);
+        }
+    }
+
+    // 不可进入矩形Bounds类
+    public static class RectangleInBounds extends Bounds {
+        private final SimpleDoubleProperty x;
+        private final SimpleDoubleProperty y;
+        private final double width;
+        private final double height;
+
+        public RectangleInBounds(SimpleDoubleProperty x, SimpleDoubleProperty y, double width, double height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+
+        public SimpleDoubleProperty getX() {
+            return x;
+        }
+        public SimpleDoubleProperty getY() {
+            return y;
+        }
+        public double getWidth() {
+            return width;
+        }
+        public double getHeight() {
+            return height;
+        }
+
+        @Override
+        public CollisionState collisionState(Bounds aim) {
+
+            if (aim instanceof RectangleInBounds) {// 和矩形Bound碰撞
+                RectangleInBounds aimRectangle = (RectangleInBounds) aim;
+                boolean collision = x.get() < aimRectangle.getX().get() + aimRectangle.getWidth() &&
+                        x.get() + width > aimRectangle.getX().get() &&
+                        y.get() < aimRectangle.getY().get() + aimRectangle.getHeight() &&
+                        y.get() + height > aimRectangle.getY().get();
+                if (collision)
+                    return CollisionState.TRUE;
+            } else if (aim instanceof CircleBounds) {// 和圆形Bound碰撞
+                CircleBounds aimCircle = (CircleBounds) aim;
+                return aimCircle.collisionState(this);//直接引用圆形bounds和矩形碰撞方法
+            }
+            return CollisionState.FALSE;
+        }
+    }
+
+    // 不可离开矩形Bounds类
+    public static class RectangleOutBounds extends Bounds {
+        private final SimpleDoubleProperty x;
+        private final SimpleDoubleProperty y;
+        private final double width;
+        private final double height;
+
+        public RectangleOutBounds(SimpleDoubleProperty x, SimpleDoubleProperty y, double width, double height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+
+        public SimpleDoubleProperty getX() {return x;}
+        public SimpleDoubleProperty getY() {return y;}
+        public double getWidth() {return width;}
+        public double getHeight() {return height;}
+
+        @Override
+        public CollisionState collisionState(Bounds aim) {
+
+            if (aim instanceof RectangleInBounds) {// 和矩形Bound碰撞
+                RectangleInBounds aimRectangle = (RectangleInBounds) aim;
+                boolean collision = x.get() < aimRectangle.getX().get() + aimRectangle.getWidth() &&
+                        x.get() + width > aimRectangle.getX().get() &&
+                        y.get() < aimRectangle.getY().get() + aimRectangle.getHeight() &&
+                        y.get() + height > aimRectangle.getY().get();
+                if (collision)
+                    return CollisionState.TRUE;
+            } else if (aim instanceof CircleBounds) {// 和圆形Bound碰撞
+                CircleBounds aimCircle = (CircleBounds) aim;
+                return aimCircle.collisionState(this);//直接调用Bounds和矩形碰撞的方法
+            }
+            return CollisionState.FALSE;
         }
     }
 

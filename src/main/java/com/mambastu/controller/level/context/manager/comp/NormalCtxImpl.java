@@ -20,6 +20,7 @@ public class NormalCtxImpl implements ModeCtxLogic{
         firstLevelConfig.getMonsterEggList().put(MonsterTypes.BossMonster, 2.0);
         firstLevelConfig.getMonsterEggList().put(MonsterTypes.HotMonster, 1.0);
         firstLevelConfig.setMonsterScalDensity(2000);
+        firstLevelConfig.setMonsterScalCoin(1.0);
         firstLevelConfig.setDuration(10); // 基础关卡时长30秒。
 
     }
@@ -35,6 +36,12 @@ public class NormalCtxImpl implements ModeCtxLogic{
     public void updatePlayerProp() {
         ctx.getLevelRecord().getPlayer().getHP().set(ctx.getLevelRecord().getPlayer().getMaxHP().get()); // 玩家生命值恢复到上限。
         // 更新玩家属性，例如生命值、攻击力、防御力等。
+    }
+
+    @Override
+    public void updateCoin() { // 更新玩家当前关卡获得的硬币数。
+        int newCoin = (int) (ctx.getLevelRecord().getKillCount().get() * ctx.getLevelConfig().getMonsterScalCoin()); // 计算当前关卡击杀怪物获得的硬币数。
+        ctx.getGlobalRecord().getCoins().set(ctx.getGlobalRecord().getCoins().get() + newCoin);
     }
 
     @Override

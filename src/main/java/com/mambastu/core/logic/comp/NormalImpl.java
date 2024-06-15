@@ -51,7 +51,7 @@ public class NormalImpl implements ModeLogic {
 
     // ================================= Init Section =================================
 
-    public NormalImpl(EngineProps engineProps, LogicLayerListener listener) { // TODO: 优化事件处理方式, 每次都要new一个事件实例对性能影响较大
+    public NormalImpl(EngineProps engineProps, LogicLayerListener listener) {
         this.listener = listener;
         this.inputListener = new InputHandler();
         this.ctx = engineProps.getCtx();
@@ -90,7 +90,6 @@ public class NormalImpl implements ModeLogic {
         try {
             player.init();
             player.setPos(gamePane.getWidth(), gamePane.getHeight());
-            player.setRoot(gamePane);
             player.putOnPane(gamePane);
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,10 +117,9 @@ public class NormalImpl implements ModeLogic {
             public void handle(ActionEvent event) {
                 try {
                     BaseMonster monster = MonsterFactory.getInstance().create(eggType);
-                    monster.setRoot(gamePane);
+                    monster.omen(monsterList); // 生成预警
                     monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
                     monster.putOnPane(gamePane);
-                    monsterList.add(monster);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -143,12 +141,12 @@ public class NormalImpl implements ModeLogic {
 
     private void monsterMove() {
         for (BaseMonster monster : monsterList) {
-            monster.move(player.getX().get(), player.getY().get());
+            monster.move(player.getX().get(), player.getY().get(), gamePane);
         }
     }
 
     private void playerMove() {
-        player.move(InputManager.getInstance().getActiveInputs());
+        player.move(InputManager.getInstance().getActiveInputs(), gamePane);
     }
 
     private void bulletMove() {
@@ -182,9 +180,9 @@ public class NormalImpl implements ModeLogic {
             for (BaseMonster monster : monsterList) {
                 if (bullet.getBounds().collisionState(monster.getBounds()) == CollisionState.TRUE) {
                     BulletHitMonsterEvent event = BulletHitMonsterEvent.getInstance(); // 触发子弹击中怪物事件，记录数据等操作
-                    event.setProperty(bullet, monster);
+                    event.setProperty(bullet, monster, gamePane);
                     EventManager.getInstance().fireEvent(event);
-                    removeList.add(bullet);
+                    removeList.add(bullet); // TODO: 贯穿子弹
                     checkMonsterDie(monster);
                     break;
                 }

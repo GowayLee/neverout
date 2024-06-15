@@ -16,6 +16,7 @@ import java.net.URL;
 import com.mambastu.controller.input.InputManager;
 import com.mambastu.controller.level.LevelController;
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.PropStore;
 
 /**
  * JavaFX App
@@ -81,6 +82,7 @@ public class App extends Application {
             root.prefHeightProperty().bind(scene.heightProperty());
 
             ResourceManager.getInstance().loadResources(); // 初始化资源管理器，载入JSON
+            PropStore.getInstance().loadResources(); // 初始化道具存储器，载入JSON
             InputManager.init(scene); // 初始化输入管理器
             LevelController controller = new LevelController(root);
             controller.showMainMenu();

@@ -80,23 +80,31 @@ public class InputManager {
             boolean isConnected = currState.isConnected;
             if (isConnected) {
                 leftJoystickInput(currState.leftStickX, currState.leftStickY);
-                buttonInput(currState.x, currState.a, currState.b, currState.y, currState.startJustPressed,
-                        currState.backJustPressed);
+                buttonInput(currState.x, currState.a, currState.b, currState.y, currState.startJustPressed, currState.backJustPressed);
                 triggerInput(currState.leftTrigger, currState.rightTrigger);
             }
         }
     }
 
     private void triggerInput(double leftTrigger, double rightTrigger) {
-        // if (leftTrigger>0.5) {
-        // System.out.println("L: " + leftTrigger);
-        // }
+        if (rightTrigger>0.5) {
+            activeInputs.add(GameInput.FIRE);
+        }else{
+            activeInputs.remove(GameInput.FIRE);
+        }
+
+
     }
 
     private void buttonInput(boolean x, boolean a, boolean b, boolean y, boolean start, boolean back) { // FIXME: 暂停键映射无法正常暂停
         // if (start) {
         //     listener.switchPausenResume();
         // }
+        if(b){
+            activeInputs.add(GameInput.SKILL);
+        }else{
+            activeInputs.remove(GameInput.SKILL);
+        }
     }
 
     private void leftJoystickInput(double leftX, double leftY) { // 手柄左摇杆输入映射
