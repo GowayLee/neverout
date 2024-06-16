@@ -81,9 +81,7 @@ public class App extends Application {
             // 绑定StackPane的尺寸到场景的尺寸
             root.prefWidthProperty().bind(scene.widthProperty());
             root.prefHeightProperty().bind(scene.heightProperty());
-            AudioManager.getInstance().loadResources();
-            AudioManager.getInstance().loadMusic("BackgroundMusic", "BattleTheme","displayMusic");
-            AudioManager.getInstance().playMusic("BackgroundMusic", "BattleTheme","displayMusic");
+            audioManagerLoad();
             ResourceManager.getInstance().loadResources(); // 初始化资源管理器，载入JSON
             PropStore.getInstance().loadResources(); // 初始化道具存储器，载入JSON
             InputManager.init(scene); // 初始化输入管理器
@@ -105,5 +103,23 @@ public class App extends Application {
         public void exitGame() {
             System.out.println("退出游戏方法已调用");
         }
+    }
+
+    private void audioManagerLoad() {
+        AudioManager.getInstance().loadResources();
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "BattleTheme1","displayAudio");
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "BattleTheme2","displayAudio");
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "BattleTheme3","displayAudio");
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "PassLevel","displayAudio");
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "ReadyFight","displayAudio");
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "GameOver","displayAudio");
+
+        AudioManager.getInstance().loadAudio("SoundEffects", "FireNormal","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "GunReloading","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "HitMonster","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "SkillJokerDown","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "SkillJokerUp","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "SkillJokerUp","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "SkillLaugh","displayAudio");
     }
 }

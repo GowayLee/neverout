@@ -2,6 +2,7 @@ package com.mambastu.material.pojo.entity.player;
 
 import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.AudioManager;
 import com.mambastu.util.BetterMath;
 
 import javafx.animation.FadeTransition;
@@ -71,6 +72,7 @@ public class LaughPlayer extends BasePlayer {
         }
 
         if (getState() == State.SKILL) {
+            skillSoundEffects();
             createDashTrail(root);
         }
 
@@ -82,6 +84,12 @@ public class LaughPlayer extends BasePlayer {
 
         trappedInStage();
     }
+
+    private void skillSoundEffects() {
+        if(!AudioManager.getInstance().isAudioPlaying("SoundEffects", "SkillLaugh","displayAudio")){
+            AudioManager.getInstance().playAudio("SoundEffects", "SkillLaugh","displayAudio");
+        }
+        }
 
     @Override
     public void getHurt(Integer damage) {
