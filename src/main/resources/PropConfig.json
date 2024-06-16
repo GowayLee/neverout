@@ -2,15 +2,45 @@
   "Props": [
     {
         "name": "DamageBuff",
-        "image": "https://example.com/item1.png",
-        "buffValue": "10.0",
-        "price": "5"
+        "description": "换上硬子弹, 但是保证没有超过1.8J/cm2 🤫\nIncreases damage dealt by 20%",
+        "buffValue": "1.2",
+        "price": "10"
     },
     {
         "name": "FireCDBuff",
-        "image": "https://example.com/item2.png",
-        "buffValue": "-20.0",
-        "price": "10"
+        "description": "悄悄超频了你的枪!\nReduces fire CD by 20%",
+        "buffValue": "0.8",
+        "price": "5"
+    },
+    {
+      "name": "HpBuff",
+      "description": "不想再打一半就喊救护车🚑?\nIncreases Max HP by 10 pts",
+      "buffValue": "10.0",
+      "price": "10"
+    },
+    {
+      "name": "SkillCDBuff",
+      "description": "I say NO MORE WAITING TIME!\nReduces skill CD by 20%",
+      "buffValue": "0.8",
+      "price": "20"
+    },
+    {
+      "name": "SpeedBuff",
+      "description": "光速前往波兰(划掉)\nIncreases speed by 10 pts",
+      "buffValue": "1",
+      "price": "10"
+    },
+    {
+      "name": "BulletSpeedBuff",
+      "description": "💡您的村民向您分享的黑火药的技术!\nIncreases Bullet Speed by 5 pts",
+      "buffValue": "5",
+      "price": "5"
+    },
+    {
+      "name": "BulletRangeBuff",
+      "description": "御敌千里之外\nIncreases Bullet Range by 100 pts",
+      "buffValue": "100",
+      "price": "5"
     }
   ]
 }

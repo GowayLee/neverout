@@ -7,7 +7,7 @@ public class CollisionEventHandler extends BaseEventHandler<CollisionEvent> {
     public void handle(CollisionEvent event) {
         int damage = event.getMonster().releaseDamage();
         if (damage > 0) {
-            event.getPlayer().getHurt(damage);
+             event.getPlayer().getHurt(damage);
         }
     }
 }

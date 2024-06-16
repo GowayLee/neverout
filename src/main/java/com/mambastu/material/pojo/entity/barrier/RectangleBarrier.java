@@ -17,10 +17,4 @@ public class RectangleBarrier extends BaseBarrier {
         showingImage.set(bornImage);
         showingImageView.imageProperty().bind(showingImage);
     }
-
-
-    @Override
-    public Bounds getBounds() {
-        return null;
-    }
 }

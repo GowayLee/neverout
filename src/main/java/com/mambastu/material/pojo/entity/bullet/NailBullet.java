@@ -5,13 +5,13 @@ import com.mambastu.material.resource.ResourceManager;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
-public class StandardBullet extends BaseBullet{
+public class NailBullet extends BaseBullet {
     private Image bornImage;
 
-    public StandardBullet() {
+    public NailBullet() {
         super();
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
-        setImageSize(20, 20);
+        setImageSize(15, 15);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class StandardBullet extends BaseBullet{
 
     @Override
     public void afterHitTarget() {
-        isValid = false;
+        isValid = true;
     }
 }

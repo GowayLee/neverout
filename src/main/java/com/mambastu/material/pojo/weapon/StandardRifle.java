@@ -18,46 +18,42 @@ import javafx.util.Duration;
 public class StandardRifle extends BaseWeapon{
 
     public StandardRifle() {
-        damage.set(8);
-        bulletSpeed.set(20);
-        range.set(600);
-        coolTime.set(70);
-        bulletType = BulletType.StandardBullet;
+        damage.set(34);
+        bulletSpeed.set(10);
+        range.set(700);
+        coolTime.set(300);
+        bulletType = BulletType.NailBullet;
         coolStatus = Status.READY;
         coolTimer.setDuration(Duration.millis(coolTime.get()));
         coolTimer.setOnFinished(event ->{
-            setStatus(Status.READY);
+            coolStatus = Status.READY;
             coolTimer.stop(); // 停止冷却计时器。
         });
     }
 
     @Override
-    public BaseBullet fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs, Pane root) {
+    public List<BaseBullet> fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs, Pane root) {
         if (activeInputs.contains(GameInput.FIRE) && coolStatus == Status.READY && monsters.size() > 0){
+            newBulletList.clear();
             try {
                 BaseBullet newBullet = BulletFactory.getInstance().create(bulletType);
                 newBullet.setProps(damage.get(), bulletSpeed.get(), range.get());
-                newBullet.setTarget(selectTarget(x, y, monsters));
                 newBullet.setPos(x, y);
+                newBullet.setTarget(selectTarget(x, y, monsters), 0.0);
                 newBullet.putOnPane(root);
-                setStatus(Status.COOLDOWN);
+                coolStatus = Status.COOLDOWN;
                 coolTimer.play(); // 开始冷却计时器。
-                return newBullet;
+                newBulletList.add(newBullet);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return newBulletList;
         }
         return null;
     }
 
     @Override
     public BaseEntity selectTarget(double x, double y, LinkedList<BaseMonster> monsterList) { // 选择目标，并传入当前武器的位置信息。TODO: 改进算法
-        // List<BaseMonster> validMonsters = new ArrayList<>();
-        // for (BaseMonster monster : monsterList) { // FIXME: 实现避开预警中的怪物
-        //     if (monster.isOmen()) {
-        //         validMonsters.add(monster);
-        //     }
-        // }
         List<Double> distList = new ArrayList<>();
         for (BaseEntity entity : monsterList) {
             distList.add((entity.getX().get() - x) * (entity.getX().get() - x) + (entity.getY().get() - y) * (entity.getY().get() - y)); // 计算距离，并平方。

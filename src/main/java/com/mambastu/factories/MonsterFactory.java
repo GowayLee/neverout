@@ -35,10 +35,12 @@ public class MonsterFactory implements EntityFactory<BaseMonster, MonsterTypes> 
         switch (monsterType) {
             case BossMonster:
                 BossMonster bossMonster = (BossMonster) objectPoolManager.getObjectPool(BossMonster.class).borrowObject();
+                bossMonster.setOnStage(true);
                 bossMonster.init();
                 return bossMonster;
             case HotMonster:
                 HotMonster hotMonster = (HotMonster) objectPoolManager.getObjectPool(HotMonster.class).borrowObject();
+                hotMonster.setOnStage(true);
                 hotMonster.init();
                 return hotMonster;
             default:
@@ -49,6 +51,7 @@ public class MonsterFactory implements EntityFactory<BaseMonster, MonsterTypes> 
 
     @Override
     public void delete(BaseMonster obj) {
+        obj.setOnStage(false);
         @SuppressWarnings("unchecked")
         ObjectPool<BaseMonster> objectPool = (ObjectPool<BaseMonster>)  ObjectPoolManager.getInstance().getObjectPool(obj.getClass());
         objectPool.returnObject(obj);

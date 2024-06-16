@@ -2,6 +2,8 @@ package com.mambastu.material.pools;
 
 import com.mambastu.material.pojo.entity.BaseEntity;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.Stack;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,14 +20,14 @@ import org.apache.logging.log4j.Logger;
 public class ObjectPool<T extends BaseEntity> {
     private static final Logger logger = LogManager.getLogger(ObjectPool.class);
 
-    private final Stack<T> pool;
+    private final Queue<T> pool;
     private final Class<T> objectClass;
     private double maxCapacity;
     private double curCapacity;
     private boolean readyForEnlarge = true; // 是否可以扩容(线程安全)
 
     public ObjectPool(Class<T> objectClass, int maxCapacity) {
-        this.pool = new Stack<>();
+        this.pool = new ArrayDeque<>();
         this.objectClass = objectClass;
         this.maxCapacity = maxCapacity;
         this.curCapacity = maxCapacity; // 当前池中的可使用对象数量
@@ -35,7 +37,7 @@ public class ObjectPool<T extends BaseEntity> {
     private void init() { // 初始化对象池
         for (int i = 0; i < maxCapacity; i++) {
             try {
-                pool.push(objectClass.getDeclaredConstructor().newInstance());
+                pool.add(objectClass.getDeclaredConstructor().newInstance());
             } catch (Exception e) {
                 logger.error("Error in initializing object pool!");
                 e.printStackTrace();
@@ -49,13 +51,13 @@ public class ObjectPool<T extends BaseEntity> {
                 enlargePool();
             }
             curCapacity--;
-            return pool.pop();
+            return pool.poll();
         } else { // 如果池中没有元素，立刻创建新元素并返回，同时增加池的容量
             try {
-                pool.push(objectClass.getDeclaredConstructor().newInstance());
+                pool.add(objectClass.getDeclaredConstructor().newInstance());
                 maxCapacity++;
                 logger.warn("Object pool reaches upper limit!");
-                return pool.pop();
+                return pool.poll();
             } catch (Exception e) {
                 logger.error("Error in enlarging object pool!");
                 e.printStackTrace();
@@ -65,7 +67,7 @@ public class ObjectPool<T extends BaseEntity> {
     }
 
     public void returnObject(T obj) {
-        pool.push(obj);
+        pool.add(obj);
         curCapacity++;
         // logger.info("Return object to pool! ");
     }
@@ -75,7 +77,7 @@ public class ObjectPool<T extends BaseEntity> {
             readyForEnlarge = false;
             for (int i = 0; i < maxCapacity; i++) {
                 try {
-                    pool.push(objectClass.getDeclaredConstructor().newInstance());
+                    pool.add(objectClass.getDeclaredConstructor().newInstance());
                 } catch (Exception e) {
                     logger.error("Error in enlarging object pool!");
                     e.printStackTrace();

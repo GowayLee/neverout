@@ -7,6 +7,8 @@ import com.mambastu.controller.level.context.enums.GameMode;
 import com.mambastu.factories.PlayerFactory;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 import com.mambastu.material.pojo.entity.player.PlayerTypes;
+import com.mambastu.material.pojo.weapon.M1900ShotGun;
+import com.mambastu.material.pojo.weapon.StandardRifle;
 
 import javafx.beans.property.SimpleObjectProperty;
 import lombok.Getter;
@@ -22,7 +24,7 @@ public class Context {
     @Getter
     private final LevelConfig levelConfig; // 每个关卡的参数
 
-    @Getter @Setter
+    @Getter
     private GlobalRecord globalRecord;
     @Getter @Setter
     private LevelRecord levelRecord; // 每个关卡的记录器, 在关卡开始前将实例化一个新的对象来引用
@@ -36,6 +38,7 @@ public class Context {
 
     public void initPlayer() {
         BasePlayer player =  PlayerFactory.getInstance().create(playerType.get());
+        player.setWeapon(new M1900ShotGun());
         levelConfig.setPlayer(player); // 设置玩家到关卡配置中
     }
 

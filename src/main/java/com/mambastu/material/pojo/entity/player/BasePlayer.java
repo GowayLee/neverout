@@ -3,11 +3,10 @@ package com.mambastu.material.pojo.entity.player;
 import java.util.Set;
 
 import com.mambastu.controller.input.comp.GameInput;
-import com.mambastu.material.pojo.Interface.Movable;
+import com.mambastu.material.pojo.bound.CircleBound;
 import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.weapon.BaseWeapon;
-
-import com.mambastu.material.pojo.enums.CollisionState;
+import com.mambastu.util.BetterMath;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -20,9 +19,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
-public abstract class BasePlayer extends BaseEntity implements Movable {
-    protected double speed = 5;
+public abstract class BasePlayer extends BaseEntity{
+    protected final SimpleDoubleProperty speed = new SimpleDoubleProperty(5.0);
+    protected final SimpleDoubleProperty skillCD = new SimpleDoubleProperty(); // 秒
     protected final SimpleIntegerProperty MaxHP = new SimpleIntegerProperty(100);
     protected final SimpleIntegerProperty HP = new SimpleIntegerProperty(100);
     protected final PauseTransition skillCDTimer = new PauseTransition(); // 技能冷却时间计时器
@@ -36,7 +35,7 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
             new KeyFrame(Duration.millis(50), e -> {
                 showingImageView.setOpacity(1.0);
             }));
-
+    @Setter
     protected BaseWeapon weapon;
 
     protected enum State {
@@ -51,13 +50,17 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
         NORMAL, INVINCIBLE
     }
 
-    private State state;
-    private SkillState skillState;
-    private InjuryState injuryState;
+    protected State state;
+    protected SkillState skillState;
+    protected InjuryState injuryState;
 
-    public void move(Set<GameInput> activeInputs, Pane root) { // TODO: 边界问题
+    public BasePlayer() { // 默认构造函数内设置玩家的碰撞箱
+        this.bound = new CircleBound(x, y, 50, prevX, prevY);
+    }
+
+    public void move(Set<GameInput> activeInputs, Pane root) {
         double deltaX = 0, deltaY = 0;
-
+        double speed = this.speed.get(); // 获取玩家速度属性值
         if (activeInputs.contains(GameInput.MOVE_UP))
             deltaY -= speed;
         if (activeInputs.contains(GameInput.MOVE_DOWN))
@@ -68,8 +71,8 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
             deltaX += speed;
 
         if (deltaX != 0 && deltaY != 0) {
-            deltaX /= Math.sqrt(2);
-            deltaY /= Math.sqrt(2);
+            deltaX /= BetterMath.sqrt(2);
+            deltaY /= BetterMath.sqrt(2);
         }
 
         x.set(x.get() + deltaX);
@@ -77,7 +80,7 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
 
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-        crossedBoundary(root);
+        trappedInStage();
     }
 
     public void setPos(double sceneWidth, double sceneHeight) { // 默认出生在屏幕中央
@@ -85,7 +88,7 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
         this.y.set(sceneHeight / 2);
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-        setImageSize(50, 50);
+
     }
 
     public void getHurt(Integer damage) {
@@ -100,33 +103,4 @@ public abstract class BasePlayer extends BaseEntity implements Movable {
     }
 
     abstract public void die(); // 设置玩家死亡状态
-
-    @Override
-    public Bounds getBounds() {// 返回圆形bound类
-        double radius = Math.max(showingImageView.getFitWidth(), showingImageView.getFitHeight()) / 2;
-        return new CircleBounds(x, y, radius, prevX, prevY);
-    }
-
-    @Override
-    public void crossedBoundary(Pane root) {
-        double sceneWidth = root.getWidth();
-        double sceneHeight = root.getHeight();
-        RectangleOutBounds sceneBounds = new RectangleOutBounds(new SimpleDoubleProperty(0.0),
-                new SimpleDoubleProperty(0.0), sceneWidth, sceneHeight);
-        CollisionState collisionState = sceneBounds.collisionState(this.getBounds());
-        if (collisionState == CollisionState.HORIZONTAL)
-            x = new SimpleDoubleProperty(prevX);
-        if (collisionState == CollisionState.VERTICAL)
-            y = new SimpleDoubleProperty(prevY);
-        if (collisionState == CollisionState.BOTH) {
-            x = new SimpleDoubleProperty(prevX);
-            y = new SimpleDoubleProperty(prevY);
-        }
-    }
-
-    @Override
-    public void savePreviousFrame() {
-        prevX = x.get();
-        prevY = y.get();
-    }
 }

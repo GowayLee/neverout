@@ -1,9 +1,11 @@
 package com.mambastu.core.logic.comp;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.mambastu.controller.input.InputManager;
 import com.mambastu.controller.level.context.dto.Context;
@@ -48,6 +50,9 @@ public class NormalImpl implements ModeLogic {
     private final LinkedList<BaseMonster> monsterList;
     private final LinkedList<BaseBullet> bulletList;
     private final LinkedList<BaseBarrier> barrierList;
+
+    private final List<BaseBullet> removeList = new ArrayList<>();
+    private final Set<BaseMonster> hittedSet = new HashSet<>();
 
     // ================================= Init Section =================================
 
@@ -141,7 +146,7 @@ public class NormalImpl implements ModeLogic {
 
     private void monsterMove() {
         for (BaseMonster monster : monsterList) {
-            monster.move(player.getX().get(), player.getY().get(), gamePane);
+            monster.move(player.getX().get(), player.getY().get());
         }
     }
 
@@ -151,22 +156,22 @@ public class NormalImpl implements ModeLogic {
 
     private void bulletMove() {
         for (BaseBullet bullet : bulletList) {
-            bullet.move(); // 子弹移动逻辑
+            bullet.move(gamePane); // 子弹移动逻辑
         }
     }
 
     private void playerFire() {
         if (player.getWeapon() != null) {
-            BaseBullet newBullet = player.getWeapon().fire(player.getX().get(), player.getY().get(), monsterList, InputManager.getInstance().getActiveInputs(), gamePane);
-            if (newBullet != null) {
-                bulletList.add(newBullet);
+            List<BaseBullet> newBulletList = player.getWeapon().fire(player.getX().get(), player.getY().get(), monsterList, InputManager.getInstance().getActiveInputs(), gamePane);
+            if (newBulletList != null && newBulletList.size() > 0) {
+                bulletList.addAll(newBulletList); // 添加新子弹到子弹列表中
             }
         }
     }
 
     private void checkCollision() {
         for (BaseMonster monster : monsterList) {
-            if (player.getBounds().collisionState(monster.getBounds()) == CollisionState.TRUE) { // 触发事件
+            if (player.getBound().collisionState(monster.getBound()) == CollisionState.TRUE) { // 触发事件
                 CollisionEvent event = CollisionEvent.getInstance();
                 event.setProperty(player, monster);
                 EventManager.getInstance().fireEvent(event);
@@ -175,22 +180,24 @@ public class NormalImpl implements ModeLogic {
     }
 
     private void checkBullletHitMonster() { // 检查子弹是否击中怪物，触发事件等操作
-        List<BaseBullet> removeList = new ArrayList<>(); // 记录需要移除的子弹列表，因为不能在循环中直接移除元素，会导致并发修改异常
+        removeList.clear(); // 记录需要移除的子弹列表，因为不能在循环中直接移除元素，会导致并发修改异常
+        hittedSet.clear(); // 记录被击中的怪物集合，使用集合防止一个怪物被多次添加多次死亡造成对象池异常
         for (BaseBullet bullet : bulletList) {
             for (BaseMonster monster : monsterList) {
-                if (bullet.getBounds().collisionState(monster.getBounds()) == CollisionState.TRUE) {
+                if (bullet.getBound().collisionState(monster.getBound()) == CollisionState.TRUE) {
                     BulletHitMonsterEvent event = BulletHitMonsterEvent.getInstance(); // 触发子弹击中怪物事件，记录数据等操作
                     event.setProperty(bullet, monster, gamePane);
                     EventManager.getInstance().fireEvent(event);
-                    removeList.add(bullet); // TODO: 贯穿子弹
-                    checkMonsterDie(monster);
-                    break;
+                    hittedSet.add(monster); // 记录被击中的怪物，后续统一处理
                 }
-                if (bullet.isHitTarget() || bullet.isOutRange()) { // 如果子弹已经到达目标位置但是没有命中目标，说明目标已经死亡并被对象池回收，该子弹也应该被回收
+                if (!bullet.isValid()) { // 如果子弹无效，则需要移除该子弹
                     removeList.add(bullet);
                     break;
                 }
             }
+        }
+        for (BaseMonster monster : hittedSet) {
+            checkMonsterDie(monster);
         }
         for (BaseBullet removBullet : removeList) {
             bulletList.remove(removBullet); // 移除子弹

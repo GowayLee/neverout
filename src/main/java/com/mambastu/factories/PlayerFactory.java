@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 import com.mambastu.material.pojo.entity.player.LaughPlayer;
 import com.mambastu.material.pojo.entity.player.PlayerTypes;
-import com.mambastu.material.pools.ObjectPoolManager;
 
 public class PlayerFactory implements EntityFactory<BasePlayer, PlayerTypes>  {
     private static final Logger logger = LogManager.getLogger(PlayerFactory.class);
@@ -29,7 +28,7 @@ public class PlayerFactory implements EntityFactory<BasePlayer, PlayerTypes>  {
             case LaughPlayer:
                 try {
                     LaughPlayer laughPlayer = (LaughPlayer) LaughPlayer.class.getDeclaredConstructor().newInstance();
-                    // 玩家初始化逻辑与怪物不同, 需要在关卡管理器中初始化
+                    laughPlayer.setOnStage(true);
                     return laughPlayer;
                 } catch (Exception e) {
                     logger.error("Error in creating Monster! Unknown player type: " + playerTypes);
