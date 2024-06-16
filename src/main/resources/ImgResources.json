@@ -20,6 +20,13 @@
       "bornImage": "/static/image/JokerWhite.png",
       "readyImage": "/static/image/Joker.png",
       "dieImage": "/static/image/player_die.png"
+    },
+    "Basaker": {
+      "bornImage": "/static/image/Basaker_Normal.png",
+      "readyImage": "/static/image/Joker.png",
+      "dieImage": "/static/image/player_die.png",
+      "enragedImage": "/static/image/Basaker_Enraged.png",
+      "bloodImage": "/static/image/Blood_Image.png"
     }
   },
   "Barrier": {
