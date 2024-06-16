@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.mambastu.factories.MonsterFactory;
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.BetterMath;
 
 import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;
@@ -50,7 +51,7 @@ public class HotMonster extends BaseMonster {
             speed = 1.2;
             double dx = targetX - x.get();
             double dy = targetY - y.get();
-            double dl = Math.sqrt(dx * dx + dy * dy);
+            double dl = BetterMath.sqrt(dx * dx + dy * dy);
             if (dl > 0) {
                 x.set(x.get() + speed * dx / dl);
                 y.set(y.get() + speed * dy / dl);

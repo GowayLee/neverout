@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.mambastu.factories.MonsterFactory;
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.BetterMath;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -76,7 +77,7 @@ public class BossMonster extends BaseMonster {
                 case MOVING:
                     double dx = targetX - x.get();
                     double dy = targetY - y.get();
-                    double distance = Math.sqrt(dx * dx + dy * dy);
+                    double distance = BetterMath.sqrt(dx * dx + dy * dy);
                     if (distance > 0) {
                         x.set(x.get() + speed * dx / distance);
                         y.set(y.get() + speed * dy / distance);

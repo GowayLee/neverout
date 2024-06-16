@@ -2,6 +2,7 @@ package com.mambastu.material.pojo.entity.player;
 
 import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.BetterMath;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
@@ -65,8 +66,8 @@ public class LaughPlayer extends BasePlayer {
         }
 
         if (deltaX != 0 && deltaY != 0 && getState() == State.MOVING) {
-            deltaX /= Math.sqrt(2);
-            deltaY /= Math.sqrt(2);
+            deltaX /= BetterMath.sqrt(2);
+            deltaY /= BetterMath.sqrt(2);
         }
 
         if (getState() == State.SKILL) {
@@ -114,8 +115,8 @@ public class LaughPlayer extends BasePlayer {
             skillDeltaX += speed.get() * 7;
         // 平衡斜向移动时的距离
         if ((moveUp || moveDown) && (moveLeft || moveRight)) {
-            skillDeltaX *= 1 / Math.sqrt(2);
-            skillDeltaY *= 1 / Math.sqrt(2);
+            skillDeltaX *= 1 / BetterMath.sqrt(2);
+            skillDeltaY *= 1 / BetterMath.sqrt(2);
         }
 
         PauseTransition skillTimeline = new PauseTransition(Duration.seconds(0.1));

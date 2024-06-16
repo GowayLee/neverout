@@ -1,6 +1,7 @@
 package com.mambastu.material.pojo.bound;
 
 import com.mambastu.material.pojo.enums.CollisionState;
+import com.mambastu.util.BetterMath;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import lombok.Getter;
@@ -123,6 +124,6 @@ public class CircleBound implements Bound{
         }
         double dx = px - nearestX;
         double dy = py - nearestY;
-        return Math.sqrt(dx * dx + dy * dy);
+        return BetterMath.sqrt(dx * dx + dy * dy);
     }
 }

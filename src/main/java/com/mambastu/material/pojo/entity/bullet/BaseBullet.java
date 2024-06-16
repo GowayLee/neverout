@@ -2,6 +2,8 @@ package com.mambastu.material.pojo.entity.bullet;
 
 import com.mambastu.material.pojo.bound.CircleBound;
 import com.mambastu.material.pojo.entity.BaseEntity;
+import com.mambastu.util.BetterMath;
+
 import javafx.scene.layout.Pane;
 import lombok.Getter;
 
@@ -53,13 +55,13 @@ public abstract class BaseBullet extends BaseEntity{
         this.offsetSin = offsetSin; // 弹道与枪-目标连线的偏移夹角的Sin值，用于计算弹道
         this.dx = target.getX().get() - x.get();
         this.dy = target.getY().get() - y.get();
-        double dl = Math.sqrt(dx * dx + dy * dy);
+        double dl = BetterMath.sqrt(dx * dx + dy * dy);
 
         // 多数情况下没有弹道偏移夹角，直接赋值提高性能
         if (offsetSin != 0.0) {
             double sina = dx / dl;
             double cosa = dy / dl;
-            offsetCos = Math.sqrt(1 - offsetSin * offsetSin);
+            offsetCos = BetterMath.sqrt(1 - offsetSin * offsetSin);
             sin = offsetSin * cosa + sina * offsetCos;
             cos = offsetCos * cosa - offsetSin * sina;
         } else {
