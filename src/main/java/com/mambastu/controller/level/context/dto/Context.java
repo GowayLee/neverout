@@ -8,6 +8,7 @@ import com.mambastu.factories.PlayerFactory;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 import com.mambastu.material.pojo.entity.player.PlayerTypes;
 import com.mambastu.material.pojo.weapon.M1900ShotGun;
+import com.mambastu.material.pojo.weapon.StandardRifle;
 
 import javafx.beans.property.SimpleObjectProperty;
 import lombok.Getter;

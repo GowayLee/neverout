@@ -62,7 +62,7 @@ public class App extends Application {
         scene = new Scene(root, 1920, 1080);
         stage.setScene(scene);
         stage.setTitle("Never Out");
-        stage.getIcons().add(ImgCache.getImage("/static/image/player1.png"));
+        stage.getIcons().add(ImgCache.getImage("/static/image/char/LaughPlayer.png"));
         stage.show();
     }
 

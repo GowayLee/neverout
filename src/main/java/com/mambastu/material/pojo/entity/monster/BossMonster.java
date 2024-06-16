@@ -28,10 +28,10 @@ public class BossMonster extends BaseMonster {
 
     public BossMonster() {
         super();
+        this.omenImage = ResourceManager.getInstance().getImg("omenImage", "Monster", "BossMonster");
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "BossMonster");
         this.attackImage = ResourceManager.getInstance().getImg("attackImage", "Monster", "BossMonster");
-        this.dieImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
-        this.omenImage = ResourceManager.getInstance().getImg("omenImage", "Monster", "BossMonster");
+        this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Monster", "BossMonster");
         setImageSize(50, 50);
         super.damage = 20;
         super.initTimer.setDuration(Duration.seconds(1));

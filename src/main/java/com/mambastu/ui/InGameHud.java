@@ -161,7 +161,6 @@ public class InGameHud {
         skillCDarc.setStrokeWidth(3);
         skillCDarc.lengthProperty().bind(skillCDprogress.multiply(360));
 
-        skillCDDot.setVisible(true);
         skillCDDot.visibleProperty().bind(skillCDprogress.isEqualTo(1)); // 设置技能冷却点可见性，当技能冷却完成时显示
     }
 }

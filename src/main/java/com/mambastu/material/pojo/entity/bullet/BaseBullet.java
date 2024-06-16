@@ -59,16 +59,17 @@ public abstract class BaseBullet extends BaseEntity{
 
         // 多数情况下没有弹道偏移夹角，直接赋值提高性能
         if (offsetSin != 0.0) {
-            double sina = dx / dl;
-            double cosa = dy / dl;
+            double sina = dy / dl;
+            double cosa = dx / dl;
             offsetCos = BetterMath.sqrt(1 - offsetSin * offsetSin);
             sin = offsetSin * cosa + sina * offsetCos;
             cos = offsetCos * cosa - offsetSin * sina;
         } else {
             offsetCos = 1.0;
-            sin = dx / dl;
-            cos = dy / dl;
+            sin = dy / dl;
+            cos = dx / dl;
         }
+        // showingImageView.setRotate(BetterMath.toDegree(Math.acos(sin)));
         
     }
 

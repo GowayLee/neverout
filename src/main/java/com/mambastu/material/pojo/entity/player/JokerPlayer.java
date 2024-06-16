@@ -17,7 +17,6 @@ import java.util.Set;
 
 public class JokerPlayer extends BasePlayer {
     private Image bornImage;
-    private Image readyImage;
     private Image dieImage;
     private Random random = new Random();
     private double damageRatio;
@@ -33,9 +32,8 @@ public class JokerPlayer extends BasePlayer {
     public JokerPlayer() {
         super();
         super.skillCD.set(2);
-        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Joker");
-        this.readyImage = ResourceManager.getInstance().getImg("readyImage", "Player", "Joker");
-        this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Joker");
+        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "JokerPlayer");
+        this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "JokerPlayer");
         setImageSize(50, 50);
         this.damageRatio = 1.0;
         this.jokerSkillState = JokerSkillState.BLUE;
@@ -101,7 +99,6 @@ public class JokerPlayer extends BasePlayer {
     private void activateSkill(Set<GameInput> activeInputs) { // 技能：随机进入一种状态
         state = State.SKILL;
         skillState = SkillState.ACTIVE;
-        setStateImage();
         
         int skillType = random.nextInt(2);
         if (skillType == 0) { // 状态1：速度减慢至原速度的0.75倍，不会受到伤害，背后有红色虚影
@@ -123,26 +120,6 @@ public class JokerPlayer extends BasePlayer {
             HP.set((int) (HP.get() - damage * damageRatio)); // 加入免伤比例计算
             injuryState = InjuryState.INVINCIBLE; // 进入无敌状态
             invincibleTimer.playFromStart();
-        }
-    }
-
-    public void setStateImage() { // 根据技能的状态来设置图像
-        ColorAdjust colorAdjust = new ColorAdjust();
-        if (getSkillState() == SkillState.ACTIVE) {
-            if (this.jokerSkillState == JokerSkillState.RED) {
-                colorAdjust.setHue(-0.5); // 红色
-                colorAdjust.setContrast(0.5);
-            } else if (this.jokerSkillState == JokerSkillState.BLUE) {
-                colorAdjust.setHue(0.5); //
-                colorAdjust.setContrast(0.5);
-            }
-            showingImageView.setEffect(colorAdjust);
-        } else if (getSkillState() == SkillState.READY) {
-            showingImage.set(readyImage);
-            showingImageView.setEffect(null);
-        } else {
-            showingImage.set(bornImage);
-            showingImageView.setEffect(null);
         }
     }
 
