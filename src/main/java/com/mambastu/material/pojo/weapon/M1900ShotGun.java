@@ -20,7 +20,7 @@ public class M1900ShotGun extends BaseWeapon {
 
     private final PauseTransition shotTimer = new PauseTransition();
     private int fireCount;
-    private double[] offsetArr = { -0.2, -0.1 , 0.0, 0.1, 0.2 };
+    private final double[] offsetArr = { -0.23, -0.15, -0.07 , 0.0, 0.07, 0.15, 0.23 };
     private ShotState shotState;
     private enum ShotState { SHOOTING, READY };
 
@@ -28,8 +28,8 @@ public class M1900ShotGun extends BaseWeapon {
         super.damage.set(20);
         super.bulletSpeed.set(13);
         super.range.set(450);
-        super.coolTime.set(1400);
-        super.bulletType = BulletType.NailBullet;
+        super.coolTime.set(1100 );
+        super.bulletType = BulletType.StandardBullet;
         super.coolStatus = Status.READY;
         this.shotState = ShotState.READY;
         super.coolTimer.setDuration(Duration.millis(coolTime.get()));
@@ -49,7 +49,7 @@ public class M1900ShotGun extends BaseWeapon {
             Pane root) {
         if (activeInputs.contains(GameInput.FIRE) && coolStatus == Status.READY && shotState == ShotState.READY && monsters.size() > 0) {
             newBulletList.clear();
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 7; i++) {
                 try {
                     BaseBullet newBullet = BulletFactory.getInstance().create(bulletType);
                     newBullet.setProps(damage.get(), bulletSpeed.get(), range.get());
