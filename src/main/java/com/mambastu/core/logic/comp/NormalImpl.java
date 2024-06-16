@@ -131,7 +131,7 @@ public class NormalImpl implements ModeLogic {
 
     public void update(long elapsedTime) { // 游戏循环更新
         checkCollision();
-        checkBullletHitMonster();
+        checkBulletHitMonster();
         playerMove();
         monsterMove();
         bulletMove();
@@ -174,7 +174,7 @@ public class NormalImpl implements ModeLogic {
         }
     }
 
-    private void checkBullletHitMonster() { // 检查子弹是否击中怪物，触发事件等操作
+    private void checkBulletHitMonster() { // 检查子弹是否击中怪物，触发事件等操作
         List<BaseBullet> removeList = new ArrayList<>(); // 记录需要移除的子弹列表，因为不能在循环中直接移除元素，会导致并发修改异常
         List<BaseMonster> hittedList = new ArrayList<>(); // 记录被击中的怪物列表，因为不能在循环中直接移除元素，会导致并发修改异常
         for (BaseBullet bullet : bulletList) {
