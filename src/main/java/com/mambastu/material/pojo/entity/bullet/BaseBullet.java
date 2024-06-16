@@ -2,6 +2,8 @@ package com.mambastu.material.pojo.entity.bullet;
 
 import com.mambastu.material.pojo.bound.CircleBound;
 import com.mambastu.material.pojo.entity.BaseEntity;
+import com.mambastu.util.BetterMath;
+
 import javafx.scene.layout.Pane;
 import lombok.Getter;
 
@@ -14,6 +16,12 @@ public abstract class BaseBullet extends BaseEntity{
     protected double offsetCos;
     protected BaseEntity target; // 子弹的目标实体，用于追踪
     // 以上参数需要由Weapon来赋予
+
+    // 以下参数由子弹自身计算得出，用于确定弹道
+    private double dx;
+    private double dy;
+    protected double sin;
+    protected double cos;
 
     @Getter
     protected boolean isValid; // 子弹是否有效，用于判断是否需要移除子弹
@@ -44,8 +52,24 @@ public abstract class BaseBullet extends BaseEntity{
 
     public void setTarget(BaseEntity target, double offsetSin) { // 设置目标实体，用于追踪
         this.target = target;
-        this.offsetSin = offsetSin;
-        this.offsetCos = Math.sqrt(1 - offsetSin * offsetSin); // 预先计算偏移夹角的Cos值，用于计算弹道
+        this.offsetSin = offsetSin; // 弹道与枪-目标连线的偏移夹角的Sin值，用于计算弹道
+        this.dx = target.getX().get() - x.get();
+        this.dy = target.getY().get() - y.get();
+        double dl = BetterMath.sqrt(dx * dx + dy * dy);
+
+        // 多数情况下没有弹道偏移夹角，直接赋值提高性能
+        if (offsetSin != 0.0) {
+            double sina = dx / dl;
+            double cosa = dy / dl;
+            offsetCos = BetterMath.sqrt(1 - offsetSin * offsetSin);
+            sin = offsetSin * cosa + sina * offsetCos;
+            cos = offsetCos * cosa - offsetSin * sina;
+        } else {
+            offsetCos = 1.0;
+            sin = dx / dl;
+            cos = dy / dl;
+        }
+        
     }
 
     public Integer releaseDamage() {

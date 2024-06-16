@@ -2,6 +2,7 @@ package com.mambastu.material.pojo.entity.player;
 
 import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.BetterMath;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
@@ -66,8 +67,8 @@ public class JokerPlayer extends BasePlayer {
                 activateSkill(activeInputs);
         }
         if (deltaX != 0 && deltaY != 0 && getState() == State.MOVING) {
-            deltaX /= Math.sqrt(2);
-            deltaY /= Math.sqrt(2);
+            deltaX /= BetterMath.sqrt(2);
+            deltaY /= BetterMath.sqrt(2);
         }
         if (getState() == State.SKILL) {
             createDashTrail(root);

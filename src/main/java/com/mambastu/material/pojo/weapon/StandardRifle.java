@@ -18,7 +18,7 @@ import javafx.util.Duration;
 public class StandardRifle extends BaseWeapon{
 
     public StandardRifle() {
-        damage.set(20);
+        damage.set(34);
         bulletSpeed.set(10);
         range.set(700);
         coolTime.set(300);
@@ -39,7 +39,7 @@ public class StandardRifle extends BaseWeapon{
                 BaseBullet newBullet = BulletFactory.getInstance().create(bulletType);
                 newBullet.setProps(damage.get(), bulletSpeed.get(), range.get());
                 newBullet.setPos(x, y);
-                newBullet.setTarget(selectTarget(x, y, monsters), 0.5);
+                newBullet.setTarget(selectTarget(x, y, monsters), 0.0);
                 newBullet.putOnPane(root);
                 coolStatus = Status.COOLDOWN;
                 coolTimer.play(); // 开始冷却计时器。

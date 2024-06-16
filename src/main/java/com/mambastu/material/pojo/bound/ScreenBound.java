@@ -1,6 +1,7 @@
 package com.mambastu.material.pojo.bound;
 
 import com.mambastu.material.pojo.enums.CollisionState;
+import com.mambastu.util.BetterMath;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.layout.Pane;
@@ -93,6 +94,6 @@ public class ScreenBound { // 窗口边界
         }
         double dx = px - nearestX;
         double dy = py - nearestY;
-        return Math.sqrt(dx * dx + dy * dy);
+        return BetterMath.sqrt(dx * dx + dy * dy);
     }
 }

@@ -6,6 +6,7 @@ import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.pojo.bound.CircleBound;
 import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.weapon.BaseWeapon;
+import com.mambastu.util.BetterMath;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -70,8 +71,8 @@ public abstract class BasePlayer extends BaseEntity{
             deltaX += speed;
 
         if (deltaX != 0 && deltaY != 0) {
-            deltaX /= Math.sqrt(2);
-            deltaY /= Math.sqrt(2);
+            deltaX /= BetterMath.sqrt(2);
+            deltaY /= BetterMath.sqrt(2);
         }
 
         x.set(x.get() + deltaX);

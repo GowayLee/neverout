@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 import com.mambastu.material.pojo.entity.player.LaughPlayer;
 import com.mambastu.material.pojo.entity.player.PlayerTypes;
-import com.mambastu.material.pools.ObjectPoolManager;
 
 public class PlayerFactory implements EntityFactory<BasePlayer, PlayerTypes>  {
     private static final Logger logger = LogManager.getLogger(PlayerFactory.class);

@@ -1,9 +1,11 @@
 package com.mambastu.core.logic.comp;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.mambastu.controller.input.InputManager;
 import com.mambastu.controller.level.context.dto.Context;
@@ -48,6 +50,9 @@ public class NormalImpl implements ModeLogic {
     private final LinkedList<BaseMonster> monsterList;
     private final LinkedList<BaseBullet> bulletList;
     private final LinkedList<BaseBarrier> barrierList;
+
+    private final List<BaseBullet> removeList = new ArrayList<>();
+    private final Set<BaseMonster> hittedSet = new HashSet<>();
 
     // ================================= Init Section =================================
 
@@ -131,7 +136,7 @@ public class NormalImpl implements ModeLogic {
 
     public void update(long elapsedTime) { // 游戏循环更新
         checkCollision();
-        checkBulletHitMonster();
+        checkBullletHitMonster();
         playerMove();
         monsterMove();
         bulletMove();
@@ -174,16 +179,16 @@ public class NormalImpl implements ModeLogic {
         }
     }
 
-    private void checkBulletHitMonster() { // 检查子弹是否击中怪物，触发事件等操作
-        List<BaseBullet> removeList = new ArrayList<>(); // 记录需要移除的子弹列表，因为不能在循环中直接移除元素，会导致并发修改异常
-        List<BaseMonster> hittedList = new ArrayList<>(); // 记录被击中的怪物列表，因为不能在循环中直接移除元素，会导致并发修改异常
+    private void checkBullletHitMonster() { // 检查子弹是否击中怪物，触发事件等操作
+        removeList.clear(); // 记录需要移除的子弹列表，因为不能在循环中直接移除元素，会导致并发修改异常
+        hittedSet.clear(); // 记录被击中的怪物集合，使用集合防止一个怪物被多次添加多次死亡造成对象池异常
         for (BaseBullet bullet : bulletList) {
             for (BaseMonster monster : monsterList) {
                 if (bullet.getBound().collisionState(monster.getBound()) == CollisionState.TRUE) {
-                    BulletHitMonsterEvent event = new BulletHitMonsterEvent(); // 触发子弹击中怪物事件，记录数据等操作
+                    BulletHitMonsterEvent event = BulletHitMonsterEvent.getInstance(); // 触发子弹击中怪物事件，记录数据等操作
                     event.setProperty(bullet, monster, gamePane);
                     EventManager.getInstance().fireEvent(event);
-                    hittedList.add(monster); // 记录被击中的怪物，后续统一处理
+                    hittedSet.add(monster); // 记录被击中的怪物，后续统一处理
                 }
                 if (!bullet.isValid()) { // 如果子弹无效，则需要移除该子弹
                     removeList.add(bullet);
@@ -191,7 +196,7 @@ public class NormalImpl implements ModeLogic {
                 }
             }
         }
-        for (BaseMonster monster : hittedList) {
+        for (BaseMonster monster : hittedSet) {
             checkMonsterDie(monster);
         }
         for (BaseBullet removBullet : removeList) {
