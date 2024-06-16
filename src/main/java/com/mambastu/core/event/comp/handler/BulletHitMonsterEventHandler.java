@@ -6,8 +6,7 @@ public class BulletHitMonsterEventHandler extends BaseEventHandler<BulletHitMons
 
     @Override
     public void handle(BulletHitMonsterEvent event) {
-        event.getMonster().getHurt(event.getBullet().releaseDamage(), event.getRoot());
-        // System.out.println(event.getBullet().releaseDamage());
+        event.getMonster().getHurt(event.getBullet().releaseDamage(), event.getBullet());
         event.getBullet().afterHitTarget();
     }
 }
