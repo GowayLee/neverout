@@ -59,6 +59,9 @@
     }
   },
   "System": {
+    "MainMenu": {
+      "circleImage": "/static/image/circle.png"
+    },
     "LevelMenu": {
       "noItemImage": "/static/image/soldout.png"
     }

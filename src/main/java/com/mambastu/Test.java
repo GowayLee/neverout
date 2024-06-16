@@ -78,7 +78,7 @@ public class Test extends Application {
 
 
         // 加载人物
-        ImageView imageView2 = new ImageView(new Image("static/image/Joker.png"));  // 使用本地图片路径
+        ImageView imageView2 = new ImageView(new Image("static/image/char/JokerPlayer.png"));  // 使用本地图片路径
         imageView2.setPreserveRatio(true);
         imageView2.fitWidthProperty().bind(gridPane.widthProperty().multiply(0.4));
         imageView2.fitHeightProperty().bind(gridPane.heightProperty().multiply(0.4));
