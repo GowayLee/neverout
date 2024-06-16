@@ -56,6 +56,13 @@ public abstract class BasePlayer extends BaseEntity{
 
     public BasePlayer() { // 默认构造函数内设置玩家的碰撞箱
         this.bound = new CircleBound(x, y, 50, prevX, prevY);
+        this.skillCD.set(2.0); // 默认技能冷却时间2秒
+        this.skillCDTimer.setDuration(Duration.seconds(skillCD.get()));
+        this.skillCDTimer.setOnFinished(event -> skillState = SkillState.READY);
+        this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
+        this.invincibleTimer.setOnFinished(e -> {
+            injuryState = InjuryState.NORMAL;
+        });
     }
 
     public void move(Set<GameInput> activeInputs, Pane root) {
@@ -89,6 +96,11 @@ public abstract class BasePlayer extends BaseEntity{
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
 
+    }
+
+    protected void startSkillCooldown () {
+        skillState = SkillState.COOLDOWN;
+        skillCDTimer.play();
     }
 
     public void getHurt(Integer damage) {

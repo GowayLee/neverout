@@ -220,7 +220,7 @@ public class LevelMenu {
         speedLabel.setFont(new Font("Arial", 24));
 
         Label skillCDLabel = new Label();
-        skillCDLabel.textProperty().bind(ctx.getLevelConfig().getPlayer().getSpeed().asString("SkillCD: %.2fs"));
+        skillCDLabel.textProperty().bind(ctx.getLevelConfig().getPlayer().getSkillCD().asString("SkillCD: %.2fs"));
         skillCDLabel.setStyle("-fx-text-fill: yellow;");
         skillCDLabel.setFont(new Font("Arial", 24));
 

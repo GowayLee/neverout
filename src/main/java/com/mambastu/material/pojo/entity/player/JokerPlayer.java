@@ -21,6 +21,8 @@ public class JokerPlayer extends BasePlayer {
     private Image dieImage;
     private Random random = new Random();
 
+    private final PauseTransition skillTimeline = new PauseTransition();
+
     public enum JokerSkillState {
         RED, BLUE
     };
@@ -39,6 +41,19 @@ public class JokerPlayer extends BasePlayer {
         this.invincibleTimer.setOnFinished(e -> {
             super.injuryState = InjuryState.NORMAL;
         });
+        this.skillTimeline.setDuration(Duration.seconds(2));
+        this.skillTimeline.setOnFinished(event -> {
+            state = State.MOVING;
+            skillState = SkillState.COOLDOWN;
+            injuryState = InjuryState.NORMAL;
+            if (this.jokerSkillState == JokerSkillState.BLUE) {
+                speed.set(this.speed.get() / 2);
+            } else if (this.jokerSkillState == JokerSkillState.RED) {
+                speed.set(this.speed.get() * 2);
+            }
+            startSkillCooldown();
+        });
+
     }
 
     @Override
@@ -95,32 +110,7 @@ public class JokerPlayer extends BasePlayer {
             injuryState = InjuryState.NORMAL;
             speed.set(this.speed.get() * 2);
         }
-
-        PauseTransition skillTimeline = new PauseTransition(Duration.seconds(2));
-        skillTimeline.setOnFinished(event -> {
-            state = State.MOVING;
-            skillState = SkillState.COOLDOWN;
-            injuryState = InjuryState.NORMAL;
-            // 重置速度为原始值
-            if (this.jokerSkillState == JokerSkillState.BLUE) {
-                speed.set(this.speed.get() / 2);
-            } else if (this.jokerSkillState == JokerSkillState.RED) {
-                speed.set(this.speed.get() * 2);
-            }
-
-            startSkillCooldown();
-        });
         skillTimeline.play();
-    }
-
-    private void startSkillCooldown() { // 进入技能冷却
-        skillCDTimer.setDuration(Duration.seconds(skillCD.get()));
-        skillCDTimer.setOnFinished(event -> skillState = SkillState.READY);
-        skillCDTimer.play();
-    }
-
-    public void die() {
-        showingImage.set(dieImage);
     }
 
     @Override
@@ -178,5 +168,9 @@ public class JokerPlayer extends BasePlayer {
         fade.play();
 
         root.getChildren().add(trail);
+    }
+
+    public void die() {
+        showingImage.set(dieImage);
     }
 }

@@ -21,16 +21,19 @@ public class LaughPlayer extends BasePlayer {
     private double skillDeltaX;
     private double skillDeltaY;
 
+    private final PauseTransition skillTimeline;
+
     public LaughPlayer() {
         super();
-        super.skillCD.set(2);
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
         this.readyImage = ResourceManager.getInstance().getImg("readyImage", "Player", "Player1");
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Player1");
         setImageSize(50, 50);
-        this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
-        this.invincibleTimer.setOnFinished(e -> {
+        this.skillTimeline = new PauseTransition(Duration.seconds(0.1));
+        this.skillTimeline.setOnFinished(event -> {
+            state = State.MOVING;
             injuryState = InjuryState.NORMAL;
+            startSkillCooldown();
         });
     }
 
@@ -118,22 +121,9 @@ public class LaughPlayer extends BasePlayer {
             skillDeltaX *= 1 / BetterMath.sqrt(2);
             skillDeltaY *= 1 / BetterMath.sqrt(2);
         }
-
-        PauseTransition skillTimeline = new PauseTransition(Duration.seconds(0.1));
-        skillTimeline.setOnFinished(event -> {
-            state = State.MOVING;
-            skillState = SkillState.COOLDOWN;
-            injuryState = InjuryState.NORMAL;
-            startSkillCooldown();
-        });
         skillTimeline.play();
     }
 
-    private void startSkillCooldown() {// 进入技能冷却
-        skillCDTimer.setDuration(Duration.seconds(skillCD.get()));
-        skillCDTimer.setOnFinished(event -> skillState = SkillState.READY);
-        skillCDTimer.play();
-    }
 
     private void setStateImage() {// 根据技能的状态来设置图像，CD条替代物
         ColorAdjust colorAdjust = new ColorAdjust();
