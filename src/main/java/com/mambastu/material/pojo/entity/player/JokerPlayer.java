@@ -20,6 +20,7 @@ public class JokerPlayer extends BasePlayer {
     private Image readyImage;
     private Image dieImage;
     private Random random = new Random();
+    private double damageRatio;
 
     private final PauseTransition skillTimeline = new PauseTransition();
 
@@ -36,6 +37,7 @@ public class JokerPlayer extends BasePlayer {
         this.readyImage = ResourceManager.getInstance().getImg("readyImage", "Player", "Joker");
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Joker");
         setImageSize(50, 50);
+        this.damageRatio = 1.0;
         this.jokerSkillState = JokerSkillState.BLUE;
         this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
         this.invincibleTimer.setOnFinished(e -> {
@@ -47,6 +49,7 @@ public class JokerPlayer extends BasePlayer {
             skillState = SkillState.COOLDOWN;
             injuryState = InjuryState.NORMAL;
             if (this.jokerSkillState == JokerSkillState.BLUE) {
+                damageRatio = 1.0;
                 speed.set(this.speed.get() / 2);
             } else if (this.jokerSkillState == JokerSkillState.RED) {
                 speed.set(this.speed.get() * 2);
@@ -106,6 +109,7 @@ public class JokerPlayer extends BasePlayer {
             injuryState = InjuryState.INVINCIBLE;
             speed.set(this.speed.get() / 2);
         } else {
+            damageRatio = 0.3;
             jokerSkillState = JokerSkillState.BLUE;
             injuryState = InjuryState.NORMAL;
             speed.set(this.speed.get() * 2);
@@ -116,7 +120,7 @@ public class JokerPlayer extends BasePlayer {
     @Override
     public void getHurt(Integer damage) {
         if (super.getInjuryState() != InjuryState.INVINCIBLE) {
-            HP.set(HP.get() - damage); // 受到伤害，扣除生命值
+            HP.set((int) (HP.get() - damage * damageRatio)); // 加入免伤比例计算
             injuryState = InjuryState.INVINCIBLE; // 进入无敌状态
             invincibleTimer.playFromStart();
         }

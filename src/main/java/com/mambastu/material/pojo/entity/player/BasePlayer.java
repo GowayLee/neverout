@@ -104,7 +104,11 @@ public abstract class BasePlayer extends BaseEntity{
     }
 
     public void getHurt(Integer damage) {
-        HP.set(HP.get() - damage); // 受到伤害，扣除生命值
+        if (this.getInjuryState() != InjuryState.INVINCIBLE) {
+            HP.set(HP.get() - damage); // 受到伤害，扣除生命值
+            injuryState = InjuryState.INVINCIBLE; // 进入无敌帧
+            invincibleTimer.playFromStart();
+        }
     }
 
     public boolean isDie() { // 判断玩家是否死亡

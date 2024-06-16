@@ -86,15 +86,6 @@ public class LaughPlayer extends BasePlayer {
         trappedInStage();
     }
 
-    @Override
-    public void getHurt(Integer damage) {
-        if (injuryState != InjuryState.INVINCIBLE) {
-            HP.set(HP.get() - damage); // 受到伤害，扣除生命值
-            injuryState = InjuryState.INVINCIBLE; // 进入无敌状态
-            invincibleTimer.playFromStart();
-        }
-    }
-
     private void activateSkill(Set<GameInput> activeInputs) {// 技能：根据玩家的输入向前免伤冲刺
         state = State.SKILL;
         skillState = SkillState.ACTIVE;
