@@ -24,7 +24,7 @@ import com.mambastu.util.PropStore;
 public class App extends Application {
 
     private static Scene scene;
-    private Stage stage; // 新增的stage引用
+    private static Stage stage; // 新增的stage引用
     private WebView webView; // 新增的webView引用
 
     @Override
@@ -59,7 +59,7 @@ public class App extends Application {
         // 设置初始场景
         StackPane root = new StackPane();
         root.getChildren().add(webView); // 将WebView添加到根节点
-        scene = new Scene(root, 1920, 1080);
+        scene = new Scene(root, 800, 800);
         stage.setScene(scene);
         stage.setTitle("Never Out");
         stage.getIcons().add(ImgCache.getImage("/static/image/player1.png"));
@@ -70,7 +70,7 @@ public class App extends Application {
         launch();
     }
 
-    public class JavaApp {
+    public static class JavaApp {
         public void startGame() {
             System.out.println("开始游戏方法已调用");
 

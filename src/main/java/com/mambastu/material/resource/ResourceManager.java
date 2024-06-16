@@ -43,6 +43,7 @@ public class ResourceManager {
 
     /**
      * 传入 JSON 中的所有父节点，从而查询到url
+     * caseType 为想要的图片key，path 从左到右为：父节点1，父节点2，父节点3...
      *
      * @param caseType
      * @param paths
