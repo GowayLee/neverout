@@ -65,7 +65,7 @@ public class MainMenu {
     }
 
     public void show() {
-        root.getChildren().remove(menuPane);
+        root.getChildren().clear();
         root.getChildren().add(menuPane); // 确保菜单在游戏场景之上(StackPane的栈顶)
     }
 
@@ -76,6 +76,7 @@ public class MainMenu {
     public void init() { // 初始化
         bindProperties();
         buildLayout();
+        menuPane.setOpacity(1.0);
     }
 
     private void bindProperties() {
@@ -84,6 +85,8 @@ public class MainMenu {
     }
 
     private void buildLayout() {
+        menuPane.getChildren().clear();
+        
         buildFaceLayout();
         buildBtnLayout();
         buildCharLayout();
@@ -92,6 +95,8 @@ public class MainMenu {
     }
 
     private void bulidGameModeLayout() {
+        modeIntroPane.getChildren().clear();
+
         ImageView normalModeIntro = createModeIntro(
                 ResourceManager.getInstance().getImg("normalIntroImage", "System", "MainMenu"));
         ImageView normalModeView = createMode(
@@ -177,6 +182,8 @@ public class MainMenu {
     }
 
     private void buildCharLayout() {
+        charIntroPane.getChildren().clear();
+
         ImageView laughPlayerIntro = createCharIntro(
                 ResourceManager.getInstance().getImg("laughIntroImage", "System", "MainMenu")); // 创建角色介绍图像视图
         ImageView laughPlayerView = createChar(
@@ -278,6 +285,8 @@ public class MainMenu {
     }
 
     private void buildBtnLayout() {
+        btnPane.getChildren().clear();
+
         ImageView circleView = new ImageView(ResourceManager.getInstance().getImg("circleImage", "System", "MainMenu"));
         circleView.setFitWidth(600);
         circleView.setFitHeight(120);
@@ -312,6 +321,8 @@ public class MainMenu {
     }
 
     private void buildFaceLayout() {
+        facePane.getChildren().clear();
+
         Group leftEye = createEye();
         Group rightEye = createEye();
         ImageView face = new ImageView(ResourceManager.getInstance().getImg("bornImage", "Monster", "BossMonster"));
