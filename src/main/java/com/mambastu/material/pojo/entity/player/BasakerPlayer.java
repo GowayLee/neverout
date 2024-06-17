@@ -75,7 +75,10 @@ public class BasakerPlayer extends BasePlayer {
             GlobalVar.getGamePane().getChildren().remove(bloodImageView); // 移除血图层
             startSkillCooldown();
             if (weapon != null)
+            {
                 weapon.getDamage().set((weapon.getDamage().get() / 2));
+                weapon.getCoolTime().set(weapon.getCoolTime().get() * 2);
+            }
         });
 
         shadowFade.setNode(skillShadow);
@@ -136,7 +139,12 @@ public class BasakerPlayer extends BasePlayer {
         skillState = SkillState.ACTIVE;
         basakerSkillState = BasakerSkillState.ENRAGED;
         if (weapon != null)
+        {
             weapon.getDamage().set((weapon.getDamage().get() * 2));
+            weapon.getCoolTime().set(weapon.getCoolTime().get() / 2); // 武器冷却时间减半
+        }
+            
+
         setStateImage();
 
         // 产生一个巨大的原地50%透明度虚影

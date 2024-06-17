@@ -8,6 +8,8 @@ import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -82,21 +84,38 @@ public class InGameHud {
         HP.bind(ctx.getLevelRecord().getPlayer().getHP());
         killCount.bind(ctx.getLevelRecord().getKillCount());
         totalFireCD.bind(ctx.getLevelConfig().getPlayer().getWeapon().getCoolTime()); // 绑定武器冷却时间属性
+        setupFireCDTimerKeyFrames();
+        totalFireCD.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                fireCDTimer.stop();
+                setupFireCDTimerKeyFrames();
+            }
+        });
+
         ctx.getLevelConfig().getPlayer().getWeapon().getCoolTimer().statusProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Animation.Status.RUNNING) {
                 fireCDTimer.play();
             }
         }); // 当武器冷却计时器开始时，启动冷却时间计时器
         totalSkillCD.bind(ctx.getLevelConfig().getPlayer().getSkillCD());
+        setupSkillCDTimerKeyFrames();
+        totalSkillCD.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                skillCDTimer.stop();
+                setupSkillCDTimerKeyFrames();
+            }
+        });
+
         ctx.getLevelConfig().getPlayer().getSkillCDTimer().statusProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Animation.Status.RUNNING) {
                 skillCDTimer.play();
             }
         });
-        setupKeyFrames();
     }
 
-    private void setupKeyFrames() { // 计算CD条的补间动画关键帧
+    private void setupFireCDTimerKeyFrames() { // 计算CD条的补间动画关键帧
         fireCDTimer.getKeyFrames().clear();
         int steps = (int) totalFireCD.get() / 16; // 在60fps的情况下确保每一帧都有关键帧
         for (int i = 0; i <= steps; i++) {
@@ -104,14 +123,18 @@ public class InGameHud {
             Duration stepDuration = Duration.millis(totalFireCD.get()).multiply(progress);
             fireCDTimer.getKeyFrames().add(new KeyFrame(stepDuration, e -> fireCDprogress.set(progress)));
         }
+        fireCDTimer.playFromStart();
+    }
 
+    private void setupSkillCDTimerKeyFrames() {
         skillCDTimer.getKeyFrames().clear();
-        steps = (int) totalSkillCD.get() * 1000 / 16; // 在60fps的情况下确保每一帧都有关键帧
+        int steps = (int) totalSkillCD.get() * 1000 / 16; // 在60fps的情况下确保每一帧都有关键帧
         for (int i = 0; i <= steps; i++) {
             double progress = (double) i / steps;
             Duration stepDuration = Duration.millis(totalSkillCD.get() * 1000).multiply(progress);
             skillCDTimer.getKeyFrames().add(new KeyFrame(stepDuration, e -> skillCDprogress.set(progress)));
         }
+        skillCDTimer.playFromStart();
     }
 
     private void buildLayout() {

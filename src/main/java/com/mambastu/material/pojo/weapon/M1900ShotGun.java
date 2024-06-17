@@ -11,6 +11,7 @@ import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.bullet.BulletType;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
+import com.mambastu.util.AudioManager;
 import com.mambastu.util.GlobalVar;
 
 import javafx.animation.PauseTransition;
@@ -48,6 +49,7 @@ public class M1900ShotGun extends BaseWeapon {
     public List<BaseBullet> fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs) {
         if (activeInputs.contains(GameInput.FIRE) && coolStatus == Status.READY && shotState == ShotState.READY && monsters.size() > 0) {
             newBulletList.clear();
+            AudioManager.getInstance().playAudio("SoundEffects", "FireM1900ShotGun", "displayAudio");
             for (int i = 0; i < 7; i++) {
                 try {
                     BaseBullet newBullet = BulletFactory.getInstance().create(bulletType);

@@ -35,7 +35,7 @@ public class LaughPlayer extends BasePlayer {
     }
 
     private void initSkillFX() {
-        skillTimeline.setDuration(Duration.seconds(2));
+        skillTimeline.setDuration(Duration.seconds(0.1));
         skillTimeline.setOnFinished(event -> {
             state = State.MOVING;
             injuryState = InjuryState.NORMAL;

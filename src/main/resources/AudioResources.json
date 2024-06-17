@@ -3,14 +3,14 @@
     "BattleTheme1": {
       "displayAudio": "/Audio/Background_Fighting1.wav"
     },
-    "BattleTheme2":{
+    "BattleTheme2": {
       "displayAudio": "/Audio/Background_Fighting2.wav"
     },
-    "BattleTheme3":{
+    "BattleTheme3": {
       "displayAudio": "/Audio/Background_Fighting3.wav"
     },
     "PassLevel": {
-      "displayAudio":"/Audio/Pass_Level.wav"
+      "displayAudio": "/Audio/Pass_Level.wav"
     },
     "ReadyFight": {
       "displayAudio": "/Audio/Ready_Fight.wav"
@@ -21,7 +21,10 @@
   },
   "SoundEffects": {
     "FireNormal": {
-      "displayAudio" :"/Audio/Fire_Normal.wav"
+      "displayAudio": "/Audio/Fire_Normal.wav"
+    },
+    "FireM1900ShotGun": {
+      "displayAudio": "/Audio/M1900ShotGunShoot.wav"
     },
     "GunReloading": {
       "displayAudio": "/Audio/Gun_Reloading.wav"
@@ -29,7 +32,7 @@
     "HitMonster": {
       "displayAudio": "/Audio/Hit_Monster.wav"
     },
-    "SkillJokerUp":{
+    "SkillJokerUp": {
       "displayAudio": "/Audio/Skill_Joker_Up.wav"
     },
     "SkillJokerDown": {
@@ -39,5 +42,4 @@
       "displayAudio": "/Audio/Skill_Laugh.wav"
     }
   }
-
 }

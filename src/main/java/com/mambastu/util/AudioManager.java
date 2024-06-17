@@ -129,13 +129,17 @@ public class AudioManager {
      * @param key
      */
     public void playAudio(String category, String name, String key) {
-        Clip clip = getClip(category, name, key);
-        if (clip != null) {
-            clip.stop();
-            clip.setFramePosition(0); // Reset the clip to the beginning
-            clip.start();
-            logger.info("Playing audio: /" + category + "/" + name + "/" + key);
-        }
+        new Thread(() -> {
+            Clip clip = getClip(category, name, key);
+            if (clip != null) {
+                if (clip.isRunning()) {
+                    clip.stop();
+                }
+                clip.setFramePosition(0); // Reset the clip to the beginning
+                clip.start();
+                logger.info("Playing audio: /" + category + "/" + name + "/" + key);
+            }
+        }).start();
     }
 
     /**

@@ -29,10 +29,10 @@ public class LevelController {
 
     private final ContextManager ctxManager; // 上下文管理器，用于在过关后进入下一关前更新上下文
 
-    private final MainMenu mainMenu;
+    private MainMenu mainMenu;
     private final PauseMenu pauseMenu;
     private final LevelMenu levelMenu;
-    private final GameOverMenu gameOverMenu;
+    private GameOverMenu gameOverMenu;
     private final InGameHud inGameHud;
 
     private final EngineLayerHandler engineLayerListener;
@@ -54,13 +54,9 @@ public class LevelController {
         this.levelMenuListener = new LevelMenuHandler();
         this.gameOverMenuListener = new GameOverMenuHandler();
 
-        this.mainMenu = new MainMenu(root, ctx, mainMenuListener); // 初始化主菜单，传入关卡配置信息，用于显示关卡选择
         this.pauseMenu = new PauseMenu(root, ctx, pauseMenuListener);
         this.levelMenu = new LevelMenu(root, ctx, levelMenuListener);
-        this.gameOverMenu = new GameOverMenu(root, ctx, gameOverMenuListener); // 初始化游戏结束菜单，传入关卡配置信息，用于显示关卡选择
         this.inGameHud = new InGameHud(root, ctx); // 初始化游戏内HUD
-        
-        this.mainMenu.init(); // 静态菜单单独初始化
     }
 
     private void initDynamicResource() { // 初始化动态资源ctx, 动态菜单
@@ -71,19 +67,26 @@ public class LevelController {
     private void updateDynamicMenu() { // 更新动态资源ctx, 动态菜单，如游戏内HUD、暂停菜单等，这些菜单需要根据关卡配置信息来显示不同的内容。
         pauseMenu.update();
         inGameHud.update();
-        // levelMenu.update();
+        levelMenu.update();
     }
 
     private void initDynamicMenu() { // 初始化动态菜单，如游戏内HUD、暂停菜单等，这些菜单需要根据关卡配置信息来显示不同的内容。
         pauseMenu.init();
         inGameHud.init();
         levelMenu.init();
-        gameOverMenu.init();
     }
 
     // ================================= Operation Section =================================
     public void showMainMenu() { // 显示主菜单逻辑
+        mainMenu = new MainMenu(root, ctx, mainMenuListener);
+        mainMenu.init();
         mainMenu.show();
+    }
+
+    private void showGameOverMenu() {
+        gameOverMenu = new GameOverMenu(root, ctx, gameOverMenuListener);
+        gameOverMenu.init();
+        gameOverMenu.show();
     }
 
     private void startFirstLevel() { // 初始化引擎层, 开始关卡逻辑
@@ -139,7 +142,7 @@ public class LevelController {
                 AudioManager.getInstance().stopAudio("BackgroundMusic", "BattleTheme2","displayAudio");
                 AudioManager.getInstance().playAudio("BackgroundMusic", "GameOver","displayAudio");
                 ctxManager.recordBeforeOver();
-                gameOverMenu.show();
+                showGameOverMenu();
                 logger.error("LevelManager: Game is over.");
             }
         }
@@ -173,7 +176,7 @@ public class LevelController {
         @Override
         public void backMainMenu() {
             gameOverMenu.hide();
-            mainMenu.show();
+            showMainMenu();
         }
 
         @Override
