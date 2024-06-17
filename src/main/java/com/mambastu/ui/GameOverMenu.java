@@ -8,8 +8,6 @@ import com.mambastu.util.BetterMath;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Group;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -17,7 +15,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class GameOverMenu {
@@ -47,7 +44,6 @@ public class GameOverMenu {
         bindProperties();
         buildLayout();
         menuPane.setStyle("-fx-background-color: white;");
-        menuPane.setOpacity(0.8);
     }
 
     public void show() {
@@ -179,7 +175,7 @@ public class GameOverMenu {
         //设置背景图
 
         ImageView circleView = new ImageView(ResourceManager.getInstance().getImg("circleImage", "System", "MainMenu"));
-        circleView.fitHeightProperty().bind(pane.heightProperty().multiply(0.3));
+        circleView.fitHeightProperty().bind(pane.heightProperty().multiply(0.2));
         circleView.fitWidthProperty().bind(pane.widthProperty().multiply(0.7));
         circleView.setLayoutX(0);
         circleView.setLayoutY(0);
@@ -193,8 +189,8 @@ public class GameOverMenu {
         ));
         button.setFill(Color.web("#9F9DD3"));
         button.setOpacity(0.8);
-        button.layoutXProperty().bind(circleView.fitWidthProperty().multiply(0.15));
-        button.layoutYProperty().bind(circleView.fitHeightProperty().multiply(0.65));
+        button.layoutXProperty().bind(circleView.fitWidthProperty().multiply(0.0));
+        button.layoutYProperty().bind(circleView.fitHeightProperty().multiply(0.60));
         switch (buttonType) {
             case REPLAY : {
                 button.setText("Hit Me Again!");

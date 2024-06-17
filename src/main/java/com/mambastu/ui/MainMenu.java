@@ -22,6 +22,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -53,6 +55,7 @@ public class MainMenu {
         this.gameMode = new SimpleObjectProperty<>(GameMode.NORMAL);
         this.playerType = new SimpleObjectProperty<>(PlayerTypes.JokerPlayer);
         this.menuPane = new Pane();
+        this.titlePane = new Pane();
         this.facePane = new Group();
         this.btnPane = new Group();
         this.charPane = new HBox();
@@ -111,7 +114,7 @@ public class MainMenu {
                 .bind(root.heightProperty().subtract(modePane.layoutBoundsProperty().get().getHeight()).multiply(0.72));
 
         modeIntroPane.setPrefSize(620, 620);
-        modeIntroPane.setLayoutX(70);
+        modeIntroPane.setLayoutX(55);
         modeIntroPane.setLayoutY(10);
     }
 
@@ -133,7 +136,7 @@ public class MainMenu {
         scaleTransition.setToY(1);
         scaleTransition.setCycleCount(2);
         scaleTransition.setAutoReverse(true);
-        
+
         modeView.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
             if (scaleTransition.getStatus() != Animation.Status.RUNNING) {
                 modeView.setEffect(shadow);
@@ -205,7 +208,7 @@ public class MainMenu {
         charIntroPane.setPrefSize(620, 620);
         charIntroPane.layoutXProperty()
                 .bind(root.widthProperty().subtract(charIntroPane.layoutBoundsProperty().get().getWidth())
-                        .multiply(0.64));
+                        .multiply(0.65));
         charIntroPane.setLayoutY(10);
     }
 
@@ -282,19 +285,13 @@ public class MainMenu {
         circleView.setLayoutY(0);
         circleView.setVisible(false);
 
-        Text startBtn = new Text(buttonName.name());
-//        startBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 80));
-        startBtn.styleProperty().bind(Bindings.concat(
-                "-fx-font-family: 'Segoe Script'; ",
-                "-fx-font-weight: bold; ",
-                "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.08).asString(), "px;"
-        ));
+        Text startBtn = new Text("Start Game");
+        startBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 80));
         startBtn.setFill(Color.BLACK);
         startBtn.setOpacity(0.8);
+        startBtn.setLayoutX(50);
+        startBtn.setLayoutY(85);
 
-        // Group的大小取决于更大的circleView，所以要设置文字居中，也就是从左上角向下和向右大概四分之一circleView长宽
-        startBtn.layoutXProperty().bind(circleView.fitWidthProperty().multiply(0.15));
-        startBtn.layoutYProperty().bind(circleView.fitHeightProperty().multiply(0.65));
         startBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
             circleView.setVisible(true); // 显示圆圈
         });
@@ -302,27 +299,11 @@ public class MainMenu {
         startBtn.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
             circleView.setVisible(false);
         });
-        startBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            switch (buttonName) {
-                case START_GAME: {
-                    listener.startGame();
-                    break;
-                }
-                case EXIT_GAME: {
-                    break;
-                }
-                case DEVELOPERS:{
-                    break;
-                }
 
-                case MODE_SELECT:{
-                    break;
-                }
-                case PLAYER_SELECT:{
-                    break;
-                }
-            }
+        startBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            listener.startGame();
         });
+
         btnPane.getChildren().addAll(circleView, startBtn);
 
         btnPane.setLayoutX(70);
@@ -334,8 +315,8 @@ public class MainMenu {
         Group leftEye = createEye();
         Group rightEye = createEye();
         ImageView face = new ImageView(ResourceManager.getInstance().getImg("bornImage", "Monster", "BossMonster"));
-        face.setFitWidth(380);
-        face.setFitHeight(380);
+        face.setFitWidth(550);
+        face.setFitHeight(324);
         leftEye.setLayoutX(face.getFitWidth() * 0.300);
         leftEye.setLayoutY(face.getFitHeight() * 0.45);
         rightEye.setLayoutX(face.getFitWidth() * 0.700);
@@ -357,17 +338,14 @@ public class MainMenu {
 
     private Group createEye() {
         // 创建眼睛背景
-//        Circle eyeBackground = new Circle(30);
-        Circle eyeBackground = new Circle();
-        eyeBackground.radiusProperty().bind(root.widthProperty().multiply(0.3*0.15));
+        Circle eyeBackground = new Circle(86.4);
+        eyeBackground.setRadius(86.4);
         eyeBackground.setFill(Color.WHITE);
         eyeBackground.setStroke(Color.WHITE);
         eyeBackground.setStrokeWidth(2);
 
         // 创建眼珠
-//        Circle pupil = new Circle(13);
-        Circle pupil = new Circle();
-        pupil.radiusProperty().bind(root.widthProperty().multiply(0.3*0.15*0.3));
+        Circle pupil = new Circle(26.0);
         pupil.setFill(Color.BLACK);
 
         // 将眼珠添加到眼睛背景中
@@ -395,12 +373,5 @@ public class MainMenu {
 
         pupil.setTranslateX(deltaX);
         pupil.setTranslateY(deltaY);
-    }
-    private enum ButtonType {
-        START_GAME,
-        EXIT_GAME,
-        DEVELOPERS,
-        MODE_SELECT,
-        PLAYER_SELECT;
     }
 }

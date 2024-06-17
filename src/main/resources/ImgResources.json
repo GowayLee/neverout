@@ -71,13 +71,13 @@
       "laughPlayerImage": "/static/image/char/LaughPlayer.png",
       "laughIntroImage": "/static/image/menu/laughPlayerIntro.png",
       "jokerPlayerImage": "/static/image/char/JokerPlayer.png",
-      "jokerIntroImage": "/static/image/menu/JokerPlayerIntro.png",
+      "jokerIntroImage": "/static/image/menu/jokerPlayerIntro.png",
       "basakerPlayerImage": "/static/image/char/Basaker_Normal.png",
       "basakerIntroImage": "/static/image/menu/basakerPlayerIntro.png",
       "normalModeImage": "/static/image/menu/NormalMode.png",
       "normalIntroImage": "/static/image/menu/normalModeIntro.png",
       "challengeModeImage": "/static/image/menu/ChallengeMode.png",
-      "challengeIntroImage": "/static/image/menu/JokerPlayerIntro.png"
+      "challengeIntroImage": "/static/image/menu/normalModeIntro.png"
     },
     "LevelMenu": {
       "noItemImage": "/static/image/menu/soldout.png"
