@@ -186,7 +186,7 @@ public class LevelMenu {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("YOU ARE TOO POOR");
             alert.setHeaderText("Don't have enough coins to buy !");
-            ImageView imageView = new ImageView(ResourceManager.getInstance().getImg("dieImage", "Player", "Player1"));
+            ImageView imageView = new ImageView(ResourceManager.getInstance().getImg("dieImage", "Player", "LaughPlayer"));
             imageView.setFitWidth(100);
             imageView.setFitHeight(100);
             alert.setGraphic(imageView);

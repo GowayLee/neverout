@@ -58,6 +58,8 @@ public class LevelController {
         this.levelMenu = new LevelMenu(root, ctx, levelMenuListener);
         this.gameOverMenu = new GameOverMenu(root, ctx, gameOverMenuListener); // 初始化游戏结束菜单，传入关卡配置信息，用于显示关卡选择
         this.inGameHud = new InGameHud(root, ctx); // 初始化游戏内HUD
+        
+        this.mainMenu.init(); // 静态菜单单独初始化
     }
 
     private void initDynamicResource() { // 初始化动态资源ctx, 动态菜单
@@ -80,7 +82,6 @@ public class LevelController {
 
     // ================================= Operation Section =================================
     public void showMainMenu() { // 显示主菜单逻辑
-        mainMenu.init(); // 静态菜单单独初始化
         mainMenu.show();
     }
 

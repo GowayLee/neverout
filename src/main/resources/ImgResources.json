@@ -60,10 +60,19 @@
   },
   "System": {
     "MainMenu": {
-      "circleImage": "/static/image/circle.png"
+      "cursorImage": "/static/image/cursor.png",
+      "circleImage": "/static/image/menu/circle.png",
+      "laughPlayerImage": "/static/image/char/LaughPlayer.png",
+      "laughIntroImage": "/static/image/menu/laughPlayerIntro.png",
+      "jokerPlayerImage": "/static/image/char/JokerPlayer.png",
+      "jokerIntroImage": "/static/image/menu/JokerPlayerIntro.png",
+      "normalModeImage": "/static/image/menu/NormalMode.png",
+      "normalIntroImage": "/static/image/menu/normalModeIntro.png",
+      "challengeModeImage": "/static/image/menu/ChallengeMode.png",
+      "challengeIntroImage": "/static/image/menu/JokerPlayerIntro.png"
     },
     "LevelMenu": {
-      "noItemImage": "/static/image/soldout.png"
+      "noItemImage": "/static/image/menu/soldout.png"
     }
   }
 }

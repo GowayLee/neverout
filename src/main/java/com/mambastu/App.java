@@ -2,7 +2,9 @@ package com.mambastu;
 
 import com.mambastu.material.resource.ImgCache;
 import javafx.application.Application;
+import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -32,6 +34,11 @@ public class App extends Application {
         ResourceManager.getInstance().loadResources(); // 初始化资源管理器，载入JSON
         PropStore.getInstance().loadResources(); // 初始化道具存储器，载入JSON
         InputManager.init(scene); // 初始化输入管理器
+
+        Image cursorImage = ResourceManager.getInstance().getImg("cursorImage", "System", "MainMenu"); // 载入光标图片，并设置为鼠标光标
+        ImageCursor customCursor = new ImageCursor(cursorImage, 4, 8);
+        scene.setCursor(customCursor);
+
         LevelController controller = new LevelController(root);
         controller.showMainMenu();
 
