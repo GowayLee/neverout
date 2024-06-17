@@ -10,7 +10,7 @@ public class NailBullet extends BaseBullet {
 
     public NailBullet() {
         super();
-        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
+        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Bullet", "NailBullet");
         setImageSize(15, 15);
     }
 
@@ -23,8 +23,8 @@ public class NailBullet extends BaseBullet {
 
     @Override
     public void move(Pane root) {
-        double currentX = x.get() + speed * sin;
-        double currentY = y.get() + speed * cos;
+        double currentX = x.get() + speed * cos;
+        double currentY = y.get() + speed * sin;
         range -= speed; // 减少子弹的射程
 
         x.set(currentX);

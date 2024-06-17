@@ -1,63 +1,50 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-
+<html>
 <head>
     <style>
         body {
-
             /* Basic dimensions and centering */
             width: 100%;
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-
-            /* Dark mode colors and gradient */
-            background: #121212;
-            /* Fallback for browsers that don't support gradients */
-            background: linear-gradient(135deg,
-                    #121212 25%,
-                    #1a1a1a 25%,
-                    #1a1a1a 50%,
-                    #121212 50%,
-                    #121212 75%,
-                    #1a1a1a 75%,
-                    #1a1a1a);
-            background-size: 40px 40px;
-
-            /* Animation */
-            animation: move 4s linear infinite;
             font-family: Arial, sans-serif;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('static/image/stone.png') no-repeat center center fixed;
+            background-size: cover;
+            z-index: -1;
+            filter: blur(10px);
         }
 
 
-        /*@keyframes move {*/
-        /*    0% {*/
-        /*        background-position: 0 0;*/
-        /*    }*/
-        /*    100% {*/
-        /*        background-position: 40px 40px;*/
-        /*    }*/
-        /*}*/
-
-
-
-
         .title {
-
             position: fixed;
             top: 5vh;
             width: 65%;
-            font-size: 8vh;
+            height: 25%;
+            font-size: 20vmin;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             text-align: center;
             z-index: 2;
             white-space: nowrap;
-            color: rgba(52, 83, 185, 0.6);
+            color: rgba(22, 60, 211, 0.6);
+            text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            transition: transform 0.1s, text-shadow 0.1s;
         }
 
         .characterImage {
             position: fixed;
-            top: 40%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 35vh;
@@ -66,9 +53,35 @@
             background-size: cover;
             z-index: 1;
         }
+        .eye {
+            position: absolute;
+            width: 20%;
+            height: 20%;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-        .leftOptions,
-        .rightOptions {
+        .left-eye {
+            top: 30%;
+            left: 25%;
+        }
+
+        .right-eye {
+            top: 30%;
+            right: 25%;
+        }
+
+        .pupil {
+            width: 50%;
+            height: 50%;
+            background: black;
+            border-radius: 50%;
+        }
+
+        .leftOptions, .rightOptions {
             position: absolute;
             display: flex;
             flex-direction: column;
@@ -117,10 +130,8 @@
             color: transparent;
             -webkit-text-stroke: 1px var(--text-stroke-color);
             box-sizing: border-box;
-            white-space: nowrap;
-            /* 防止换行 */
-            overflow: hidden;
-            /* 确保内容不溢出 */
+            white-space: nowrap; /* 防止换行 */
+            overflow: hidden; /* 确保内容不溢出 */
         }
 
         /* this is the text, when you hover on button */
@@ -136,12 +147,13 @@
             overflow: hidden;
             transition: width 0.5s, transform 0.5s;
             -webkit-text-stroke: 1px var(--animation-color);
-            will-change: width, filter;
+            will-change: transform, width; /* 优化动画性能 */
         }
 
         .button:hover .hover-text-left {
             width: 100%;
-            filter: drop-shadow(0 0 23px var(--animation-color))
+            filter: drop-shadow(0 0 23px var(--animation-color));
+            will-change: transform, width; /* 优化动画性能 */
         }
 
         /* 右边*/
@@ -157,51 +169,55 @@
             transition: width 0.5s, transform 0.5s;
             -webkit-text-stroke: 1px var(--animation-color);
             transform: translateX(100%);
-            will-change: transform, filter;
+            will-change: transform, width; /* 优化动画性能 */
         }
 
         .button:hover .hover-text-right {
             transform: translateX(0);
             width: 100%;
-            filter: drop-shadow(0 0 23px var(--animation-color))
+            filter: drop-shadow(0 0 23px var(--animation-color));
+            will-change: transform, width; /* 优化动画性能 */
         }
     </style>
-    <title></title>
 </head>
-
 <body>
 
-    <div class="title">LaoDaChuanShuo</div>
-    <div class="characterImage"></div>
-
-
-    <div class="leftOptions">
-        <button class="button" data-text="Awesome" onclick="startGame()">
-            <span class="actual-text">&nbsp;Start game&nbsp;</span>
-            <span aria-hidden="true" class="hover-text-left">&nbsp;Start game&nbsp;</span>
-        </button>
-        <button class="button" data-text="Awesome">
-            <span class="actual-text-left">&nbsp;Stage Select&nbsp;</span>
-            <span aria-hidden="true" class="hover-text-left">&nbsp;Stage Select&nbsp;</span>
-        </button>
-        <button class="button" data-text="Awesome">
-            <span class="actual-text-left">&nbsp;Quit Game&nbsp;</span>
-            <span aria-hidden="true" class="hover-text-left">&nbsp;Quit Game&nbsp;</span>
-        </button>
+<div class="title">JokerBro</div>
+<div class="characterImage">
+    <div class="eye left-eye">
+        <div class="pupil"></div>
     </div>
-
-    <div class="rightOptions">
-        <button class="button" data-text="Awesome">
-            <span class="actual-text">&nbsp;Char Select&nbsp;</span>
-            <span aria-hidden="true" class="hover-text-right">&nbsp;Char Select&nbsp;</span>
-        </button>
-        <button class="button" data-text="Awesome">
-            <span class="actual-text">&nbsp;Developers&nbsp;</span>
-            <span aria-hidden="true" class="hover-text-right">&nbsp;Developers&nbsp;</span>
-        </button>
+    <div class="eye right-eye">
+        <div class="pupil"></div>
     </div>
+</div>
 
-</body>
+<div class="leftOptions">
+    <button class="button" data-text="Awesome" onclick="startGame()">
+        <span class="actual-text">&nbsp;Start game&nbsp;</span>
+        <span aria-hidden="true" class="hover-text-left">&nbsp;Start game&nbsp;</span>
+    </button>
+    <button class="button" data-text="Awesome" onclick="selectMode()">
+        <span class="actual-text-left">&nbsp;Stage Select&nbsp;</span>
+        <span aria-hidden="true" class="hover-text-left">&nbsp;Stage Select&nbsp;</span>
+    </button>
+    <button class="button" data-text="Awesome" onclick="exitGame()">
+        <span class="actual-text-left">&nbsp;Quit Game&nbsp;</span>
+        <span aria-hidden="true" class="hover-text-left">&nbsp;Quit Game&nbsp;</span>
+    </button>
+</div>
+
+<div class="rightOptions">
+    <button class="button" data-text="Awesome" onclick="selectPlayerType()">
+        <span class="actual-text">&nbsp;Char Select&nbsp;</span>
+        <span aria-hidden="true" class="hover-text-right">&nbsp;Char Select&nbsp;</span>
+    </button>
+    <button class="button" data-text="Awesome" >
+        <span class="actual-text">&nbsp;Developers&nbsp;</span>
+        <span aria-hidden="true" class="hover-text-right">&nbsp;Developers&nbsp;</span>
+    </button>
+</div>
+
 <script>
     function startGame() {
         app.startGame();
@@ -215,6 +231,40 @@
     function exitGame() {
         app.exitGame();
     }
-</script>
+    document.addEventListener('mousemove', function(e) {
+        requestAnimationFrame(() => {
 
+            // const title = document.querySelector('.title');
+            // const titleRect = title.getBoundingClientRect();
+            // const titleX = e.clientX - (titleRect.left + titleRect.width / 2);
+            // const titleY = e.clientY - (titleRect.top + titleRect.height / 2);
+            // const titleDx = -titleX / 30;
+            // const titleDy = -titleY / 30;
+            //
+            // title.style.transform = `translate(${titleDx}px, ${titleDy}px)`;
+            // title.style.textShadow = `${titleDx}px ${titleDy}px 3px rgba(0, 0, 0, 0.5)`;
+
+            const eyes = document.querySelectorAll('.pupil');
+            eyes.forEach(function(pupil) {
+                const rect = pupil.parentElement.getBoundingClientRect();
+                const eyeX = rect.left + rect.width / 2;
+                const eyeY = rect.top + rect.height / 2;
+                const dx = e.clientX - eyeX;
+                const dy = e.clientY - eyeY;
+                const angle = Math.atan2(dy, dx);
+                const distance = Math.min(rect.width / 4, Math.hypot(dx, dy));
+
+                const pupilX = distance * Math.cos(angle);
+                const pupilY = distance * Math.sin(angle);
+
+                pupil.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+            });
+        });
+
+
+    });
+
+
+</script>
+</body>
 </html>

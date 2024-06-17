@@ -19,10 +19,10 @@ public class StandardRifle extends BaseWeapon{
 
     public StandardRifle() {
         damage.set(34);
-        bulletSpeed.set(10);
+        bulletSpeed.set(3);
         range.set(700);
         coolTime.set(300);
-        bulletType = BulletType.NailBullet;
+        bulletType = BulletType.StandardBullet;
         coolStatus = Status.READY;
         coolTimer.setDuration(Duration.millis(coolTime.get()));
         coolTimer.setOnFinished(event ->{

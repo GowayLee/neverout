@@ -12,16 +12,18 @@ import javafx.scene.layout.Pane;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
 public abstract class BaseEntity {
+    @Getter @Setter
     protected boolean isOnStage; // 是否在舞台上，Otherwise就在对象池中
     protected final ImageView showingImageView = new ImageView(); // 正在被展示的图片节点
     protected final SimpleObjectProperty<Image> showingImage = new SimpleObjectProperty<>(); // 正在被绑定展示的图片
+    @Getter
     protected SimpleDoubleProperty x = new SimpleDoubleProperty();
+    @Getter
     protected SimpleDoubleProperty y = new SimpleDoubleProperty();
     protected double prevX; // 用于碰撞检测的变量，记录上一次的位置
     protected double prevY;
+    @Getter
     protected Bound bound; // 碰撞箱
 
     abstract public void init();
@@ -46,7 +48,7 @@ public abstract class BaseEntity {
      * 如果实体碰到在舞台边界，返回true，否则返回false
      */
     public boolean trappedInStage() {
-        CollisionState collisionState = ScreenBound.collisionState(this.getBound());
+        CollisionState collisionState = ScreenBound.collisionState(bound);
         switch (collisionState) {
             case HORIZONTAL:
                 x.set(prevX);

@@ -31,6 +31,8 @@ public abstract class BaseWeapon {
 
     protected BulletType bulletType;
     protected Status coolStatus;
+    
+    @Getter
     protected final PauseTransition coolTimer = new PauseTransition();
     protected final List<BaseBullet> newBulletList = new ArrayList<>();
 

@@ -10,8 +10,8 @@ public class StandardBullet extends BaseBullet{
 
     public StandardBullet() {
         super();
-        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
-        setImageSize(20, 20);
+        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Bullet", "StandardBullet");
+        setImageSize(15, 15);
     }
 
     @Override
@@ -23,8 +23,8 @@ public class StandardBullet extends BaseBullet{
 
     @Override
     public void move(Pane root) {
-        double currentX = x.get() + speed * sin;
-        double currentY = y.get() + speed * cos;
+        double currentX = x.get() + speed * cos;
+        double currentY = y.get() + speed * sin;
         range -= speed; // 减少子弹的射程
 
         x.set(currentX);

@@ -20,7 +20,7 @@ public class HotMonster extends BaseMonster {
         super();
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "HotMonster");
         this.omenImage = ResourceManager.getInstance().getImg("omenImage", "Monster", "HotMonster");
-        this.dieImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
+        this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Monster", "HotMonster");
         setImageSize(50, 50);
         this.damage = 10;
         this.initTimer.setDuration(Duration.seconds(1));

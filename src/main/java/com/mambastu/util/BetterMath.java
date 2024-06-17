@@ -16,4 +16,8 @@ public class BetterMath {
         }
         return guess;
     }
+
+    public static double toDegree(double value) { // 将弧度转换为角度，预计算
+        return value * 565.49; // 将弧度转换为角度
+    }
 }

@@ -17,21 +17,22 @@ import java.util.Set;
 
 public class LaughPlayer extends BasePlayer {
     private Image bornImage;
-    private Image readyImage;
     private Image dieImage;
     private double skillDeltaX;
     private double skillDeltaY;
 
+    private final PauseTransition skillTimeline;
+
     public LaughPlayer() {
         super();
-        super.skillCD.set(2);
-        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Player1");
-        this.readyImage = ResourceManager.getInstance().getImg("readyImage", "Player", "Player1");
-        this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Player1");
+        this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "LaughPlayer");
+        this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "LaughPlayer");
         setImageSize(50, 50);
-        this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
-        this.invincibleTimer.setOnFinished(e -> {
+        this.skillTimeline = new PauseTransition(Duration.seconds(0.1));
+        this.skillTimeline.setOnFinished(event -> {
+            state = State.MOVING;
             injuryState = InjuryState.NORMAL;
+            startSkillCooldown();
         });
     }
 
@@ -104,11 +105,9 @@ public class LaughPlayer extends BasePlayer {
         state = State.SKILL;
         skillState = SkillState.ACTIVE;
         injuryState = InjuryState.INVINCIBLE; // 无敌状态，不受伤害
-        setStateImage();
 
         skillDeltaX = 0;
         skillDeltaY = 0;
-
         boolean moveUp = activeInputs.contains(GameInput.MOVE_UP);
         boolean moveDown = activeInputs.contains(GameInput.MOVE_DOWN);
         boolean moveLeft = activeInputs.contains(GameInput.MOVE_LEFT);
@@ -126,35 +125,7 @@ public class LaughPlayer extends BasePlayer {
             skillDeltaX *= 1 / BetterMath.sqrt(2);
             skillDeltaY *= 1 / BetterMath.sqrt(2);
         }
-
-        PauseTransition skillTimeline = new PauseTransition(Duration.seconds(0.1));
-        skillTimeline.setOnFinished(event -> {
-            state = State.MOVING;
-            skillState = SkillState.COOLDOWN;
-            injuryState = InjuryState.NORMAL;
-            startSkillCooldown();
-        });
         skillTimeline.play();
-    }
-
-    private void startSkillCooldown() {// 进入技能冷却
-        skillCDTimer.setDuration(Duration.seconds(skillCD.get()));
-        skillCDTimer.setOnFinished(event -> skillState = SkillState.READY);
-        skillCDTimer.play();
-    }
-
-    private void setStateImage() {// 根据技能的状态来设置图像，CD条替代物
-        ColorAdjust colorAdjust = new ColorAdjust();
-        if (getSkillState() == SkillState.ACTIVE) {
-            colorAdjust.setHue(1);
-            showingImageView.setEffect(colorAdjust);
-        } else if (getSkillState() == SkillState.READY) {
-            showingImage.set(readyImage);
-            showingImageView.setEffect(colorAdjust);
-        } else {
-            showingImage.set(bornImage);
-            showingImageView.setEffect(null);
-        }
     }
 
     private void createDashTrail(Pane root) {// 冲刺生成虚影
