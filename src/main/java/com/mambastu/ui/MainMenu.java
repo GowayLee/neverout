@@ -7,18 +7,15 @@ import com.mambastu.material.pojo.entity.player.PlayerTypes;
 import com.mambastu.material.resource.ResourceManager;
 import com.mambastu.util.BetterMath;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Group;
-import javafx.scene.control.Button;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class MainMenu {
@@ -31,9 +28,10 @@ public class MainMenu {
     private final SimpleObjectProperty<PlayerTypes> playerType; // 玩家类型
 
     private final Pane menuPane;
-
+    private final Pane titlePane;
     private final Group facePane;
-    private final Group btnPane;
+    private final Group btnPanes;
+
 
     public MainMenu(StackPane root, Context ctx,  MainMenuListener listener) {
         this.root = root;
@@ -43,7 +41,8 @@ public class MainMenu {
         this.playerType = new SimpleObjectProperty<>(PlayerTypes.JokerPlayer);
         this.menuPane = new Pane();
         this.facePane = new Group();
-        this.btnPane = new Group();
+        this.btnPanes = new Group();
+        this.titlePane= new Pane();
     }
 
     public void show() {
@@ -67,24 +66,65 @@ public class MainMenu {
     private void buildLayout() {
         buildFace();
         buildBtns();
-        menuPane.getChildren().addAll(facePane, btnPane);
+        buildTitle();
+        menuPane.getChildren().addAll(facePane, btnPanes, titlePane);
     }
 
-    private void buildBtns() {
+    private void buildTitle(){
+        Text title = new Text();
+        title.setText("JokerBro");
+        title.styleProperty().bind(Bindings.concat(
+                "-fx-font-family: 'Segoe Script'; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", root.widthProperty().multiply(0.1).asString(), "px;"
+        ));
+        titlePane.layoutXProperty().bind(root.widthProperty().multiply(0.25));
+        titlePane.layoutYProperty().bind(root.heightProperty().multiply(0.2));
+        titlePane.getChildren().add(title);
+    }
+
+    /**
+     * 设置多个按钮
+     */
+    private void buildBtns(){
+        //创建位于左侧的按钮
+        buildBtn(ButtonType.START_GAME, 0.02,0.6);
+        buildBtn(ButtonType.MODE_SELECT, 0.02,0.725);
+        buildBtn(ButtonType.PLAYER_SELECT, 0.02,0.85);
+        //创建位于有右侧的按钮
+        buildBtn(ButtonType.PLAYER_SELECT, 0.7,0.6);
+        buildBtn(ButtonType.PLAYER_SELECT, 0.7,0.85);
+    }
+
+    /**
+     * 创造单个按钮
+     *
+     * @param buttonName
+     * @param xRadio: 相对于root宽度的倍率
+     * @param yRatio: 相对于root高度的倍率
+     */
+    private void buildBtn(ButtonType buttonName, Double xRadio, Double yRatio)  {
+        Group btnPane = new Group();
         ImageView circleView = new ImageView(ResourceManager.getInstance().getImg("circleImage", "System", "MainMenu"));
-        circleView.setFitWidth(600); 
-        circleView.setFitHeight(120);
+        circleView.fitHeightProperty().bind(root.heightProperty().multiply(0.1));
+        circleView.fitWidthProperty().bind(root.widthProperty().multiply(0.25));
         circleView.setLayoutX(0);
         circleView.setLayoutY(0);
         circleView.setVisible(false);
 
-        Text startBtn = new Text("Start Game");
-        startBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 80));
+        Text startBtn = new Text(buttonName.name());
+//        startBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 80));
+        startBtn.styleProperty().bind(Bindings.concat(
+                "-fx-font-family: 'Segoe Script'; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.08).asString(), "px;"
+        ));
         startBtn.setFill(Color.BLACK);
         startBtn.setOpacity(0.8);
-        startBtn.setLayoutX(50);
-        startBtn.setLayoutY(85);
 
+        // Group的大小取决于更大的circleView，所以要设置文字居中，也就是从左上角向下和向右大概四分之一circleView长宽
+        startBtn.layoutXProperty().bind(circleView.fitWidthProperty().multiply(0.15));
+        startBtn.layoutYProperty().bind(circleView.fitHeightProperty().multiply(0.65));
         startBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
             circleView.setVisible(true); // 显示圆圈
         });
@@ -92,34 +132,53 @@ public class MainMenu {
         startBtn.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
             circleView.setVisible(false);
         });
-
         startBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            listener.startGame();
+            switch (buttonName) {
+                case START_GAME: {
+                    listener.startGame();
+                    break;
+                }
+                case EXIT_GAME: {
+                    break;
+                }
+                case DEVELOPERS:{
+                    break;
+                }
+
+                case MODE_SELECT:{
+                    break;
+                }
+                case PLAYER_SELECT:{
+                    break;
+                }
+            }
         });
-
         btnPane.getChildren().addAll(circleView, startBtn);
-
-        btnPane.setLayoutX(70);
-        btnPane.layoutYProperty()
-            .bind(root.heightProperty().subtract(btnPane.layoutBoundsProperty().get().getHeight()).multiply(0.68));
+        btnPane.layoutXProperty().bind(root.widthProperty().multiply(xRadio));
+        btnPane.layoutYProperty().bind(root.heightProperty().multiply(yRatio));
+        btnPanes.getChildren().add(btnPane);
     }
 
     private void buildFace() {
         Group leftEye = createEye();
         Group rightEye = createEye();
         ImageView face = new ImageView(ResourceManager.getInstance().getImg("bornImage", "Monster", "BossMonster"));
-        face.setFitWidth(380);
-        face.setFitHeight(380);
-        leftEye.setLayoutX(face.getFitWidth() * 0.300); 
-        leftEye.setLayoutY(face.getFitHeight() * 0.45); 
-        rightEye.setLayoutX(face.getFitWidth() * 0.700);
-        rightEye.setLayoutY(leftEye.getLayoutY());
+        face.fitWidthProperty().bind(root.widthProperty().multiply(0.3));
+        face.fitHeightProperty().bind(root.heightProperty().multiply(0.3));
+//        leftEye.setLayoutX(face.getFitWidth() * 0.300);
+//        leftEye.setLayoutY(face.getFitHeight() * 0.45);
+//        rightEye.setLayoutX(face.getFitWidth() * 0.700);
+//        rightEye.setLayoutY(leftEye.getLayoutY());
+        leftEye.layoutXProperty().bind(face.fitWidthProperty().multiply(0.3));
+        leftEye.layoutYProperty().bind(face.fitHeightProperty().multiply(0.45));
+        rightEye.layoutXProperty().bind(face.fitWidthProperty().multiply(0.7));
+        rightEye.layoutYProperty().bind(face.fitHeightProperty().multiply(0.45));
 
         facePane.layoutXProperty()
-            .bind(root.widthProperty().subtract(face.layoutBoundsProperty().get().getWidth()).divide(2));
+            .bind(root.widthProperty().multiply(0.35));
 
         facePane.layoutYProperty()
-            .bind(root.heightProperty().subtract(face.layoutBoundsProperty().get().getHeight()).divide(3));
+            .bind(root.heightProperty().multiply(0.3));
 
         facePane.getChildren().addAll(face, leftEye, rightEye);
 
@@ -131,13 +190,17 @@ public class MainMenu {
 
     private Group createEye() {
         // 创建眼睛背景
-        Circle eyeBackground = new Circle(30);
+//        Circle eyeBackground = new Circle(30);
+        Circle eyeBackground = new Circle();
+        eyeBackground.radiusProperty().bind(root.widthProperty().multiply(0.3*0.15));
         eyeBackground.setFill(Color.WHITE);
         eyeBackground.setStroke(Color.WHITE);
         eyeBackground.setStrokeWidth(2);
 
         // 创建眼珠
-        Circle pupil = new Circle(13);
+//        Circle pupil = new Circle(13);
+        Circle pupil = new Circle();
+        pupil.radiusProperty().bind(root.widthProperty().multiply(0.3*0.15*0.3));
         pupil.setFill(Color.BLACK);
 
         // 将眼珠添加到眼睛背景中
@@ -165,5 +228,12 @@ public class MainMenu {
 
         pupil.setTranslateX(deltaX);
         pupil.setTranslateY(deltaY);
+    }
+    private enum ButtonType {
+        START_GAME,
+        EXIT_GAME,
+        DEVELOPERS,
+        MODE_SELECT,
+        PLAYER_SELECT;
     }
 }
