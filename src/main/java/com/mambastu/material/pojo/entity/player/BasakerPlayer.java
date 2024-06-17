@@ -1,26 +1,31 @@
 package com.mambastu.material.pojo.entity.player;
 
 import com.mambastu.controller.input.comp.GameInput;
-import com.mambastu.material.pojo.weapon.BaseWeapon;
 import com.mambastu.material.resource.ResourceManager;
 import com.mambastu.util.BetterMath;
+import com.mambastu.util.GlobalVar;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import java.util.Set;
 
 public class BasakerPlayer extends BasePlayer {
-    private Image bornImage;
-    private Image dieImage;
-    private Image rageImage;
-    private Image bloodImage;
-    private ImageView bloodImageView;
+    private final Image bornImage;
+    private final Image dieImage;
+    private final Image rageImage;
+    private final Image bloodImage;
+    private final ImageView bloodImageView;
+
+    private final ImageView skillShadow;
+
+    private final PauseTransition skillTimeline;
+    private final FadeTransition shadowFade;
+    private final ColorAdjust trailColorAdjust;
 
     public enum BasakerSkillState {
         NORMAL, ENRAGED
@@ -36,17 +41,53 @@ public class BasakerPlayer extends BasePlayer {
         this.rageImage = ResourceManager.getInstance().getImg("enragedImage", "Player", "Basaker");
         this.bloodImage = ResourceManager.getInstance().getImg("bloodImage", "Player", "Basaker");
         setImageSize(50, 50);
-        this.basakerSkillState = BasakerSkillState.NORMAL;
+
         this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
         this.invincibleTimer.setOnFinished(e -> {
-        super.injuryState = InjuryState.NORMAL;
+            super.injuryState = InjuryState.NORMAL;
         });
 
-        // 初始化血图层
-        bloodImageView = new ImageView(bloodImage);
-        bloodImageView.setFitWidth(1920);
-        bloodImageView.setFitHeight(1080);
+        // 初始化技能特效
+        this.skillShadow = new ImageView();
+        this.bloodImageView = new ImageView(bloodImage);
+        this.skillTimeline = new PauseTransition();
+        this.shadowFade = new FadeTransition();
+        this.trailColorAdjust = new ColorAdjust();
+        initSkillFX();
+    }
+
+    private void initSkillFX() {
+        skillShadow.setImage(rageImage);
+        skillShadow.setFitWidth(showingImageView.getFitWidth() * 8);
+        skillShadow.setFitHeight(showingImageView.getFitHeight() * 8);
+        skillShadow.setOpacity(0.5);
+
+        bloodImageView.setFitWidth(GlobalVar.getScreenWidth());
+        bloodImageView.setFitHeight(GlobalVar.getScreenHeight());
         bloodImageView.setOpacity(0.5);
+
+        skillTimeline.setDuration(Duration.seconds(5.0));
+        skillTimeline.setOnFinished(event -> {
+            state = State.MOVING;
+            skillState = SkillState.COOLDOWN;
+            basakerSkillState = BasakerSkillState.NORMAL;
+            setStateImage();
+            GlobalVar.getGamePane().getChildren().remove(bloodImageView); // 移除血图层
+            startSkillCooldown();
+            if (weapon != null)
+                weapon.getDamage().set((weapon.getDamage().get() / 2));
+        });
+
+        shadowFade.setNode(skillShadow);
+        shadowFade.setDuration(Duration.seconds(1));
+        shadowFade.setFromValue(0.5);
+        shadowFade.setToValue(0);
+        shadowFade.setOnFinished(event -> GlobalVar.getGamePane().getChildren().remove(skillShadow));
+
+        trailColorAdjust.setHue(-0.1); // 火红色
+        trailColorAdjust.setContrast(0.5);
+        trailColorAdjust.setSaturation(0.5);
+
     }
 
     @Override
@@ -54,14 +95,15 @@ public class BasakerPlayer extends BasePlayer {
         state = State.MOVING;
         skillState = SkillState.READY;
         injuryState = InjuryState.NORMAL;
+        basakerSkillState = BasakerSkillState.NORMAL;
         showingImage.set(bornImage);
         showingImageView.imageProperty().bind(showingImage);
     }
 
     @Override
-    public void move(Set<GameInput> activeInputs, Pane root) {
+    public void move(Set<GameInput> activeInputs) {
         double deltaX = 0, deltaY = 0;
-        double speed = this.speed.get();
+        double speed = super.speed.get();
         if (getState() == State.MOVING || getState() == State.SKILL) {
             if (activeInputs.contains(GameInput.MOVE_UP))
                 deltaY -= speed;
@@ -71,8 +113,8 @@ public class BasakerPlayer extends BasePlayer {
                 deltaX -= speed;
             if (activeInputs.contains(GameInput.MOVE_RIGHT))
                 deltaX += speed;
-            if (activeInputs.contains(GameInput.SKILL) && getSkillState() == SkillState.READY){
-                activateSkill(root);
+            if (activeInputs.contains(GameInput.SKILL) && getSkillState() == SkillState.READY) {
+                activateSkill();
             }
         }
         if (deltaX != 0 && deltaY != 0 && getState() == State.MOVING) {
@@ -80,7 +122,7 @@ public class BasakerPlayer extends BasePlayer {
             deltaY /= BetterMath.sqrt(2);
         }
         if (getState() == State.SKILL) {
-            createDashTrail(root);
+            createDashTrail();
         }
         x.set(x.get() + deltaX);
         y.set(y.get() + deltaY);
@@ -89,46 +131,26 @@ public class BasakerPlayer extends BasePlayer {
         trappedInStage();
     }
 
-    private void activateSkill(Pane root) { // 技能：进入特殊状态
+    private void activateSkill() { // 技能：进入特殊状态
         state = State.SKILL;
         skillState = SkillState.ACTIVE;
         basakerSkillState = BasakerSkillState.ENRAGED;
-        if (weapon != null) weapon.getDamage().set((weapon.getDamage().get() * 2));
+        if (weapon != null)
+            weapon.getDamage().set((weapon.getDamage().get() * 2));
         setStateImage();
 
         // 产生一个巨大的原地50%透明度虚影
-        createInitialSkillShadow(root);
-        root.getChildren().add(bloodImageView); // 添加血图层到顶层
+        createInitialSkillShadow();
+        GlobalVar.getGamePane().getChildren().add(bloodImageView); // 添加血图层到顶层
 
-        PauseTransition skillTimeline = new PauseTransition(Duration.seconds(5));
-        skillTimeline.setOnFinished(event -> {
-            state = State.MOVING;
-            skillState = SkillState.COOLDOWN;
-            basakerSkillState = BasakerSkillState.NORMAL;
-            setStateImage();
-            root.getChildren().remove(bloodImageView); // 移除血图层
-            startSkillCooldown();
-            if (weapon != null) weapon.getDamage().set((weapon.getDamage().get() / 2));
-        });
         skillTimeline.play();
     }
 
-    private void createInitialSkillShadow(Pane root) {
-        ImageView skillShadow = new ImageView(rageImage);
-        skillShadow.setFitWidth(showingImageView.getFitWidth() * 8);
-        skillShadow.setFitHeight(showingImageView.getFitHeight() * 8);
-        skillShadow.setX(showingImageView.getX() - skillShadow.getFitWidth() / 2+showingImageView.getFitHeight() / 2);
-        skillShadow.setY(showingImageView.getY() - skillShadow.getFitHeight() / 2+showingImageView.getFitHeight() / 2);
-
-        skillShadow.setOpacity(0.5);
-
-        FadeTransition fade = new FadeTransition(Duration.seconds(1), skillShadow);
-        fade.setFromValue(0.5);
-        fade.setToValue(0);
-        fade.setOnFinished(event -> root.getChildren().remove(skillShadow));
-        fade.play();
-
-        root.getChildren().add(skillShadow);
+    private void createInitialSkillShadow() {
+        skillShadow.setX(showingImageView.getX() - skillShadow.getFitWidth() / 2 + showingImageView.getFitHeight() / 2);
+        skillShadow.setY(showingImageView.getY() - skillShadow.getFitHeight() / 2 + showingImageView.getFitHeight() / 2);
+        shadowFade.play();
+        GlobalVar.getGamePane().getChildren().add(skillShadow);
     }
 
     protected void startSkillCooldown() { // 进入技能冷却
@@ -144,11 +166,8 @@ public class BasakerPlayer extends BasePlayer {
     @Override
     public void getHurt(Integer damage) {
         if (super.getInjuryState() != InjuryState.INVINCIBLE) {
-            int finalDamage = damage;
-            if (basakerSkillState == BasakerSkillState.ENRAGED) {
-                finalDamage *= 2; // 受到的伤害翻倍
-            }
-            HP.set(HP.get() - finalDamage); // 受到伤害，扣除生命值
+            damage = basakerSkillState == BasakerSkillState.ENRAGED ? damage << 1 : damage; // 受到的伤害减半
+            HP.set(HP.get() - damage); // 受到伤害，扣除生命值
             injuryState = InjuryState.INVINCIBLE; // 进入无敌状态
             invincibleTimer.playFromStart();
         }
@@ -163,28 +182,22 @@ public class BasakerPlayer extends BasePlayer {
         showingImageView.imageProperty().bind(showingImage);
     }
 
-    private void createDashTrail(Pane root) { // 冲刺生成虚影
+    private void createDashTrail() { // 冲刺生成虚影
         // 根据玩家位置生成虚影
         ImageView trail = new ImageView(showingImageView.getImage());
         trail.setFitWidth(showingImageView.getFitWidth());
         trail.setFitHeight(showingImageView.getFitHeight());
         trail.setX(showingImageView.getX());
         trail.setY(showingImageView.getY());
-
-        // 虚影特性：火红色，0.5透明度，淡出（时间0.5秒）
-        ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setHue(-0.1); // 火红色
-        colorAdjust.setContrast(0.5);
-        colorAdjust.setSaturation(0.5);
-        trail.setEffect(colorAdjust);
+        trail.setEffect(trailColorAdjust);
         trail.setOpacity(0.5);
 
         FadeTransition fade = new FadeTransition(Duration.seconds(0.5), trail);
         fade.setFromValue(0.5);
         fade.setToValue(0);
-        fade.setOnFinished(event -> root.getChildren().remove(trail));
+        fade.setOnFinished(event -> GlobalVar.getGamePane().getChildren().remove(trail));
         fade.play();
 
-        root.getChildren().add(trail);
+        GlobalVar.getGamePane().getChildren().add(trail);
     }
 }

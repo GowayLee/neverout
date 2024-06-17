@@ -11,8 +11,8 @@ import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.bullet.BulletType;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
+import com.mambastu.util.GlobalVar;
 
-import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 public class StandardRifle extends BaseWeapon{
@@ -32,7 +32,7 @@ public class StandardRifle extends BaseWeapon{
     }
 
     @Override
-    public List<BaseBullet> fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs, Pane root) {
+    public List<BaseBullet> fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs) {
         if (activeInputs.contains(GameInput.FIRE) && coolStatus == Status.READY && monsters.size() > 0){
             newBulletList.clear();
             try {
@@ -40,7 +40,7 @@ public class StandardRifle extends BaseWeapon{
                 newBullet.setProps(damage.get(), bulletSpeed.get(), range.get());
                 newBullet.setPos(x, y);
                 newBullet.setTarget(selectTarget(x, y, monsters), 0.0);
-                newBullet.putOnPane(root);
+                newBullet.putOnPane(GlobalVar.getGamePane());
                 coolStatus = Status.COOLDOWN;
                 coolTimer.play(); // 开始冷却计时器。
                 newBulletList.add(newBullet);

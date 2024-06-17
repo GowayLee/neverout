@@ -5,10 +5,10 @@ import java.util.List;
 import com.mambastu.factories.MonsterFactory;
 import com.mambastu.material.resource.ResourceManager;
 import com.mambastu.util.BetterMath;
+import com.mambastu.util.GlobalVar;
 
 import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 public class HotMonster extends BaseMonster {
@@ -68,12 +68,12 @@ public class HotMonster extends BaseMonster {
     }
 
     @Override
-    public void die(Pane root) {
+    public void die() {
         state = State.DIE;
         showingImage.set(dieImage);
         PauseTransition rmTimer = new PauseTransition(Duration.seconds(1));
         rmTimer.setOnFinished( e ->{
-            removeFromPane(root); // Remove from pane after 1 second.
+            removeFromPane(GlobalVar.getGamePane()); // Remove from pane after 1 second.
             MonsterFactory.getInstance().delete(this);
         });
         rmTimer.play();

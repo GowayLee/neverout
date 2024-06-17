@@ -4,7 +4,6 @@ import com.mambastu.material.pojo.bound.CircleBound;
 import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.util.BetterMath;
 
-import javafx.scene.layout.Pane;
 import lombok.Getter;
 
 public abstract class BaseBullet extends BaseEntity{
@@ -30,7 +29,7 @@ public abstract class BaseBullet extends BaseEntity{
         this.bound = new CircleBound(x, y, 50, prevX, prevY);
     }
 
-    abstract public void move(Pane root); // 移动子弹的方法
+    abstract public void move(); // 移动子弹的方法
 
     /**
      * 子弹击中目标后的处理方法，例如爆炸效果等

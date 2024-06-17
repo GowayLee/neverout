@@ -14,7 +14,6 @@ import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.scene.layout.Pane;
 import lombok.Getter;
 
 public abstract class BaseWeapon {
@@ -38,6 +37,6 @@ public abstract class BaseWeapon {
 
     abstract public BaseEntity selectTarget(double x, double y, LinkedList<BaseMonster> monsters); // 在一群实体中选择目标 TODO: 空间划分
 
-    abstract public List<BaseBullet> fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs, Pane root);
+    abstract public List<BaseBullet> fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs);
 
 }

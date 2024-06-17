@@ -11,9 +11,9 @@ import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.bullet.BulletType;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
+import com.mambastu.util.GlobalVar;
 
 import javafx.animation.PauseTransition;
-import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 public class M1900ShotGun extends BaseWeapon {
@@ -45,8 +45,7 @@ public class M1900ShotGun extends BaseWeapon {
     }
 
     @Override
-    public List<BaseBullet> fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs,
-            Pane root) {
+    public List<BaseBullet> fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs) {
         if (activeInputs.contains(GameInput.FIRE) && coolStatus == Status.READY && shotState == ShotState.READY && monsters.size() > 0) {
             newBulletList.clear();
             for (int i = 0; i < 7; i++) {
@@ -55,7 +54,7 @@ public class M1900ShotGun extends BaseWeapon {
                     newBullet.setProps(damage.get(), bulletSpeed.get(), range.get());
                     newBullet.setPos(x, y);
                     newBullet.setTarget(selectTarget(x, y, monsters), offsetArr[i]);
-                    newBullet.putOnPane(root);
+                    newBullet.putOnPane(GlobalVar.getGamePane());
                     newBulletList.add(newBullet);
                 } catch (Exception e) {
                     e.printStackTrace();

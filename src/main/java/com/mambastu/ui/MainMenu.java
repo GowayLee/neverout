@@ -188,9 +188,11 @@ public class MainMenu {
                 ResourceManager.getInstance().getImg("jokerPlayerImage", "System", "MainMenu"),
                 PlayerTypes.JokerPlayer, jokerPlayerIntro);
 
+        ImageView basakerPlayerIntro = createCharIntro(
+                ResourceManager.getInstance().getImg("basakerIntroImage", "System", "MainMenu"));
         ImageView basakerPlayerView = createChar(
-                ResourceManager.getInstance().getImg("laughPlayerImage", "System", "MainMenu"),
-                PlayerTypes.LaughPlayer, laughPlayerIntro);
+                ResourceManager.getInstance().getImg("basakerPlayerImage", "System", "MainMenu"),
+                PlayerTypes.BasakerPlayer, basakerPlayerIntro);
 
         charPane.getChildren().addAll(laughPlayerView, jokerPlayerView, basakerPlayerView);
         charPane.setSpacing(70);

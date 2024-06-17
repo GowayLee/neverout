@@ -4,13 +4,13 @@ import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.resource.ResourceManager;
 import com.mambastu.util.AudioManager;
 import com.mambastu.util.BetterMath;
+import com.mambastu.util.GlobalVar;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import java.util.Random;
@@ -22,7 +22,8 @@ public class JokerPlayer extends BasePlayer {
     private Random random = new Random();
     private double damageRatio;
 
-    private final PauseTransition skillTimeline = new PauseTransition();
+    private final PauseTransition skillTimeline;
+    private final ColorAdjust skillColorAdjust;
 
     public enum JokerSkillState {
         RED, BLUE
@@ -42,20 +43,28 @@ public class JokerPlayer extends BasePlayer {
         this.invincibleTimer.setOnFinished(e -> {
             super.injuryState = InjuryState.NORMAL;
         });
-        this.skillTimeline.setDuration(Duration.seconds(2));
-        this.skillTimeline.setOnFinished(event -> {
+        this.skillTimeline = new PauseTransition();
+        this.skillColorAdjust = new ColorAdjust();
+        initSkillFX();
+    }
+
+    private void initSkillFX() {
+        skillTimeline.setDuration(Duration.seconds(2));
+        skillTimeline.setOnFinished(event -> {
             state = State.MOVING;
             skillState = SkillState.COOLDOWN;
             injuryState = InjuryState.NORMAL;
-            if (this.jokerSkillState == JokerSkillState.BLUE) {
+            if (jokerSkillState == JokerSkillState.BLUE) {
                 damageRatio = 1.0;
-                speed.set(this.speed.get() / 2);
-            } else if (this.jokerSkillState == JokerSkillState.RED) {
-                speed.set(this.speed.get() * 2);
+                speed.set(speed.get() / 2);
+            } else if (jokerSkillState == JokerSkillState.RED) {
+                speed.set(speed.get() * 2);
             }
             startSkillCooldown();
         });
 
+        skillColorAdjust.setContrast(0.5);
+        skillColorAdjust.setSaturation(0.5);
     }
 
     @Override
@@ -68,7 +77,7 @@ public class JokerPlayer extends BasePlayer {
     }
 
     @Override
-    public void move(Set<GameInput> activeInputs, Pane root) {
+    public void move(Set<GameInput> activeInputs) {
         double deltaX = 0, deltaY = 0;
         double speed = this.speed.get();
         if (getState() == State.MOVING || getState() == State.SKILL) {
@@ -89,7 +98,7 @@ public class JokerPlayer extends BasePlayer {
         }
         if (getState() == State.SKILL) {
             skillSoundEffects();
-            createDashTrail(root);
+            createDashTrail();
         }
         x.set(x.get() + deltaX);
         y.set(y.get() + deltaY);
@@ -137,7 +146,7 @@ public class JokerPlayer extends BasePlayer {
         }
     }
 
-    private void createDashTrail(Pane root) { // 冲刺生成虚影
+    private void createDashTrail() { // 冲刺生成虚影
         // 根据玩家位置生成虚影
         ImageView trail = new ImageView(showingImageView.getImage());
         trail.setFitWidth(showingImageView.getFitWidth());
@@ -145,24 +154,18 @@ public class JokerPlayer extends BasePlayer {
         trail.setX(showingImageView.getX());
         trail.setY(showingImageView.getY());
 
-        // 虚影特性：根据技能状态设置颜色，0.5透明度，淡出（时间0.5秒）
-        ColorAdjust colorAdjust = new ColorAdjust();
-        if (this.jokerSkillState == JokerSkillState.RED) {
-            colorAdjust.setHue(0); // 红色
-        } else if (this.jokerSkillState == JokerSkillState.BLUE) {
-            colorAdjust.setHue(0.5); // 蓝色
-        }
-        colorAdjust.setContrast(0.5);
-        colorAdjust.setSaturation(0.5);
-        trail.setEffect(colorAdjust);
+        // 虚影特性：根据技能状态设置颜色，0.5透明度，淡出（时间0.5秒）;
+        skillColorAdjust.setHue(jokerSkillState == JokerSkillState.RED ? 0.0 : 0.5);
+        
+        trail.setEffect(skillColorAdjust);
         trail.setOpacity(0.5);
         FadeTransition fade = new FadeTransition(Duration.seconds(0.5), trail);
         fade.setFromValue(0.5);
         fade.setToValue(0);
-        fade.setOnFinished(event -> root.getChildren().remove(trail));
+        fade.setOnFinished(event -> GlobalVar.getGamePane().getChildren().remove(trail));
         fade.play();
 
-        root.getChildren().add(trail);
+        GlobalVar.getGamePane().getChildren().add(trail);
     }
 
     public void die() {

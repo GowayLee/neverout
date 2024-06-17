@@ -95,6 +95,7 @@ public class AudioManager {
             }
         }
     }
+
     public boolean isAudioPlaying(String category, String name, String key) {
         String path = getAudioPath(category, name, key);
         if (path != null && audioCache.containsKey(path)) {
@@ -144,7 +145,6 @@ public class AudioManager {
             System.out.println("Audio not found for key: " + key + ", category: " + category + ", name: " + name);
         }
     }
-
 
     public void loopAudio(String category, String name, String key) {
         String path = getAudioPath(category, name, key);

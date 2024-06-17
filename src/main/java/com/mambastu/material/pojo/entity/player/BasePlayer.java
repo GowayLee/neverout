@@ -13,7 +13,6 @@ import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
@@ -65,7 +64,7 @@ public abstract class BasePlayer extends BaseEntity{
         });
     }
 
-    public void move(Set<GameInput> activeInputs, Pane root) {
+    public void move(Set<GameInput> activeInputs) {
         double deltaX = 0, deltaY = 0;
         double speed = this.speed.get(); // 获取玩家速度属性值
         if (activeInputs.contains(GameInput.MOVE_UP))
@@ -95,7 +94,6 @@ public abstract class BasePlayer extends BaseEntity{
         this.y.set(sceneHeight / 2);
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
-
     }
 
     protected void startSkillCooldown () {

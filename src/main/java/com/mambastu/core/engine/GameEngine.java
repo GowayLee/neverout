@@ -14,6 +14,7 @@ import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
+import com.mambastu.util.GlobalVar;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.layout.Pane;
@@ -92,8 +93,10 @@ public class GameEngine {
 
     // ================================= Control Section =================================
     public void showGamePane() { // 显示游戏画布
-        root.getChildren().remove(engineProps.getGamePane());
-        root.getChildren().add(engineProps.getGamePane()); // 将游戏画布节点压入StackPane
+        Pane gamePane = engineProps.getGamePane();
+        GlobalVar.setGamePane(gamePane);
+        root.getChildren().remove(gamePane);
+        root.getChildren().add(gamePane); // 将游戏画布节点压入StackPane
     }
 
     public void hideGamePane() { // 隐藏游戏画布

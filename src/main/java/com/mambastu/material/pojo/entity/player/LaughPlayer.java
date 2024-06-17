@@ -4,13 +4,13 @@ import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.resource.ResourceManager;
 import com.mambastu.util.AudioManager;
 import com.mambastu.util.BetterMath;
+import com.mambastu.util.GlobalVar;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import java.util.Set;
@@ -22,18 +22,27 @@ public class LaughPlayer extends BasePlayer {
     private double skillDeltaY;
 
     private final PauseTransition skillTimeline;
+    private final ColorAdjust skillColorAdjust;
 
     public LaughPlayer() {
         super();
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "LaughPlayer");
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "LaughPlayer");
         setImageSize(50, 50);
-        this.skillTimeline = new PauseTransition(Duration.seconds(0.1));
-        this.skillTimeline.setOnFinished(event -> {
+        this.skillTimeline = new PauseTransition();
+        this.skillColorAdjust = new ColorAdjust();
+        initSkillFX();
+    }
+
+    private void initSkillFX() {
+        skillTimeline.setDuration(Duration.seconds(2));
+        skillTimeline.setOnFinished(event -> {
             state = State.MOVING;
             injuryState = InjuryState.NORMAL;
             startSkillCooldown();
         });
+
+        skillColorAdjust.setHue(0.5);
     }
 
     @Override
@@ -48,7 +57,7 @@ public class LaughPlayer extends BasePlayer {
     }
 
     @Override
-    public void move(Set<GameInput> activeInputs, Pane root) {
+    public void move(Set<GameInput> activeInputs) {
         double deltaX = 0, deltaY = 0;
         double speed = this.speed.get();
         if (getState() == State.MOVING) {
@@ -74,7 +83,7 @@ public class LaughPlayer extends BasePlayer {
 
         if (getState() == State.SKILL) {
             skillSoundEffects();
-            createDashTrail(root);
+            createDashTrail();
         }
 
         x.set(x.get() + deltaX);
@@ -87,10 +96,10 @@ public class LaughPlayer extends BasePlayer {
     }
 
     private void skillSoundEffects() {
-        if(!AudioManager.getInstance().isAudioPlaying("SoundEffects", "SkillLaugh","displayAudio")){
-            AudioManager.getInstance().playAudio("SoundEffects", "SkillLaugh","displayAudio");
+        if (!AudioManager.getInstance().isAudioPlaying("SoundEffects", "SkillLaugh", "displayAudio")) {
+            AudioManager.getInstance().playAudio("SoundEffects", "SkillLaugh", "displayAudio");
         }
-        }
+    }
 
     @Override
     public void getHurt(Integer damage) {
@@ -128,7 +137,7 @@ public class LaughPlayer extends BasePlayer {
         skillTimeline.play();
     }
 
-    private void createDashTrail(Pane root) {// 冲刺生成虚影
+    private void createDashTrail() {// 冲刺生成虚影
         // 根据玩家位置生成虚影
         ImageView trail = new ImageView(showingImageView.getImage());
         trail.setFitWidth(showingImageView.getFitWidth());
@@ -137,18 +146,15 @@ public class LaughPlayer extends BasePlayer {
         trail.setY(showingImageView.getY());
 
         // 虚影特性： 变蓝 0.5透明度 淡出（时间0.5秒）
-        ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setHue(0.5);
-        trail.setEffect(colorAdjust);
+        trail.setEffect(skillColorAdjust);
         trail.setOpacity(0.5);
         FadeTransition fade = new FadeTransition(Duration.seconds(0.5), trail);
         fade.setFromValue(0.5);
         fade.setToValue(0);
-        fade.setOnFinished(event -> root.getChildren().remove(trail));
+        fade.setOnFinished(event -> GlobalVar.getGamePane().getChildren().remove(trail));
         fade.play();
 
-        root.getChildren().add(trail);
-
+        GlobalVar.getGamePane().getChildren().add(trail);
     }
 
     public void die() {

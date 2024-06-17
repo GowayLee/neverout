@@ -14,7 +14,6 @@ import javafx.animation.PauseTransition;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import lombok.Getter;
 
@@ -61,7 +60,7 @@ public abstract class BaseMonster extends BaseEntity {
      */
     abstract public Integer releaseDamage();
 
-    abstract public void die(Pane root);
+    abstract public void die();
 
     public void getHurt(Integer damage, BaseBullet bullet) {
         if (state == State.NORMAL && !inBulletQueue.contains(bullet)) { // 如果怪物处于正常状态，并且子弹不在无敌子弹队列中，则造成伤害

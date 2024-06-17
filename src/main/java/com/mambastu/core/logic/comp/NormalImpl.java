@@ -151,18 +151,18 @@ public class NormalImpl implements ModeLogic {
     }
 
     private void playerMove() {
-        player.move(InputManager.getInstance().getActiveInputs(), gamePane);
+        player.move(InputManager.getInstance().getActiveInputs());
     }
 
     private void bulletMove() {
         for (BaseBullet bullet : bulletList) {
-            bullet.move(gamePane); // 子弹移动逻辑
+            bullet.move(); // 子弹移动逻辑
         }
     }
 
     private void playerFire() {
         if (player.getWeapon() != null) {
-            List<BaseBullet> newBulletList = player.getWeapon().fire(player.getX().get(), player.getY().get(), monsterList, InputManager.getInstance().getActiveInputs(), gamePane);
+            List<BaseBullet> newBulletList = player.getWeapon().fire(player.getX().get(), player.getY().get(), monsterList, InputManager.getInstance().getActiveInputs());
             if (newBulletList != null && newBulletList.size() > 0) {
                 bulletList.addAll(newBulletList); // 添加新子弹到子弹列表中
             }
@@ -186,7 +186,7 @@ public class NormalImpl implements ModeLogic {
             for (BaseMonster monster : monsterList) {
                 if (bullet.getBound().collisionState(monster.getBound()) == CollisionState.TRUE) {
                     BulletHitMonsterEvent event = BulletHitMonsterEvent.getInstance(); // 触发子弹击中怪物事件，记录数据等操作
-                    event.setProperty(bullet, monster, gamePane);
+                    event.setProperty(bullet, monster);
                     EventManager.getInstance().fireEvent(event);
                     hittedSet.add(monster); // 记录被击中的怪物，后续统一处理
                 }
@@ -209,7 +209,7 @@ public class NormalImpl implements ModeLogic {
     private void checkMonsterDie(BaseMonster monster) {
         if (monster.isDie()) {
             MonsterDieEvent event = MonsterDieEvent.getInstance(); // 因为怪物有死亡延迟效果，为了保证对象池中对象的可用性
-            event.setProperty(monster, gamePane);
+            event.setProperty(monster);
             EventManager.getInstance().fireEvent(event);                                  // 在怪物死亡效果结束后再放回对象池
             monsterList.remove(monster); // 移除怪物
             ctx.getLevelRecord().getKillCount().set(ctx.getLevelRecord().getKillCount().get() + 1);

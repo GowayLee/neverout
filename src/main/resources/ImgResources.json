@@ -72,6 +72,8 @@
       "laughIntroImage": "/static/image/menu/laughPlayerIntro.png",
       "jokerPlayerImage": "/static/image/char/JokerPlayer.png",
       "jokerIntroImage": "/static/image/menu/JokerPlayerIntro.png",
+      "basakerPlayerImage": "/static/image/char/Basaker_Normal.png",
+      "basakerIntroImage": "/static/image/menu/basakerPlayerIntro.png",
       "normalModeImage": "/static/image/menu/NormalMode.png",
       "normalIntroImage": "/static/image/menu/normalModeIntro.png",
       "challengeModeImage": "/static/image/menu/ChallengeMode.png",

@@ -3,7 +3,6 @@ package com.mambastu.material.pojo.entity.bullet;
 import com.mambastu.material.resource.ResourceManager;
 
 import javafx.scene.image.Image;
-import javafx.scene.layout.Pane;
 
 public class NailBullet extends BaseBullet {
     private Image bornImage;
@@ -22,7 +21,7 @@ public class NailBullet extends BaseBullet {
     }
 
     @Override
-    public void move(Pane root) {
+    public void move() {
         double currentX = x.get() + speed * cos;
         double currentY = y.get() + speed * sin;
         range -= speed; // 减少子弹的射程
