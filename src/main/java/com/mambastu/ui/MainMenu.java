@@ -22,8 +22,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -37,7 +35,7 @@ public class MainMenu {
     private final SimpleObjectProperty<PlayerTypes> playerType; // 玩家类型
 
     private final Pane menuPane;
-
+    private final Pane titlePane;
     private final Group facePane;
     private final Group btnPane;
     private final HBox charPane; // 角色面板，用于显示角色选择界面
@@ -284,13 +282,19 @@ public class MainMenu {
         circleView.setLayoutY(0);
         circleView.setVisible(false);
 
-        Text startBtn = new Text("Start Game");
-        startBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 80));
+        Text startBtn = new Text(buttonName.name());
+//        startBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 80));
+        startBtn.styleProperty().bind(Bindings.concat(
+                "-fx-font-family: 'Segoe Script'; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.08).asString(), "px;"
+        ));
         startBtn.setFill(Color.BLACK);
         startBtn.setOpacity(0.8);
-        startBtn.setLayoutX(50);
-        startBtn.setLayoutY(85);
 
+        // Group的大小取决于更大的circleView，所以要设置文字居中，也就是从左上角向下和向右大概四分之一circleView长宽
+        startBtn.layoutXProperty().bind(circleView.fitWidthProperty().multiply(0.15));
+        startBtn.layoutYProperty().bind(circleView.fitHeightProperty().multiply(0.65));
         startBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
             circleView.setVisible(true); // 显示圆圈
         });
@@ -298,11 +302,27 @@ public class MainMenu {
         startBtn.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
             circleView.setVisible(false);
         });
-
         startBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            listener.startGame();
-        });
+            switch (buttonName) {
+                case START_GAME: {
+                    listener.startGame();
+                    break;
+                }
+                case EXIT_GAME: {
+                    break;
+                }
+                case DEVELOPERS:{
+                    break;
+                }
 
+                case MODE_SELECT:{
+                    break;
+                }
+                case PLAYER_SELECT:{
+                    break;
+                }
+            }
+        });
         btnPane.getChildren().addAll(circleView, startBtn);
 
         btnPane.setLayoutX(70);
@@ -337,13 +357,17 @@ public class MainMenu {
 
     private Group createEye() {
         // 创建眼睛背景
-        Circle eyeBackground = new Circle(30);
+//        Circle eyeBackground = new Circle(30);
+        Circle eyeBackground = new Circle();
+        eyeBackground.radiusProperty().bind(root.widthProperty().multiply(0.3*0.15));
         eyeBackground.setFill(Color.WHITE);
         eyeBackground.setStroke(Color.WHITE);
         eyeBackground.setStrokeWidth(2);
 
         // 创建眼珠
-        Circle pupil = new Circle(13);
+//        Circle pupil = new Circle(13);
+        Circle pupil = new Circle();
+        pupil.radiusProperty().bind(root.widthProperty().multiply(0.3*0.15*0.3));
         pupil.setFill(Color.BLACK);
 
         // 将眼珠添加到眼睛背景中
@@ -371,5 +395,12 @@ public class MainMenu {
 
         pupil.setTranslateX(deltaX);
         pupil.setTranslateY(deltaY);
+    }
+    private enum ButtonType {
+        START_GAME,
+        EXIT_GAME,
+        DEVELOPERS,
+        MODE_SELECT,
+        PLAYER_SELECT;
     }
 }

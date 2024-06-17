@@ -3,12 +3,20 @@ package com.mambastu.ui;
 import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.listener.GameOverMenuListener;
 
+import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.BetterMath;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -34,11 +42,12 @@ public class GameOverMenu {
         this.menuPane = new Pane();
     }
 
+
     public void init() { // 初始化
         bindProperties();
         buildLayout();
-        menuPane.setStyle("-fx-background-color: black;");
-        menuPane.setOpacity(0.90);
+        menuPane.setStyle("-fx-background-color: white;");
+        menuPane.setOpacity(0.8);
     }
 
     public void show() {
@@ -56,48 +65,256 @@ public class GameOverMenu {
         totalLevelNum.bind(ctx.getGlobalRecord().getTotalLevelNum());
     }
 
-    private void buildLayout() { // TODO: 构建布局，包括显示分数、生命值、游戏时间等游戏信息。
-        Text uDieText = new Text("You Die!");
-        uDieText.setFill(Color.WHITE); // 设置文本颜色为白色
-        uDieText.setFont(new Font("Segoe Script", 320));
-        uDieText.setLayoutX((root.getWidth() - uDieText.getLayoutBounds().getWidth()) / 2); // 居中
-        uDieText.setLayoutY(root.getHeight() / 2); // 居中
 
-        Button restartBtn = new Button("Restart!");
-        restartBtn.setLayoutX(root.getWidth() / 2 - 100);
-        restartBtn.setLayoutY(root.getHeight() / 2 + 100);
-        restartBtn.setOnAction(e -> {
-            listener.restartGame();
+    private void buildLayout(){
+
+        // 设置标题
+        Text title = new Text("GAME OVER");
+        title.layoutXProperty().bind(menuPane.heightProperty().multiply(0.28));
+        title.layoutYProperty().bind(menuPane.widthProperty().multiply(0.1));
+        title.styleProperty().bind(Bindings.concat(
+                "-fx-font-family: 'Segoe Script'; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", menuPane.widthProperty().multiply(0.10).asString(), "px;"
+        ));
+
+        //设置分割线
+        Line line = new Line();
+        line.startXProperty().bind(menuPane.widthProperty().multiply(0.5));
+        line.endXProperty().bind(menuPane.widthProperty().multiply(0.5));
+        line.startYProperty().bind(menuPane.heightProperty().multiply(0.25));
+        line.endYProperty().bind(menuPane.heightProperty().multiply(0.95));
+
+        //本轮成绩设置
+        Pane scareBox = new Pane();
+        scareBox.layoutXProperty().bind(menuPane.widthProperty().multiply(0.1));
+        scareBox.layoutYProperty().bind(menuPane.heightProperty().multiply(0.25));
+        scareBox.prefWidthProperty().bind(menuPane.widthProperty().multiply(0.35));
+        scareBox.prefHeightProperty().bind(menuPane.heightProperty().multiply(0.7));
+        scareBox.setStyle("-fx-border-color: black; -fx-border-width: 3; -fx-border-style: dashed");
+        //设置具体成绩内容
+        addScore(scareBox,ScoreType.SCORE_TITLE,0.1,0.1);
+        addScore(scareBox,ScoreType.TOTAL_LEVEL,0.1,0.4);
+        addScore(scareBox,ScoreType.TOTAL_KILL,0.1,0.6);
+        addScore(scareBox,ScoreType.TOTAL_DURATION,0.1,0.8);
+
+        //设置右侧内容
+        Pane chooseBox = new Pane();
+        chooseBox.layoutXProperty().bind(menuPane.widthProperty().multiply(0.55));
+        chooseBox.layoutYProperty().bind(menuPane.heightProperty().multiply(0.25));
+        chooseBox.prefWidthProperty().bind(menuPane.widthProperty().multiply(0.35));
+        chooseBox.prefHeightProperty().bind(menuPane.heightProperty().multiply(0.7));
+//        chooseBox.setStyle("-fx-border-color: black; -fx-border-width: 3; -fx-border-style: dashed");
+        //设置语录
+        Text quote = new Text("The Joker may have faltered this round, yet the dance of life twirls on.\nCast your next die !!");
+        quote.wrappingWidthProperty().bind(chooseBox.widthProperty().multiply(0.9));
+        quote.styleProperty().bind(Bindings.concat(
+                "-fx-font-family: 'Segoe Script'; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", chooseBox.widthProperty().multiply(0.05).asString(), "px;"
+        ));
+        quote.layoutXProperty().bind(chooseBox.widthProperty().multiply(0.028));
+        quote.layoutYProperty().bind(chooseBox.heightProperty().multiply(0.05));
+        chooseBox.getChildren().add(quote);
+        //设置按钮
+        addButton(chooseBox, ButtonType.REPLAY, 0.02, 0.3);
+        addButton(chooseBox, ButtonType.RETURN, 0.02, 0.6);
+        //设置人物
+        Pane facePane = new Pane();
+        facePane.layoutXProperty().bind(menuPane.widthProperty().multiply(0.8));
+        facePane.layoutYProperty().bind(menuPane.heightProperty().multiply(0.8));
+        facePane.prefWidthProperty().bind(menuPane.widthProperty().multiply(0.2));
+        facePane.prefHeightProperty().bind(menuPane.heightProperty().multiply(0.2));
+//        facePane.setStyle("-fx-border-color: black; -fx-border-width: 3; -fx-border-style: dashed");
+        buildFace(facePane);
+        
+
+        //设置画布
+        menuPane.getChildren().addAll(title,line,scareBox,chooseBox,facePane);
+    }
+
+    private void addScore(Pane pane, ScoreType scoreType, Double xRatio, Double yRation){
+        Text score = new Text();
+        score.layoutXProperty().bind(pane.heightProperty().multiply(xRatio));
+        score.layoutYProperty().bind(pane.widthProperty().multiply(yRation));
+        score.styleProperty().bind(Bindings.concat(
+                "-fx-font-family: 'Segoe Script'; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", pane.widthProperty().multiply(0.08).asString(), "px;"
+        ));
+
+        switch (scoreType) {
+            case TOTAL_KILL: {
+                score.textProperty().bind(totalKillCount.asString("Total Kill: %d "));
+                score.setFill(Color.web("#FF709E"));
+                break;
+            }
+            case TOTAL_DURATION: {
+                score.textProperty().bind(totalDuration.asString("Total Duration: %d "));
+                score.setFill(Color.web("#FF937A"));
+                break;
+            }
+            case TOTAL_LEVEL: {
+                score.textProperty().bind(totalLevelNum.asString("Total Level: %d "));
+                score.setFill(Color.web("#5E66C2"));
+                break;
+            }
+            case SCORE_TITLE: {
+                score.setText("Stats All Folks !");
+                score.setFill(Color.web("#5E66C2"));
+                score.styleProperty().bind(Bindings.concat(
+                        "-fx-font-family: 'Segoe Script'; ",
+                        "-fx-font-weight: normal; ",
+                        "-fx-font-size: ", pane.widthProperty().multiply(0.1).asString(), "px;"
+                ));
+                break;
+            }
+        }
+
+        pane.getChildren().add(score);
+    }
+
+    private void addButton(Pane pane, ButtonType buttonType, Double xRatio, Double yRation){
+        Group buttonBox = new Group();
+        //设置背景图
+
+        ImageView circleView = new ImageView(ResourceManager.getInstance().getImg("circleImage", "System", "MainMenu"));
+        circleView.fitHeightProperty().bind(pane.heightProperty().multiply(0.3));
+        circleView.fitWidthProperty().bind(pane.widthProperty().multiply(0.7));
+        circleView.setLayoutX(0);
+        circleView.setLayoutY(0);
+        circleView.setVisible(false);
+        //设置按钮
+        Text button = new Text();
+        button.styleProperty().bind(Bindings.concat(
+                "-fx-font-family: 'Segoe Script'; ",
+                "-fx-font-weight: normal; ",
+                "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.1).asString(), "px;"
+        ));
+        button.setFill(Color.web("#9F9DD3"));
+        button.setOpacity(0.8);
+        button.layoutXProperty().bind(circleView.fitWidthProperty().multiply(0.15));
+        button.layoutYProperty().bind(circleView.fitHeightProperty().multiply(0.65));
+        switch (buttonType) {
+            case REPLAY : {
+                button.setText("Hit Me Again!");
+                break;
+            }
+            case RETURN:{
+                button.setText("Escape to the Lobby!");
+                break;
+            }
+        }
+        button.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+            circleView.setVisible(true); // 显示圆圈
+            button.setFill(Color.web("#FF709E"));
+            button.styleProperty().bind(Bindings.concat(
+                    "-fx-font-family: 'Segoe Script'; ",
+                    "-fx-font-weight: bolder; ",
+                    "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.15).asString(), "px;"
+            ));
+
         });
+        button.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+            circleView.setVisible(false);
+            button.setFill(Color.web("#9F9DD3"));
+            button.styleProperty().bind(Bindings.concat(
+                    "-fx-font-family: 'Segoe Script'; ",
+                    "-fx-font-weight: bold; ",
+                    "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.1).asString(), "px;"
+            ));
 
-        Button backMainMenuBtn = new Button("Back to MainMenu");
-        backMainMenuBtn.setLayoutX(root.getWidth() / 2 + 100);
-        backMainMenuBtn.setLayoutY(root.getHeight() / 2 + 100);
-        backMainMenuBtn.setOnAction(e -> {
-            listener.backMainMenu();
         });
+        button.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
 
-        Label killCountLabel = new Label();
-        killCountLabel.textProperty().bind(totalKillCount.asString("Total Kill: %d "));
-        killCountLabel.setStyle("-fx-text-fill: red;"); // 设置文本颜色为红色
-        killCountLabel.setFont(new Font("Segoe Script", 20)); // 设置字体大小和样式
-        killCountLabel.setLayoutX(100);
-        killCountLabel.setLayoutY(100);
+            switch (buttonType) {
+                case REPLAY: {
+                    listener.restartGame();
+                    break;
+                }
+                case RETURN: {
+                    listener.backMainMenu();
+                    break;
+                }
 
-        Label durationLabel = new Label();
-        durationLabel.textProperty().bind(totalDuration.asString("Total duration: %d "));
-        durationLabel.setStyle("-fx-text-fill: red;"); // 设置文本颜色为红色
-        durationLabel.setFont(new Font("Segoe Script", 20)); // 设置字体大小和样式
-        durationLabel.setLayoutX(400);
-        durationLabel.setLayoutY(100);
+            }
 
-        Label levelNumLabel = new Label();
-        levelNumLabel.textProperty().bind(totalLevelNum.asString("Total level: %d "));
-        levelNumLabel.setStyle("-fx-text-fill: red;"); // 设置文本颜色为红色
-        levelNumLabel.setFont(new Font("Segoe Script", 20)); // 设置字体大小和样式
-        levelNumLabel.setLayoutX(700);
-        levelNumLabel.setLayoutY(100);
+        });
+        buttonBox.getChildren().addAll(circleView, button);
+        buttonBox.layoutXProperty().bind(pane.widthProperty().multiply(xRatio));
+        buttonBox.layoutYProperty().bind(pane.heightProperty().multiply(yRation));
+        pane.getChildren().add(buttonBox);
+    }
+    private void buildFace(Pane pane) {
+        Group facePane = new Group();
+        Group leftEye = createEye(pane);
+        Group rightEye = createEye(pane);
+        ImageView face = new ImageView(ResourceManager.getInstance().getImg("bornImage", "Player", "JokerPlayer"));
+        face.fitWidthProperty().bind(pane.widthProperty().multiply(0.9));
+        face.fitHeightProperty().bind(pane.heightProperty().multiply(0.9));
+        face.setLayoutX(0);
+        face.setLayoutY(0);
+        leftEye.layoutXProperty().bind(face.fitWidthProperty().multiply(0.33));
+        leftEye.layoutYProperty().bind(face.fitHeightProperty().multiply(0.42));
+        rightEye.layoutXProperty().bind(face.fitWidthProperty().multiply(0.65));
+        rightEye.layoutYProperty().bind(face.fitHeightProperty().multiply(0.42));
+        facePane.setLayoutX(0);
+        facePane.setLayoutY(0);
 
-        menuPane.getChildren().addAll(uDieText, restartBtn, backMainMenuBtn, killCountLabel, durationLabel, levelNumLabel);
+
+        facePane.getChildren().addAll(face, leftEye, rightEye);
+
+        root.setOnMouseMoved(event -> {
+            updatePupilPosition(pane, event.getX(), event.getY(), leftEye);
+            updatePupilPosition(pane, event.getX(), event.getY(), rightEye);
+        });
+        pane.getChildren().add(facePane);
+
+    }
+
+    private Group createEye(Pane pane) {
+        // 创建眼睛背景
+        Circle eyeBackground = new Circle();
+        eyeBackground.radiusProperty().bind(pane.widthProperty().multiply(0.3*0.25));
+        eyeBackground.setFill(Color.WHITE);
+        eyeBackground.setStroke(Color.WHITE);
+        eyeBackground.setStrokeWidth(2);
+
+        // 创建眼珠
+        Circle pupil = new Circle();
+        pupil.radiusProperty().bind(pane.widthProperty().multiply(0.3*0.20*0.45));
+        pupil.setFill(Color.BLACK);
+
+        // 将眼珠添加到眼睛背景中
+        return new Group(eyeBackground, pupil);
+    }
+
+    // 更新眼珠位置的方法
+    private void updatePupilPosition(Pane facePane, double mouseX, double mouseY, Group eye) {
+        Circle pupil = (Circle) eye.getChildren().get(1);
+        Circle eyeBackground = (Circle) eye.getChildren().get(0);
+
+        double eyeCenterX = eye.getLayoutX() + eyeBackground.getCenterX() + facePane.getLayoutX();
+        double eyeCenterY = eye.getLayoutY() + eyeBackground.getCenterY() + facePane.getLayoutY();
+
+        double deltaX = mouseX - eyeCenterX;
+        double deltaY = mouseY - eyeCenterY;
+        double distance = BetterMath.sqrt(deltaX * deltaX + deltaY * deltaY);
+        double maxDistance = eyeBackground.getRadius() - pupil.getRadius();
+
+        if (distance > maxDistance) {
+            deltaX = (deltaX / distance) * maxDistance;
+            deltaY = (deltaY / distance) * maxDistance;
+        }
+
+        pupil.setTranslateX(deltaX);
+        pupil.setTranslateY(deltaY);
+    }
+
+    private enum ScoreType {
+        SCORE_TITLE, TOTAL_KILL, TOTAL_DURATION, TOTAL_LEVEL;
+    }
+    private enum ButtonType {
+        REPLAY, RETURN;
     }
 }

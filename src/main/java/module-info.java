@@ -10,6 +10,7 @@ module com.mambastu {
     requires Jamepad;
     requires javafx.web;
     requires jdk.jsobject;
+    requires gdx;
 
 
     opens com.mambastu to javafx.fxml;
