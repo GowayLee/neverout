@@ -1,8 +1,8 @@
 package com.mambastu.material.pojo.entity.player;
 
 import com.mambastu.controller.input.comp.GameInput;
+import com.mambastu.material.pojo.weapon.BaseWeapon;
 import com.mambastu.material.resource.ResourceManager;
-import com.mambastu.util.AudioManager;
 import com.mambastu.util.BetterMath;
 
 import javafx.animation.FadeTransition;
@@ -13,16 +13,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-import java.util.Random;
 import java.util.Set;
 
 public class BasakerPlayer extends BasePlayer {
     private Image bornImage;
-    private Image readyImage;
     private Image dieImage;
     private Image rageImage;
     private Image bloodImage;
-    private Random random = new Random();
     private ImageView bloodImageView;
 
     public enum BasakerSkillState {
@@ -35,7 +32,6 @@ public class BasakerPlayer extends BasePlayer {
         super();
         super.skillCD.set(5);
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Player", "Basaker");
-        this.readyImage = ResourceManager.getInstance().getImg("readyImage", "Player", "Basaker");
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "Basaker");
         this.rageImage = ResourceManager.getInstance().getImg("enragedImage", "Player", "Basaker");
         this.bloodImage = ResourceManager.getInstance().getImg("bloodImage", "Player", "Basaker");
@@ -75,8 +71,9 @@ public class BasakerPlayer extends BasePlayer {
                 deltaX -= speed;
             if (activeInputs.contains(GameInput.MOVE_RIGHT))
                 deltaX += speed;
-            if (activeInputs.contains(GameInput.SKILL) && getSkillState() == SkillState.READY)
+            if (activeInputs.contains(GameInput.SKILL) && getSkillState() == SkillState.READY){
                 activateSkill(root);
+            }
         }
         if (deltaX != 0 && deltaY != 0 && getState() == State.MOVING) {
             deltaX /= BetterMath.sqrt(2);
@@ -96,6 +93,7 @@ public class BasakerPlayer extends BasePlayer {
         state = State.SKILL;
         skillState = SkillState.ACTIVE;
         basakerSkillState = BasakerSkillState.ENRAGED;
+        if (weapon != null) weapon.getDamage().set((weapon.getDamage().get() * 2));
         setStateImage();
 
         // 产生一个巨大的原地50%透明度虚影
@@ -110,16 +108,17 @@ public class BasakerPlayer extends BasePlayer {
             setStateImage();
             root.getChildren().remove(bloodImageView); // 移除血图层
             startSkillCooldown();
+            if (weapon != null) weapon.getDamage().set((weapon.getDamage().get() / 2));
         });
         skillTimeline.play();
     }
 
     private void createInitialSkillShadow(Pane root) {
         ImageView skillShadow = new ImageView(rageImage);
-        skillShadow.setFitWidth(showingImageView.getFitWidth() * 5);
-        skillShadow.setFitHeight(showingImageView.getFitHeight() * 5);
-        skillShadow.setX(showingImageView.getX() - showingImageView.getFitWidth() / 2);
-        skillShadow.setY(showingImageView.getY() - showingImageView.getFitHeight() / 2);
+        skillShadow.setFitWidth(showingImageView.getFitWidth() * 8);
+        skillShadow.setFitHeight(showingImageView.getFitHeight() * 8);
+        skillShadow.setX(showingImageView.getX() - skillShadow.getFitWidth() / 2+showingImageView.getFitHeight() / 2);
+        skillShadow.setY(showingImageView.getY() - skillShadow.getFitHeight() / 2+showingImageView.getFitHeight() / 2);
 
         skillShadow.setOpacity(0.5);
 
@@ -132,7 +131,7 @@ public class BasakerPlayer extends BasePlayer {
         root.getChildren().add(skillShadow);
     }
 
-    private void startSkillCooldown() { // 进入技能冷却
+    protected void startSkillCooldown() { // 进入技能冷却
         skillCDTimer.setDuration(Duration.seconds(skillCD.get()));
         skillCDTimer.setOnFinished(event -> skillState = SkillState.READY);
         skillCDTimer.play();
