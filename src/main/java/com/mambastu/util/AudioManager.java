@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -19,12 +23,17 @@ import org.json.JSONTokener;
 
 public class AudioManager {
     private static final Logger logger = LogManager.getLogger(AudioManager.class);
-
+    
     private static final AudioManager INSTANCE = new AudioManager();
 
-    private Map<String, Map<String, Map<String, String>>> audioResources;
-    private Map<String, Clip> audioCache;
+    private static final int POOL_SIZE = 5; // 池的大小
+    private final ExecutorService executor = Executors.newFixedThreadPool(POOL_SIZE);
 
+    private final Map<String, Map<String, Map<String, String>>> audioResources;
+    private final Map<String, Clip> audioCache;
+    private final Map<String, List<Clip>> effectCache;
+
+    private boolean readyForEnlarge = true; // 是否可以扩容(线程安全)
     private Map<String, Long> lastPlayTimes;
 
     public static AudioManager getInstance() {
@@ -34,6 +43,7 @@ public class AudioManager {
     private AudioManager() {
         this.audioResources = new HashMap<>();
         this.audioCache = new HashMap<>();
+        this.effectCache = new HashMap<>();
     }
 
     public void loadResources() {
@@ -50,6 +60,7 @@ public class AudioManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private void parseJSON(JSONObject jsonObject) {
@@ -61,6 +72,11 @@ public class AudioManager {
                 Map<String, String> nameMap = new HashMap<>();
                 for (String key : nameObj.keySet()) {
                     nameMap.put(key, nameObj.getString(key));
+                    // 音效素材储存在多冗余池中
+                    if (category.equals("SoundEffects"))
+                        loadSoundEffects(nameObj.getString(key));
+
+                        
                 }
                 categoryMap.put(name, nameMap);
             }
@@ -78,8 +94,54 @@ public class AudioManager {
                 }
             }
         }
-        logger.error("In Method getAudioPath: Audio not found for key: " + key + ", category: " + category + ", name: " + name);
+        logger.error("In Method getAudioPath: Audio not found for key: " + key + ", category: " + category + ", name: "
+                + name);
         return null;
+    }
+
+    private void loadSoundEffects(String path) {
+        try {
+            URL url = getClass().getResource(path);
+            if (url != null) {
+                List<Clip> clips = new ArrayList<>();
+                for (int i = 0; i < 5; i++) { // 创建5个冗余池
+                    try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url)) {
+                        Clip newClip = AudioSystem.getClip();
+                        newClip.open(audioInputStream);
+                        clips.add(newClip);
+                    }
+                }
+                effectCache.put(path, clips);
+                logger.info("Loaded sound effect: " + path);
+            } else {
+                logger.error("Unable to load audio from " + path);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void enlargeEffectCache(String path) { // 扩充音效冗余池
+        readyForEnlarge = false;
+        List<Clip> clips = effectCache.get(path);
+        try {
+            URL url = getClass().getResource(path);
+            if (url != null) {
+                for (int i = 0; i < clips.size(); i++) { // 扩容1倍
+                    try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url)) {
+                        Clip newClip = AudioSystem.getClip();
+                        newClip.open(audioInputStream);
+                        clips.add(newClip);
+                    }
+                }
+                logger.info("Enlarge the pool of sound effect: " + path);
+            } else {
+                logger.error("Unable to load audio from " + path);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        readyForEnlarge = true;
     }
 
     private void loadAudio(String path) {
@@ -101,11 +163,30 @@ public class AudioManager {
 
     private Clip getClip(String category, String name, String key) {
         String path = getAudioPath(category, name, key);
-        if (path == null) return null;
-        if (!audioCache.containsKey(path)) { // 如果音频未在缓存中，则加载该音频
-            loadAudio(path);
+        if (path == null)
+            return null;
+        if (category == "SoundEffects") { // 如果需要的是音效，则从音效冗余池缓存中获取
+            if (!effectCache.containsKey(path)) { // 如果音效未在缓存中，则加载该音效
+                loadSoundEffects(path);
+            }
+            List<Clip> clips = effectCache.get(path); // 获取音效冗余池
+            int i = 0;
+            for (Clip clip : clips) { // 查找一个未在使用的音效
+                if (!clip.isRunning()) { // 如果音效未在播放，则返回该音效
+                    return clip;
+                }
+                i++;
+            }
+            if ((double) i / clips.size() > 0.7 && readyForEnlarge) {
+                enlargeEffectCache(path);
+            }
+            return clips.get(0); // 如果没有未使用的音效，则返回第一个音效，并等待其他音效空闲
+        } else {
+            if (!audioCache.containsKey(path)) { // 如果音频未在缓存中，则加载该音频
+                loadAudio(path);
+            }
+            return audioCache.get(path);
         }
-        return audioCache.get(path);
     }
 
     /**
@@ -129,17 +210,24 @@ public class AudioManager {
      * @param key
      */
     public void playAudio(String category, String name, String key) {
-        new Thread(() -> {
+        executor.submit(() -> {
             Clip clip = getClip(category, name, key);
             if (clip != null) {
-                if (clip.isRunning()) {
-                    clip.stop();
+                if (category == "SoundEffects") {
+                    clip.setFramePosition(0); // 重置到起始位置
+                    clip.start();
+                    System.out.println(clip.toString());
+                } else {
+                    if (clip.isRunning()) {
+                        clip.stop();
+                    }
+                    clip.setFramePosition(0); // 重置到起始位置
+                    clip.start();
                 }
-                clip.setFramePosition(0); // Reset the clip to the beginning
-                clip.start();
-                logger.info("Playing audio: /" + category + "/" + name + "/" + key);
+                // logger.info("Playing audio: /" + category + "/" + name + "/" + key);
             }
-        }).start();
+        });
+
     }
 
     /**
@@ -168,7 +256,8 @@ public class AudioManager {
                 logger.info("Audio is on cooldown: " + path);
             }
         } else {
-            logger.error("In Method playAudio: Audio not found for key: " + key + ", category: " + category + ", name: " + name);
+            logger.error("In Method playAudio: Audio not found for key: " + key + ", category: " + category + ", name: "
+                    + name);
         }
     }
 

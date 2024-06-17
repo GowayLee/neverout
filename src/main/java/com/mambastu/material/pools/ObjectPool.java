@@ -47,6 +47,7 @@ public class ObjectPool<T extends BaseEntity> {
     public T borrowObject() {
         if (!pool.isEmpty()) { // 如果池中有元素，直接返回
             if (curCapacity / maxCapacity < 0.3 && readyForEnlarge) { // 如果池中元素数量小于总容量的30%，扩容
+                readyForEnlarge = false;
                 enlargePool();
             }
             curCapacity--;
@@ -73,7 +74,6 @@ public class ObjectPool<T extends BaseEntity> {
 
     private void enlargePool() {
         new Thread(() -> { // 异步扩容，避免阻塞主线程
-            readyForEnlarge = false;
             for (int i = 0; i < maxCapacity; i++) {
                 try {
                     pool.add(objectClass.getDeclaredConstructor().newInstance());
@@ -82,11 +82,11 @@ public class ObjectPool<T extends BaseEntity> {
                     e.printStackTrace();
                 }
             }
-            logger.info("Enlarge the object pool for " + objectClass.getSimpleName() + "! Current Capacity: "
-                    + maxCapacity);
             readyForEnlarge = true;
             curCapacity += maxCapacity; // 扩容后，池中元素数量也增加
             maxCapacity += maxCapacity;
+            logger.info("Enlarge the object pool for " + objectClass.getSimpleName() + "! Current Capacity: "
+                    + maxCapacity);
         }).start();
     }
 }

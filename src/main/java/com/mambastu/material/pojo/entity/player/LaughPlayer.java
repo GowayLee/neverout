@@ -82,7 +82,7 @@ public class LaughPlayer extends BasePlayer {
         }
 
         if (getState() == State.SKILL) {
-            skillSoundEffects();
+            //skillSoundEffects();
             createDashTrail();
         }
 
@@ -97,7 +97,7 @@ public class LaughPlayer extends BasePlayer {
 
     private void skillSoundEffects() {
         if (!AudioManager.getInstance().isAudioPlaying("SoundEffects", "SkillLaugh", "displayAudio")) {
-            AudioManager.getInstance().playAudio("SoundEffects", "SkillLaugh", "displayAudio");
+            
         }
     }
 
@@ -111,6 +111,9 @@ public class LaughPlayer extends BasePlayer {
     }
 
     private void activateSkill(Set<GameInput> activeInputs) {// 技能：根据玩家的输入向前免伤冲刺
+        if (skillState == SkillState.READY) {
+            AudioManager.getInstance().playAudio("SoundEffects", "SkillLaugh", "displayAudio");
+        }
         state = State.SKILL;
         skillState = SkillState.ACTIVE;
         injuryState = InjuryState.INVINCIBLE; // 无敌状态，不受伤害

@@ -97,7 +97,6 @@ public class JokerPlayer extends BasePlayer {
             deltaY /= BetterMath.sqrt(2);
         }
         if (getState() == State.SKILL) {
-            skillSoundEffects();
             createDashTrail();
         }
         x.set(x.get() + deltaX);
@@ -107,22 +106,18 @@ public class JokerPlayer extends BasePlayer {
         trappedInStage();
     }
 
-    private void skillSoundEffects() {
-        if(this.jokerSkillState==JokerSkillState.RED){
-            if(!AudioManager.getInstance().isAudioPlaying("SoundEffects", "SkillJokerDown","displayAudio")){
-                AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerDown","displayAudio");
-            }
-        }else if(this.jokerSkillState==JokerSkillState.BLUE){
-            if(!AudioManager.getInstance().isAudioPlaying("SoundEffects", "SkillJokerUp","displayAudio")){
-                AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerUp","displayAudio");
+    private void activateSkill(Set<GameInput> activeInputs) { // 技能：随机进入一种状态
+        if (skillState == SkillState.READY) {
+            if (this.jokerSkillState == JokerSkillState.RED) {
+                AudioManager.getInstance().playAudio("Soun dEffects", "SkillJokerDown", "displayAudio");
+            } else if (this.jokerSkillState == JokerSkillState.BLUE) {
+                AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerUp", "displayAudio");
             }
         }
-    }
 
-    private void activateSkill(Set<GameInput> activeInputs) { // 技能：随机进入一种状态
         state = State.SKILL;
         skillState = SkillState.ACTIVE;
-        
+
         int skillType = random.nextInt(2);
         if (skillType == 0) { // 状态1：速度减慢至原速度的0.75倍，不会受到伤害，背后有红色虚影
             jokerSkillState = JokerSkillState.RED;
@@ -156,7 +151,7 @@ public class JokerPlayer extends BasePlayer {
 
         // 虚影特性：根据技能状态设置颜色，0.5透明度，淡出（时间0.5秒）;
         skillColorAdjust.setHue(jokerSkillState == JokerSkillState.RED ? 0.0 : 0.5);
-        
+
         trail.setEffect(skillColorAdjust);
         trail.setOpacity(0.5);
         FadeTransition fade = new FadeTransition(Duration.seconds(0.5), trail);
