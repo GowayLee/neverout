@@ -1,6 +1,7 @@
 package com.mambastu;
 
 import com.mambastu.material.resource.ImgCache;
+import com.mambastu.util.AudioManager;
 import javafx.application.Application;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
@@ -33,6 +34,7 @@ public class App extends Application {
 
         ResourceManager.getInstance().loadResources(); // 初始化资源管理器，载入JSON
         PropStore.getInstance().loadResources(); // 初始化道具存储器，载入JSON
+        audioManagerLoad();//初始化音频播放器
         InputManager.init(scene); // 初始化输入管理器
 
         Image cursorImage = ResourceManager.getInstance().getImg("cursorImage", "System", "MainMenu"); // 载入光标图片，并设置为鼠标光标
@@ -48,7 +50,27 @@ public class App extends Application {
         stage.show();
     }
 
+    private void audioManagerLoad() {
+        AudioManager.getInstance().loadResources();
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "BattleTheme1","displayAudio");
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "BattleTheme2","displayAudio");
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "BattleTheme3","displayAudio");
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "PassLevel","displayAudio");
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "ReadyFight","displayAudio");
+        AudioManager.getInstance().loadAudio("BackgroundMusic", "GameOver","displayAudio");
+
+        AudioManager.getInstance().loadAudio("SoundEffects", "FireNormal","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "GunReloading","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "HitMonster","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "SkillJokerDown","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "SkillJokerUp","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "SkillJokerUp","displayAudio");
+        AudioManager.getInstance().loadAudio("SoundEffects", "SkillLaugh","displayAudio");
+    }
+
     public static void main(String[] args) {
         launch();
     }
 }
+
+

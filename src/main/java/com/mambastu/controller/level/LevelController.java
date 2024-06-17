@@ -1,5 +1,6 @@
 package com.mambastu.controller.level;
 
+import com.mambastu.util.AudioManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,6 +87,11 @@ public class LevelController {
     }
 
     private void startFirstLevel() { // 初始化引擎层, 开始关卡逻辑
+        AudioManager.getInstance().loopAudio("BackgroundMusic", "BattleTheme2","displayAudio");
+        AudioManager.getInstance().setVolume("BackgroundMusic", "BattleTheme2","displayAudio",0.3f);
+        AudioManager.getInstance().playAudio("BackgroundMusic", "ReadyFight","displayAudio");
+        AudioManager.getInstance().setVolume("BackgroundMusic", "ReadyFight","displayAudio",0.3f);
+
         initDynamicResource();
         gameEngine = new GameEngine(ctx, root, engineLayerListener);
         gameEngine.start();
@@ -95,6 +101,7 @@ public class LevelController {
 
     private void startNextLevel() { // 生成新的LevelConfig与LevelRecord, 初始化引擎层,
         // 开始关卡逻辑，与startFirstLevel类似，但需要从上下文中获取关卡信息，并更新上下文中的关卡记录信息。
+        AudioManager.getInstance().setVolume("BackgroundMusic", "BattleTheme2","displayAudio",0.3f);
         ctxManager.updateCtx();
         updateDynamicMenu();
         gameEngine = new GameEngine(ctx, root, engineLayerListener);
@@ -121,12 +128,16 @@ public class LevelController {
         public void stopGame(boolean isPassLevel) {
             gameEngine.hideGamePane(); // 隐藏游戏界面，显示游戏结束菜单。
             inGameHud.hide();
+
             if (isPassLevel) { // 如果通过关卡，则显示下一关卡菜单，否则显示游戏结束菜单。
+                AudioManager.getInstance().setVolume("BackgroundMusic", "BattleTheme2","displayAudio",0.04f);
                 ctxManager.updateCoin(); // 更新玩家当前关卡获得的硬币数。
                 levelMenu.update();
                 levelMenu.show();
                 logger.error("LevelManager: Level is past.");
             } else {
+                AudioManager.getInstance().stopAudio("BackgroundMusic", "BattleTheme2","displayAudio");
+                AudioManager.getInstance().playAudio("BackgroundMusic", "GameOver","displayAudio");
                 ctxManager.recordBeforeOver();
                 gameOverMenu.show();
                 logger.error("LevelManager: Game is over.");

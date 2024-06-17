@@ -2,6 +2,7 @@ package com.mambastu.material.pojo.entity.player;
 
 import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.AudioManager;
 import com.mambastu.util.BetterMath;
 
 import javafx.animation.FadeTransition;
@@ -72,6 +73,7 @@ public class LaughPlayer extends BasePlayer {
         }
 
         if (getState() == State.SKILL) {
+            skillSoundEffects();
             createDashTrail(root);
         }
 
@@ -82,6 +84,21 @@ public class LaughPlayer extends BasePlayer {
         showingImageView.setY(y.get());
 
         trappedInStage();
+    }
+
+    private void skillSoundEffects() {
+        if(!AudioManager.getInstance().isAudioPlaying("SoundEffects", "SkillLaugh","displayAudio")){
+            AudioManager.getInstance().playAudio("SoundEffects", "SkillLaugh","displayAudio");
+        }
+        }
+
+    @Override
+    public void getHurt(Integer damage) {
+        if (injuryState != InjuryState.INVINCIBLE) {
+            HP.set(HP.get() - damage); // 受到伤害，扣除生命值
+            injuryState = InjuryState.INVINCIBLE; // 进入无敌状态
+            invincibleTimer.playFromStart();
+        }
     }
 
     private void activateSkill(Set<GameInput> activeInputs) {// 技能：根据玩家的输入向前免伤冲刺

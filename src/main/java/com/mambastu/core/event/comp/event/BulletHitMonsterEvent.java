@@ -22,7 +22,8 @@ public class BulletHitMonsterEvent extends BaseEvent {
         return INSTANCE;
     }
 
-    private BulletHitMonsterEvent() {
+    public BulletHitMonsterEvent() {
+
         super("BulletHitMonsterEvent");
     }
 

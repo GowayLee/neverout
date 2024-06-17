@@ -20,6 +20,12 @@
     "JokerPlayer": {
       "bornImage": "/static/image/char/JokerPlayer.png",
       "dieImage": "/static/image/char/player_die.png"
+    },
+    "Basaker": {
+      "bornImage": "/static/image/char/Basaker_Normal.png",
+      "dieImage": "/static/image/char/player_die.png",
+      "enragedImage": "/static/image/char/Basaker_Enraged.png",
+      "bloodImage": "/static/image/char/Blood_Image.png"
     }
   },
   "Bullet": {

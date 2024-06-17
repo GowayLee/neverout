@@ -2,6 +2,7 @@ package com.mambastu.material.pojo.entity.player;
 
 import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.AudioManager;
 import com.mambastu.util.BetterMath;
 
 import javafx.animation.FadeTransition;
@@ -87,6 +88,7 @@ public class JokerPlayer extends BasePlayer {
             deltaY /= BetterMath.sqrt(2);
         }
         if (getState() == State.SKILL) {
+            skillSoundEffects();
             createDashTrail(root);
         }
         x.set(x.get() + deltaX);
@@ -94,6 +96,18 @@ public class JokerPlayer extends BasePlayer {
         showingImageView.setX(x.get());
         showingImageView.setY(y.get());
         trappedInStage();
+    }
+
+    private void skillSoundEffects() {
+        if(this.jokerSkillState==JokerSkillState.RED){
+            if(!AudioManager.getInstance().isAudioPlaying("SoundEffects", "SkillJokerDown","displayAudio")){
+                AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerDown","displayAudio");
+            }
+        }else if(this.jokerSkillState==JokerSkillState.BLUE){
+            if(!AudioManager.getInstance().isAudioPlaying("SoundEffects", "SkillJokerUp","displayAudio")){
+                AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerUp","displayAudio");
+            }
+        }
     }
 
     private void activateSkill(Set<GameInput> activeInputs) { // 技能：随机进入一种状态

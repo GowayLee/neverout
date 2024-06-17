@@ -1,12 +1,8 @@
 package com.mambastu.factories;
 
-import com.mambastu.material.pojo.entity.player.JokerPlayer;
+import com.mambastu.material.pojo.entity.player.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.mambastu.material.pojo.entity.player.BasePlayer;
-import com.mambastu.material.pojo.entity.player.LaughPlayer;
-import com.mambastu.material.pojo.entity.player.PlayerTypes;
 
 public class PlayerFactory implements EntityFactory<BasePlayer, PlayerTypes>  {
     private static final Logger logger = LogManager.getLogger(PlayerFactory.class);
@@ -43,8 +39,16 @@ public class PlayerFactory implements EntityFactory<BasePlayer, PlayerTypes>  {
                     logger.error("Error in creating Monster! Unknown player type: " + playerTypes);
                     e.printStackTrace();
                 }
+            case BasakerPlayer:
+                try {
+                    BasakerPlayer basakerPlayer =(BasakerPlayer) BasakerPlayer.class.getDeclaredConstructor().newInstance();
+                    return basakerPlayer;
+                }catch (Exception e) {
+                    logger.error("Error in creating Player! Unknown player type: " + playerTypes);
+                    e.printStackTrace();
+                }
             default:
-                logger.error("Error in creating Monster! Unknown monster type: " + playerTypes);
+                logger.error("Error in creating Player! Unknown monster type: " + playerTypes);
                 throw new IllegalArgumentException("Unknown player type");
         }
     }
