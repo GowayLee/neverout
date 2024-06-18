@@ -74,7 +74,7 @@ public abstract class BaseMonster extends BaseEntity {
         }
     }
 
-    private void runQueueTimer() {
+    protected void runQueueTimer() {
         if (inBulletQueueTimer.getStatus() != PauseTransition.Status.RUNNING) { // 如果无敌子弹队列计时器没有在运行，则开始运行
             inBulletQueueTimer.play();
         }

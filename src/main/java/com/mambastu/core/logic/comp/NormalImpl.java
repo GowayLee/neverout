@@ -281,7 +281,7 @@ public class NormalImpl implements ModeLogic {
 
     private void clearAllEntity() {
         for (BaseMonster monster : monsterList) {
-            monster.removeFromPane(gamePane);
+            monster.die(); // 怪物死亡，触发死亡效果，然后移除怪物
         }
         monsterList.clear();
         monsterEggTimerList.clear();

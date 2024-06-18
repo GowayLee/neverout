@@ -17,12 +17,12 @@ public class NormalCtxImpl implements ModeCtxLogic{
     public void initLevelConfig() { // 初始化第一个关卡配置信息，例如怪物密度、怪物伤害等。
         LevelConfig firstLevelConfig = ctx.getLevelConfig();
         // TODO: 设置其他配置信息 ... 可以使用JSON来配置 例如，设置怪物密度、怪物伤害、关卡难度等。
-        firstLevelConfig.getMonsterEggList().put(MonsterTypes.BossMonster, 2.0);
-        firstLevelConfig.getMonsterEggList().put(MonsterTypes.HotMonster, 1.0);
-        firstLevelConfig.getMonsterEggList().put(MonsterTypes.HellLordMonster, 1000.0);
+        // firstLevelConfig.getMonsterEggList().put(MonsterTypes.BossMonster, 2.0);
+        // firstLevelConfig.getMonsterEggList().put(MonsterTypes.HotMonster, 1.0);
+        firstLevelConfig.getMonsterEggList().put(MonsterTypes.HellLordMonster, 10.0);
         firstLevelConfig.setMonsterScalDensity(2000);
         firstLevelConfig.setMonsterScalCoin(1.0);
-        firstLevelConfig.setDuration(10); // 基础关卡时长30秒。
+        firstLevelConfig.setDuration(1000); // 基础关卡时长30秒。
 
     }
 

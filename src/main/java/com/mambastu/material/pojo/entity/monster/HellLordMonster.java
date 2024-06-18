@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.mambastu.factories.MonsterFactory;
+import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.resource.ResourceManager;
 import com.mambastu.util.BetterMath;
 import com.mambastu.util.GlobalVar;
@@ -18,59 +19,126 @@ import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 public class HellLordMonster extends BaseMonster {
+    private final static double INIT_SPEED = 3.0;
+    private final static double SKILL_CD_1 = 5;
+    private final static double SKILL_CD_2 = 1;
+
+    private final static int MAX_DASH_TIMES = 3; // 最大冲刺次数
+
+    private final static double MAX_INVISIBLE_TIME = 4; // 最大隐身时间（秒）
+
+    private final static double MAX_CURTAIN_TIME = 5; // 最大帘幕时间（秒）
+    private final static double CURTAIN_SPEED = 20;
+
     private final Image omenImage;
     private final Image bornImage;
     private final Image dieImage;
     private final Image curtainImage;
 
-    int moveCount = 0;//skill运行计数器
-    double randomX;
-    double randomY;
-
-    private final Random random;
     private final PauseTransition skillTimer;
     private final PauseTransition skillCooldownTimer;
-    private final Timeline dashTimer;
-    private final Timeline moveTimeline;
+
+    private int curDashCount;
+    private final Timeline accelerateTimer;
+    private final Timeline decelerateTimer;
+    private final PauseTransition dashWaitTimer;
+
+    private final FadeTransition fadeToInvisible;
+
+    private final ImageView curtainImageView;
+    private final FadeTransition curtainFadeOut;
+    private boolean isCurtainReachTarget;
+    private double randomTargetX;
+    private double randomTargetY;
 
     private boolean isLowHP;
 
-    private enum LordState {NORMAL, DASH, INVISIBLE, CURTAIN, WARNING}
+    private enum LordState {
+        NORMAL, DASH, INVISIBLE, CURTAIN, WARNING
+    }
+
     private LordState lordState;
 
-    ColorAdjust warningColorAdjust = new ColorAdjust();
+    private final ColorAdjust warningColorAdjust;
 
     public HellLordMonster() {
         super();
-        warningColorAdjust.setHue(-0.1);
+
         this.omenImage = ResourceManager.getInstance().getImg("omenImage", "Monster", "HellLord");
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "HellLord");
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Monster", "HellLord");
         this.curtainImage = ResourceManager.getInstance().getImg("curtainImage", "Monster", "HellLord");
-        this.random = new Random();
         setImageSize(150, 150);
-        this.damage = 15;
+
+        this.damage = 0;
+        this.warningColorAdjust = new ColorAdjust();
+        warningColorAdjust.setHue(-0.1);
         this.initTimer.setDuration(Duration.seconds(1));
-        moveTimeline = new Timeline();
-        dashTimer = new Timeline(
-                new KeyFrame(Duration.seconds(1.0), event -> {
-                    randomX = random.nextDouble();
-                    randomY = random.nextDouble();
-                }));
-        dashTimer.setCycleCount(Timeline.INDEFINITE);
-        skillTimer = new PauseTransition();
-        this.skillCooldownTimer = new PauseTransition(Duration.seconds(5));
-        this.skillCooldownTimer.setOnFinished(event -> {
+
+        this.accelerateTimer = new Timeline();
+        this.decelerateTimer = new Timeline();
+        this.dashWaitTimer = new PauseTransition();
+
+        this.fadeToInvisible = new FadeTransition();
+
+        this.curtainImageView = new ImageView(curtainImage);
+        this.curtainFadeOut = new FadeTransition();
+
+        this.skillTimer = new PauseTransition();
+        this.skillCooldownTimer = new PauseTransition();
+
+        this.isLowHP = false;
+
+        initSkillFX();
+    }
+
+    private void initSkillFX() {
+        skillCooldownTimer.setDuration(Duration.seconds(SKILL_CD_1));
+        skillCooldownTimer.setOnFinished(event -> {
+            lordState = LordState.WARNING;
             triggerRandomSkill();
-            lordState=LordState.WARNING;
+            // startCurtainSkill();
         });
-        isLowHP = false;
+
+        // 技能一：冲刺
+        accelerateTimer.getKeyFrames().add(new KeyFrame(Duration.millis(50), event -> speed += 1.5));
+        accelerateTimer.setCycleCount(10);
+        decelerateTimer.getKeyFrames().add(new KeyFrame(Duration.millis(50), event -> speed -= 1.5));
+        decelerateTimer.setCycleCount(10); // 15 to 0 in 0.5 seconds
+        accelerateTimer.setOnFinished(event -> decelerateTimer.play());
+        decelerateTimer.setOnFinished(event -> {
+            dashWaitTimer
+                    .setOnFinished(curDashCount > 0 ? e -> accelerateTimer.playFromStart() : e -> resetToNormalState());
+            curDashCount--;
+            dashWaitTimer.play();
+        });
+
+        // 技能二：隐身
+        fadeToInvisible.setDuration(Duration.seconds(1));
+        fadeToInvisible.setNode(showingImageView);
+        fadeToInvisible.setFromValue(1.0); // 初始透明度
+        fadeToInvisible.setToValue(0.0); // 目标透明度
+        // fadeToInvisible.setOnFinished(event -> {
+        // speed = 5;// 变透明后开始移动
+        // });
+
+        // 技能三：天幕
+        curtainImageView.setFitWidth(GlobalVar.getGamePane().getWidth());
+        curtainImageView.setFitHeight(GlobalVar.getGamePane().getHeight());
+        curtainFadeOut.setDuration(Duration.seconds(1));
+        curtainFadeOut.setNode(curtainImageView);
+        curtainFadeOut.setFromValue(1);
+        curtainFadeOut.setToValue(0);
+        curtainFadeOut.setOnFinished(event -> {
+            GlobalVar.getGamePane().getChildren().remove(curtainImageView);
+            resetToNormalState();
+        });
     }
 
     @Override
     public void init() {
         HP.set(3000);
-        speed=3;
+        speed = 3;
         inBulletQueue.clear();
         showingImage.set(omenImage);
         showingImageView.imageProperty().bind(showingImage);
@@ -78,7 +146,6 @@ public class HellLordMonster extends BaseMonster {
         lordState = LordState.NORMAL;
         skillCooldownTimer.playFromStart();
     }
-
 
     @Override
     public void omen(List<BaseMonster> monsterList) {
@@ -90,15 +157,9 @@ public class HellLordMonster extends BaseMonster {
         initTimer.playFromStart();
     }
 
-
     @Override
     public void move(double targetX, double targetY) {
-        if (HP.get() < 1000 && !isLowHP) { // 血量低于1000进入2阶段
-            isLowHP = true;
-            this.skillCooldownTimer.setDuration(Duration.seconds(1));
-        }
-
-        if(lordState != LordState.CURTAIN) {
+        if (lordState != LordState.CURTAIN) {
             double dx = targetX - x.get();
             double dy = targetY - y.get();
             double distance = BetterMath.sqrt(dx * dx + dy * dy);
@@ -108,172 +169,134 @@ public class HellLordMonster extends BaseMonster {
             }
             showingImageView.setX(x.get());
             showingImageView.setY(y.get());
-        }else {
-            dashTimer.playFromStart();
-            x.set(x.get() + speed * randomX);
-            y.set(y.get() + speed * randomY);
-            showingImageView.setX(x.get());
-            showingImageView.setY(y.get());
-            System.out.println("Dashing");
+        } else {
+            moveRandomly(); // 幕布状态下随机移动
         }
         trappedInStage();
     }
 
+    // 预警 随机释放技能
+    private void triggerRandomSkill() {
+        if (state == State.NORMAL) {
+            speed = 0;
+            Random random = new Random();
+            switch (random.nextInt(3)) {
+                case 0:
+                    lordState = LordState.DASH;
+                    startDashSkill();
+                    break;
+                case 1:
+                    lordState = LordState.INVISIBLE;
+                    startInvisibleSkill();
+                    break;
+                case 2:
+                    lordState = LordState.CURTAIN;
+                    startCurtainSkill();
+                    break;
+            }
+        }
+    }
+
+    // 冲刺技能
+    private void startDashSkill() {
+        curDashCount = MAX_DASH_TIMES;
+        accelerateTimer.playFromStart();
+    }
+
+    // 隐身技能
+    private void startInvisibleSkill() {
+        skillTimer.setDuration(Duration.seconds(MAX_INVISIBLE_TIME));
+        skillTimer.setOnFinished(event -> {
+            resetToNormalState();
+            showingImageView.setOpacity(1);
+        });
+        skillTimer.playFromStart();
+
+        speed = 5.0; // 在当前位置留下一个虚影
+        // 使 showingImageView 逐渐变透明
+        showingImageView.setOpacity(1);// 本体隐身，等待虚影变成透明
+        fadeToInvisible.playFromStart();
+    }
+
+    // 召唤幕布 运行随机冲刺
+    private void startCurtainSkill() {
+        lordState = LordState.CURTAIN;
+        skillTimer.setDuration(Duration.seconds(MAX_CURTAIN_TIME));
+        skillTimer.play();
+        isCurtainReachTarget = true;
+
+        GlobalVar.getGamePane().getChildren().add(curtainImageView);
+        curtainImageView.toFront();// 用于确保其始终处于最顶层
+
+        skillTimer.setOnFinished(event -> {
+            curtainFadeOut.play();
+        });
+    }
+
+    // 随机移动
+    private void moveRandomly() {
+        if (isCurtainReachTarget) {
+            isCurtainReachTarget = false;
+            Random random = new Random();
+            randomTargetX = 100 + random.nextDouble() * (GlobalVar.getGamePane().getWidth() - 200); // 避免移动到屏幕边缘
+            randomTargetY = 100 + random.nextDouble() * (GlobalVar.getGamePane().getHeight() - 200);
+        }
+
+        double dx = randomTargetX - x.get();
+        double dy = randomTargetY - y.get();
+        double distance = BetterMath.sqrt(dx * dx + dy * dy);
+
+        if (distance > 20) {
+            x.set(x.get() + CURTAIN_SPEED * dx / distance);
+            y.set(y.get() + CURTAIN_SPEED * dy / distance);
+        } else {
+            isCurtainReachTarget = true; // 防止无限循环移动到同一个位置
+        }
+        showingImageView.setX(x.get());
+        showingImageView.setY(y.get());
+    }
+
+    // 回归原始状态
+    private void resetToNormalState() {
+        speed = INIT_SPEED;
+        // moveCount = 0;
+        lordState = LordState.NORMAL;
+        skillCooldownTimer.playFromStart();
+    }
+
+    @Override
+    public void getHurt(Integer damage, BaseBullet bullet) {
+        if (state == State.NORMAL && !inBulletQueue.contains(bullet)) { // 如果怪物处于正常状态，并且子弹不在无敌子弹队列中，则造成伤害
+            HP.set(HP.get() - damage);
+            if (HP.get() < 1000 && !isLowHP) { // 血量低于1000进入2阶段
+                isLowHP = true;
+                skillCooldownTimer.setDuration(Duration.seconds(SKILL_CD_2));
+            }
+            if (HP.get() > 0) { // 如果怪物血量大于0，则播放受伤动画，并进入无敌帧状态
+                showingImageView.setEffect(colorAdjust);
+                hurtFXTimer.play();
+                inBulletQueue.add(bullet); // 将子弹加入无敌子弹队列中，防止连击
+                runQueueTimer(); // 尝试开始无敌子弹队列计时器
+            }
+        }
+    }
+
     @Override
     public Integer releaseDamage() {
-        return (state==State.NORMAL) ? damage : 0;
+        return (state == State.NORMAL) ? damage : 0;
     }
 
     @Override
     public void die() {
         state = State.DIE;
         showingImage.set(dieImage);
+        showingImageView.setOpacity(1.0); // 确保透明度为1，以显示死亡动画
+        curtainFadeOut.play(); // 死亡后立刻移除可能存在的天幕
         PauseTransition rmTimer = new PauseTransition(Duration.seconds(3));
         rmTimer.setOnFinished(e -> {
             removeFromPane(GlobalVar.getGamePane());
             MonsterFactory.getInstance().delete(this);
         });
         rmTimer.play();
-    }
-
-    //预警 随机释放技能
-    private void triggerRandomSkill() {
-        if (state != State.DIE) {
-            speed=0;
-
-                switch (random.nextInt(2)) {
-                    case 0:
-                        startDashSkill();
-                        break;
-                    case 1:
-                        startInvisibleSkill();
-                        break;
-                    case 2:
-                        startCurtainSkill();
-                        break;
-                }
-        }
-    }
-
-    //冲刺技能计时器
-    private void startDashSkill() {
-        System.out.println("111");
-        lordState = LordState.DASH;
-        skillTimer.setDuration(Duration.seconds(5));
-        skillTimer.setOnFinished(event -> resetToNormalState());
-        skillTimer.play();
-        dashRepeatedly(3);
-    }
-
-    //冲刺逻辑，此方法仅用于速度变化，本身的行为逻辑依然是move
-    private void dashRepeatedly(int repetitions) {
-        if(repetitions > 0) {
-            Timeline accelerate = new Timeline(new KeyFrame(Duration.millis(50), event -> speed += 1.5));
-            accelerate.setCycleCount(10);
-
-            Timeline decelerate = new Timeline(new KeyFrame(Duration.millis(50), event -> speed -= 1.5));
-            decelerate.setCycleCount(10); // 15 to 0 in 0.5 seconds
-
-            PauseTransition wait = new PauseTransition(Duration.seconds(0.5));
-
-            accelerate.setOnFinished(event -> decelerate.play());
-            decelerate.setOnFinished(event -> {
-                wait.play();
-                wait.setOnFinished(e -> dashRepeatedly(repetitions - 1));
-            });
-
-            accelerate.play();
-        }
-    }
-
-    //该方法使怪物变成透明
-    private void startInvisibleSkill() {
-        lordState = LordState.INVISIBLE;
-        skillTimer.setDuration(Duration.seconds(4));
-        skillTimer.setOnFinished(event -> {
-            resetToNormalState();
-            showingImageView.setOpacity(1);
-        });
-        skillTimer.play();
-
-        // 使 showingImageView 逐渐变透明
-        showingImageView.setOpacity(1);//本体隐身，等待虚影变成透明
-        FadeTransition fadeToInvisible = new FadeTransition(Duration.seconds(1), showingImageView);
-        fadeToInvisible.setFromValue(1.0);  // 初始透明度
-        fadeToInvisible.setToValue(0.0);    // 目标透明度
-        fadeToInvisible.setOnFinished(event -> {
-            speed = 5;//变透明后开始移动
-        });
-        fadeToInvisible.play();
-    }
-
-    // 召唤幕布 运行随机冲刺
-    private void startCurtainSkill() {
-        lordState = LordState.CURTAIN;
-        skillTimer.setDuration(Duration.seconds(10));
-        skillTimer.play();
-
-        ImageView curtainView = new ImageView(curtainImage);
-        curtainView.setFitWidth(GlobalVar.getGamePane().getWidth());
-        curtainView.setFitHeight(GlobalVar.getGamePane().getHeight());
-        GlobalVar.getGamePane().getChildren().add(curtainView);
-        curtainView.toFront();//用于确保其始终处于最顶层
-
-//        PauseTransition moveCycle = new PauseTransition(Duration.seconds(1));
-//        moveCycle.setOnFinished(event -> {
-//            moveRandomly();
-//            moveCount++;
-//            if (moveCount < 10) { // Adjusted to repeat 10 times
-//                moveCycle.play();
-//            }
-//        });
-//        moveCycle.play();
-
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), curtainView);
-        fadeOut.setFromValue(1);
-        fadeOut.setToValue(0);
-        fadeOut.setOnFinished(event -> GlobalVar.getGamePane().getChildren().remove(curtainView));
-
-        skillTimer.setOnFinished(event -> {
-            resetToNormalState();
-            dashTimer.stop();
-            fadeOut.play();
-        });
-    }
-
-//    // 随机移动
-//    private void moveRandomly() {
-//        double targetX = random.nextDouble() * GlobalVar.getGamePane().getWidth();
-//        double targetY = random.nextDouble() * GlobalVar.getGamePane().getHeight();
-//
-//        double dx = targetX - x.get();
-//        double dy = targetY - y.get();
-//        double distance = BetterMath.sqrt(dx * dx + dy * dy);
-//
-//        if (distance > 0) {
-//            double stepX = 10 * dx / distance;
-//            double stepY = 10 * dy / distance;
-//
-//            if (moveTimeline != null && moveTimeline.getStatus() == Timeline.Status.RUNNING) {
-//                moveTimeline.stop();
-//            }
-//
-//            moveTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), event -> {
-//                x.set(x.get() + stepX);
-//                y.set(y.get() + stepY);
-//                showingImageView.setX(x.get());
-//                showingImageView.setY(y.get());
-//            }));
-//            moveTimeline.setCycleCount(10); // 100ms间隔，共10次，持续1秒
-//            moveTimeline.play();
-//        }
-//    }
-
-    //回归原始状态
-    private void resetToNormalState() {
-        speed = 3;
-        moveCount =0;
-        lordState = LordState.NORMAL;
-        skillCooldownTimer.playFromStart();
     }
 }
