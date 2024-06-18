@@ -107,12 +107,10 @@ public class JokerPlayer extends BasePlayer {
     }
 
     private void activateSkill(Set<GameInput> activeInputs) { // 技能：随机进入一种状态
-        if (skillState == SkillState.READY) {
-            if (this.jokerSkillState == JokerSkillState.RED) {
-                AudioManager.getInstance().playAudio("Soun dEffects", "SkillJokerDown", "displayAudio");
-            } else if (this.jokerSkillState == JokerSkillState.BLUE) {
-                AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerUp", "displayAudio");
-            }
+        if (this.jokerSkillState == JokerSkillState.RED) {
+            AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerDown", "displayAudio");
+        } else if (this.jokerSkillState == JokerSkillState.BLUE) {
+            AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerUp", "displayAudio");
         }
 
         state = State.SKILL;

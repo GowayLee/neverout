@@ -23,11 +23,12 @@ import org.json.JSONTokener;
 
 public class AudioManager {
     private static final Logger logger = LogManager.getLogger(AudioManager.class);
-    
+
     private static final AudioManager INSTANCE = new AudioManager();
 
-    private static final int POOL_SIZE = 5; // 池的大小
-    private final ExecutorService executor = Executors.newFixedThreadPool(POOL_SIZE);
+    private static final int THREAD_POOL_SIZE = 5; // 线程池的大小
+    private static final int CLIP_POOL_SIZE = 3; // Clip冗余池的大小
+    private final ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
     private final Map<String, Map<String, Map<String, String>>> audioResources;
     private final Map<String, Clip> audioCache;
@@ -76,7 +77,6 @@ public class AudioManager {
                     if (category.equals("SoundEffects"))
                         loadSoundEffects(nameObj.getString(key));
 
-                        
                 }
                 categoryMap.put(name, nameMap);
             }
@@ -104,7 +104,7 @@ public class AudioManager {
             URL url = getClass().getResource(path);
             if (url != null) {
                 List<Clip> clips = new ArrayList<>();
-                for (int i = 0; i < 5; i++) { // 创建5个冗余池
+                for (int i = 0; i < CLIP_POOL_SIZE; i++) { // 创建冗余池
                     try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url)) {
                         Clip newClip = AudioSystem.getClip();
                         newClip.open(audioInputStream);
@@ -122,12 +122,12 @@ public class AudioManager {
     }
 
     private void enlargeEffectCache(String path) { // 扩充音效冗余池
-        readyForEnlarge = false;
         List<Clip> clips = effectCache.get(path);
         try {
             URL url = getClass().getResource(path);
             if (url != null) {
-                for (int i = 0; i < clips.size(); i++) { // 扩容1倍
+                int size = clips.size();
+                for (int i = 0; i < size; i++) { // 扩容1倍
                     try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url)) {
                         Clip newClip = AudioSystem.getClip();
                         newClip.open(audioInputStream);
@@ -178,6 +178,7 @@ public class AudioManager {
                 i++;
             }
             if ((double) i / clips.size() > 0.7 && readyForEnlarge) {
+                readyForEnlarge = false;
                 enlargeEffectCache(path);
             }
             return clips.get(0); // 如果没有未使用的音效，则返回第一个音效，并等待其他音效空闲
@@ -216,7 +217,6 @@ public class AudioManager {
                 if (category == "SoundEffects") {
                     clip.setFramePosition(0); // 重置到起始位置
                     clip.start();
-                    System.out.println(clip.toString());
                 } else {
                     if (clip.isRunning()) {
                         clip.stop();
