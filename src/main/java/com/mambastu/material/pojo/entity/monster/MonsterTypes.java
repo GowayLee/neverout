@@ -7,5 +7,6 @@ package com.mambastu.material.pojo.entity.monster;
  **/
 public enum MonsterTypes {
     BossMonster,
-    HotMonster
+    HotMonster,
+    HellLordMonster
 }

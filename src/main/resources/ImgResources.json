@@ -10,6 +10,12 @@
       "omenImage": "/static/image/char/omen.gif",
       "bornImage": "/static/image/char/HotMonster.png",
       "dieImage": "/static/image/char/monster_die1.png"
+    },
+    "HellLord":{
+      "omenImage": "/static/image/char/omen.gif",
+      "bornImage": "/static/image/char/HellLord.png",
+      "dieImage": "/static/image/char/monster_die1.png",
+      "curtainImage": "/static/image/char/HellLord_Dark.png"
     }
   },
   "Player": {
