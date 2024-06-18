@@ -27,15 +27,20 @@ public class HellLordMonster extends BaseMonster {
 
     private final static double MAX_INVISIBLE_TIME = 4; // 最大隐身时间（秒）
 
-    private final static double MAX_CURTAIN_TIME = 5; // 最大帘幕时间（秒）
+    private final static double MAX_CURTAIN_TIME = 6; // 最大帘幕时间（秒）
     private final static double CURTAIN_SPEED = 20;
 
     private final Image omenImage;
     private final Image bornImage;
     private final Image dieImage;
+    private final Image warnImage;
+    private final Image dashImage;
+    private final Image redEyeImage;
     private final Image curtainImage;
 
-    private final PauseTransition skillTimer;
+    private final ImageView redEyeView;
+
+    private final PauseTransition invisibleTimer;
     private final PauseTransition skillCooldownTimer;
 
     private int curDashCount;
@@ -45,7 +50,9 @@ public class HellLordMonster extends BaseMonster {
 
     private final FadeTransition fadeToInvisible;
 
+    private final Timeline curtainTimer;
     private final ImageView curtainImageView;
+    private final FadeTransition curtainFadeIn;
     private final FadeTransition curtainFadeOut;
     private boolean isCurtainReachTarget;
     private double randomTargetX;
@@ -67,8 +74,13 @@ public class HellLordMonster extends BaseMonster {
         this.omenImage = ResourceManager.getInstance().getImg("omenImage", "Monster", "HellLord");
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Monster", "HellLord");
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Monster", "HellLord");
+        this.warnImage = ResourceManager.getInstance().getImg("warnImage", "Monster", "HellLord");
+        this.dashImage = ResourceManager.getInstance().getImg("dashImage", "Monster", "HellLord");
+        this.redEyeImage = ResourceManager.getInstance().getImg("redEyeImage", "Monster", "HellLord");
         this.curtainImage = ResourceManager.getInstance().getImg("curtainImage", "Monster", "HellLord");
         setImageSize(150, 150);
+
+        this.redEyeView = new ImageView(redEyeImage);
 
         this.damage = 0;
         this.warningColorAdjust = new ColorAdjust();
@@ -81,10 +93,12 @@ public class HellLordMonster extends BaseMonster {
 
         this.fadeToInvisible = new FadeTransition();
 
+        this.curtainTimer = new Timeline();
         this.curtainImageView = new ImageView(curtainImage);
+        this.curtainFadeIn = new FadeTransition();
         this.curtainFadeOut = new FadeTransition();
 
-        this.skillTimer = new PauseTransition();
+        this.invisibleTimer = new PauseTransition();
         this.skillCooldownTimer = new PauseTransition();
 
         this.isLowHP = false;
@@ -95,49 +109,86 @@ public class HellLordMonster extends BaseMonster {
     private void initSkillFX() {
         skillCooldownTimer.setDuration(Duration.seconds(SKILL_CD_1));
         skillCooldownTimer.setOnFinished(event -> {
-            lordState = LordState.WARNING;
             triggerRandomSkill();
-            // startCurtainSkill();
         });
 
         // 技能一：冲刺
+        dashWaitTimer.setDuration(Duration.seconds(1.0));
+        dashWaitTimer.setOnFinished(event -> {
+            lordState = LordState.DASH;
+            showingImage.set(dashImage);
+            if (curDashCount > 0) {
+                accelerateTimer.playFromStart();
+            } else {
+                resetToNormalState();
+            }
+        });
         accelerateTimer.getKeyFrames().add(new KeyFrame(Duration.millis(50), event -> speed += 1.5));
         accelerateTimer.setCycleCount(10);
         decelerateTimer.getKeyFrames().add(new KeyFrame(Duration.millis(50), event -> speed -= 1.5));
         decelerateTimer.setCycleCount(10); // 15 to 0 in 0.5 seconds
         accelerateTimer.setOnFinished(event -> decelerateTimer.play());
         decelerateTimer.setOnFinished(event -> {
-            dashWaitTimer
-                    .setOnFinished(curDashCount > 0 ? e -> accelerateTimer.playFromStart() : e -> resetToNormalState());
             curDashCount--;
-            dashWaitTimer.play();
+            dashWaitTimer.playFromStart();
         });
 
         // 技能二：隐身
+        invisibleTimer.setDuration(Duration.seconds(MAX_INVISIBLE_TIME));
+        invisibleTimer.setOnFinished(event -> {
+            resetToNormalState();
+            showingImageView.setOpacity(1);
+        });
+
         fadeToInvisible.setDuration(Duration.seconds(1));
         fadeToInvisible.setNode(showingImageView);
         fadeToInvisible.setFromValue(1.0); // 初始透明度
         fadeToInvisible.setToValue(0.0); // 目标透明度
-        // fadeToInvisible.setOnFinished(event -> {
-        // speed = 5;// 变透明后开始移动
-        // });
+        fadeToInvisible.setOnFinished(event -> {
+            lordState = LordState.INVISIBLE;
+        });
 
         // 技能三：天幕
+        redEyeView.setFitWidth(showingImageView.getFitWidth());
+        redEyeView.setFitHeight(showingImageView.getFitHeight());
+        redEyeView.xProperty().bind(showingImageView.xProperty());
+        redEyeView.yProperty().bind(showingImageView.yProperty());
+
         curtainImageView.setFitWidth(GlobalVar.getGamePane().getWidth());
         curtainImageView.setFitHeight(GlobalVar.getGamePane().getHeight());
+
+        curtainFadeIn.setDuration(Duration.seconds(0.6));
+        curtainFadeIn.setNode(curtainImageView);
+        curtainFadeIn.setFromValue(0);
+        curtainFadeIn.setToValue(1);
+        curtainFadeIn.setOnFinished(event -> {
+            lordState = LordState.CURTAIN;
+        });
+
         curtainFadeOut.setDuration(Duration.seconds(1));
         curtainFadeOut.setNode(curtainImageView);
         curtainFadeOut.setFromValue(1);
         curtainFadeOut.setToValue(0);
         curtainFadeOut.setOnFinished(event -> {
             GlobalVar.getGamePane().getChildren().remove(curtainImageView);
-            resetToNormalState();
         });
+
+        curtainTimer.getKeyFrames().addAll(new KeyFrame(Duration.ZERO, event -> {
+            curtainFadeIn.playFromStart();
+        }), new KeyFrame(Duration.millis(900), event -> {
+            GlobalVar.getGamePane().getChildren().add(redEyeView);
+        }), new KeyFrame(Duration.millis(MAX_CURTAIN_TIME * 1000 - 500), event -> {
+            GlobalVar.getGamePane().getChildren().remove(redEyeView);
+        }), new KeyFrame(Duration.seconds(MAX_CURTAIN_TIME), event -> {
+            curtainFadeOut.playFromStart(); // 开始透明消失动画
+            resetToNormalState();
+        }));
+        curtainTimer.setCycleCount(1);
     }
 
     @Override
     public void init() {
-        HP.set(3000);
+        HP.set(10000);
         speed = 3;
         inBulletQueue.clear();
         showingImage.set(omenImage);
@@ -159,6 +210,8 @@ public class HellLordMonster extends BaseMonster {
 
     @Override
     public void move(double targetX, double targetY) {
+        if (lordState == LordState.WARNING)
+            return;
         if (lordState != LordState.CURTAIN) {
             double dx = targetX - x.get();
             double dy = targetY - y.get();
@@ -177,20 +230,18 @@ public class HellLordMonster extends BaseMonster {
 
     // 预警 随机释放技能
     private void triggerRandomSkill() {
+        lordState = LordState.WARNING;
+        showingImage.set(warnImage);
         if (state == State.NORMAL) {
-            speed = 0;
             Random random = new Random();
             switch (random.nextInt(3)) {
                 case 0:
-                    lordState = LordState.DASH;
                     startDashSkill();
                     break;
                 case 1:
-                    lordState = LordState.INVISIBLE;
                     startInvisibleSkill();
                     break;
                 case 2:
-                    lordState = LordState.CURTAIN;
                     startCurtainSkill();
                     break;
             }
@@ -200,19 +251,12 @@ public class HellLordMonster extends BaseMonster {
     // 冲刺技能
     private void startDashSkill() {
         curDashCount = MAX_DASH_TIMES;
-        accelerateTimer.playFromStart();
+        dashWaitTimer.playFromStart();
     }
 
     // 隐身技能
     private void startInvisibleSkill() {
-        skillTimer.setDuration(Duration.seconds(MAX_INVISIBLE_TIME));
-        skillTimer.setOnFinished(event -> {
-            resetToNormalState();
-            showingImageView.setOpacity(1);
-        });
-        skillTimer.playFromStart();
-
-        speed = 5.0; // 在当前位置留下一个虚影
+        invisibleTimer.playFromStart();
         // 使 showingImageView 逐渐变透明
         showingImageView.setOpacity(1);// 本体隐身，等待虚影变成透明
         fadeToInvisible.playFromStart();
@@ -220,17 +264,11 @@ public class HellLordMonster extends BaseMonster {
 
     // 召唤幕布 运行随机冲刺
     private void startCurtainSkill() {
-        lordState = LordState.CURTAIN;
-        skillTimer.setDuration(Duration.seconds(MAX_CURTAIN_TIME));
-        skillTimer.play();
         isCurtainReachTarget = true;
 
+        curtainImageView.setOpacity(0.0);
         GlobalVar.getGamePane().getChildren().add(curtainImageView);
-        curtainImageView.toFront();// 用于确保其始终处于最顶层
-
-        skillTimer.setOnFinished(event -> {
-            curtainFadeOut.play();
-        });
+        curtainTimer.playFromStart();
     }
 
     // 随机移动
@@ -259,8 +297,8 @@ public class HellLordMonster extends BaseMonster {
     // 回归原始状态
     private void resetToNormalState() {
         speed = INIT_SPEED;
-        // moveCount = 0;
         lordState = LordState.NORMAL;
+        showingImage.set(bornImage);
         skillCooldownTimer.playFromStart();
     }
 

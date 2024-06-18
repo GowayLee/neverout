@@ -110,7 +110,8 @@ public class NormalImpl implements ModeLogic {
                             Duration.millis(
                                     (long) (ctx.getLevelConfig().getMonsterScalDensity() * eggEntry.getValue())),
                             generateMonster(eggEntry.getKey())));
-            monsterEggTimer.setCycleCount(Timeline.INDEFINITE);
+            // monsterEggTimer.setCycleCount(Timeline.INDEFINITE);
+            monsterEggTimer.setCycleCount(1);
             monsterEggTimerList.add(monsterEggTimer);
         }
         startMonsterGenTimer();
