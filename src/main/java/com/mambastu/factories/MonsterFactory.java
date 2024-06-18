@@ -1,12 +1,9 @@
 package com.mambastu.factories;
 
+import com.mambastu.material.pojo.entity.monster.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mambastu.material.pojo.entity.monster.BaseMonster;
-import com.mambastu.material.pojo.entity.monster.BossMonster;
-import com.mambastu.material.pojo.entity.monster.HotMonster;
-import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 import com.mambastu.material.pools.ObjectPool;
 import com.mambastu.material.pools.ObjectPoolManager;
 
@@ -43,6 +40,11 @@ public class MonsterFactory implements EntityFactory<BaseMonster, MonsterTypes> 
                 hotMonster.setOnStage(true);
                 hotMonster.init();
                 return hotMonster;
+            case HellLordMonster:
+                HellLordMonster hellLordMonster = (HellLordMonster) objectPoolManager.getObjectPool(HellLordMonster.class).borrowObject();
+                hellLordMonster.setOnStage(true);
+                hellLordMonster.init();
+                return hellLordMonster;
             default:
                 logger.error("Error in creating Monster! Unknown monster type: " + monsterType);
                 throw new IllegalArgumentException("Unknown monster type");
