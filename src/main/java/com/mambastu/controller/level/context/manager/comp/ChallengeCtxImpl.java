@@ -6,22 +6,20 @@ import com.mambastu.controller.level.context.dto.record.GlobalRecord;
 import com.mambastu.controller.level.context.dto.record.LevelRecord;
 import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 
-public class NormalCtxImpl implements ModeCtxLogic{
+public class ChallengeCtxImpl implements ModeCtxLogic{
     private final Context ctx;
 
-    public NormalCtxImpl(Context ctx) {
+    public ChallengeCtxImpl(Context ctx) {
         this.ctx = ctx; 
     }
 
     @Override
     public void initLevelConfig() { // 初始化第一个关卡配置信息，例如怪物密度、怪物伤害等。
         LevelConfig firstLevelConfig = ctx.getLevelConfig();
-        // TODO: 设置其他配置信息 ... 可以使用JSON来配置 例如，设置怪物密度、怪物伤害、关卡难度等。
-        firstLevelConfig.getMonsterEggList().put(MonsterTypes.BossMonster, 2.0);
-        firstLevelConfig.getMonsterEggList().put(MonsterTypes.HotMonster, 1.0);
-        firstLevelConfig.setMonsterScalDensity(2000);
+        firstLevelConfig.getMonsterEggList().put(MonsterTypes.HellLordMonster, 1.0);
+        firstLevelConfig.setMonsterScalDensity(3000);
         firstLevelConfig.setMonsterScalCoin(1.0);
-        firstLevelConfig.setDuration(20); // 基础关卡时长30秒。
+        firstLevelConfig.setDuration(9999); // 基础关卡时长30秒。
 
     }
 
@@ -64,4 +62,5 @@ public class NormalCtxImpl implements ModeCtxLogic{
     public void refreshLevelRecord() { // 刷新当前关卡的记录，例如玩家得分、剩余生命值等。
         ctx.setLevelRecord(new LevelRecord(ctx.getLevelRecord().getLevelNum().get() + 1, ctx.getLevelConfig().getPlayer())); // 关卡号+1, 传递玩家信息。
     }
+
 }

@@ -107,7 +107,7 @@ public class MainMenu {
                 ResourceManager.getInstance().getImg("challengeIntroImage", "System", "MainMenu"));
         ImageView challengeModeView = createMode(
                 ResourceManager.getInstance().getImg("challengeModeImage", "System", "MainMenu"),
-                GameMode.NORMAL, challengeModeIntro);
+                GameMode.CHALLENGE, challengeModeIntro);
 
         modePane.getChildren().addAll(normalModeView, challengeModeView);
         modePane.setSpacing(70);

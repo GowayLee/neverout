@@ -21,11 +21,10 @@ import com.mambastu.listener.InputListener;
 import com.mambastu.listener.LogicLayerListener;
 import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
-import com.mambastu.material.pojo.enums.CollisionState;
-
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import com.mambastu.material.pojo.entity.monster.MonsterTypes;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
+import com.mambastu.material.pojo.enums.CollisionState;
 import com.mambastu.material.pools.ObjectPoolManager;
 
 import javafx.animation.KeyFrame;
@@ -35,7 +34,7 @@ import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-public class NormalImpl implements ModeLogic {
+public class ChallengeImpl implements ModeLogic{
     private final LogicLayerListener listener;
     private final InputHandler inputListener;
 
@@ -56,7 +55,7 @@ public class NormalImpl implements ModeLogic {
 
     // ================================= Init Section =================================
 
-    public NormalImpl(EngineProps engineProps, LogicLayerListener listener) {
+    public ChallengeImpl(EngineProps engineProps, LogicLayerListener listener) {
         this.listener = listener;
         this.inputListener = new InputHandler();
         this.ctx = engineProps.getCtx();
@@ -110,7 +109,7 @@ public class NormalImpl implements ModeLogic {
                             Duration.millis(
                                     (long) (ctx.getLevelConfig().getMonsterScalDensity() * eggEntry.getValue())),
                             generateMonster(eggEntry.getKey())));
-            monsterEggTimer.setCycleCount(Timeline.INDEFINITE);
+            monsterEggTimer.setCycleCount(1);
             monsterEggTimerList.add(monsterEggTimer);
         }
         startMonsterGenTimer();
@@ -288,5 +287,4 @@ public class NormalImpl implements ModeLogic {
         bulletList.clear();
         barrierList.clear();
     }
-
 }

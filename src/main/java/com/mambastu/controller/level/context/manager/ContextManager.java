@@ -2,6 +2,7 @@ package com.mambastu.controller.level.context.manager;
 
 import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.controller.level.context.enums.GameMode;
+import com.mambastu.controller.level.context.manager.comp.ChallengeCtxImpl;
 import com.mambastu.controller.level.context.manager.comp.ModeCtxLogic;
 import com.mambastu.controller.level.context.manager.comp.NormalCtxImpl;
 
@@ -38,7 +39,9 @@ public class ContextManager {
             case NORMAL:
                 modeCtxLogic = new NormalCtxImpl(ctx);
                 break;
-        
+            case CHALLENGE:
+                modeCtxLogic = new ChallengeCtxImpl(ctx);
+                break;
             default:
                 throw new IllegalArgumentException("Game mode not defined: " + gameMode);
         }

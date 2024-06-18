@@ -86,7 +86,7 @@
       "normalModeImage": "/static/image/menu/NormalMode.png",
       "normalIntroImage": "/static/image/menu/normalModeIntro.png",
       "challengeModeImage": "/static/image/menu/ChallengeMode.png",
-      "challengeIntroImage": "/static/image/menu/normalModeIntro.png"
+      "challengeIntroImage": "/static/image/menu/challengeModeIntro.png"
     },
     "LevelMenu": {
       "noItemImage": "/static/image/menu/soldout.png"

@@ -3,6 +3,7 @@ package com.mambastu.core.logic;
 import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.controller.level.context.enums.GameMode;
 import com.mambastu.core.engine.GameEngine.EngineProps;
+import com.mambastu.core.logic.comp.ChallengeImpl;
 import com.mambastu.core.logic.comp.ModeLogic;
 import com.mambastu.core.logic.comp.NormalImpl;
 import com.mambastu.listener.LogicLayerListener;
@@ -29,6 +30,9 @@ public class LogicManager { // TODO: 尝试单例模式
         switch (gameMode) {
             case NORMAL:
                 logiModule = new NormalImpl(engineProps, listener);
+                break;
+            case CHALLENGE:
+                logiModule = new ChallengeImpl(engineProps, listener);
                 break;
             default:
                 break;
