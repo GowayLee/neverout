@@ -90,10 +90,10 @@ public class LevelController {
     }
 
     private void startFirstLevel() { // 初始化引擎层, 开始关卡逻辑
-        // AudioManager.getInstance().loopAudio("BackgroundMusic", "BattleTheme2","displayAudio");
-        // AudioManager.getInstance().setVolume("BackgroundMusic", "BattleTheme2","displayAudio",0.3f);
-        // AudioManager.getInstance().playAudio("BackgroundMusic", "ReadyFight","displayAudio");
-        // AudioManager.getInstance().setVolume("BackgroundMusic", "ReadyFight","displayAudio",0.3f);
+        AudioManager.getInstance().loopAudio("BackgroundMusic", "BattleTheme2","displayAudio");
+        AudioManager.getInstance().setVolume("BackgroundMusic", "BattleTheme2","displayAudio",0.3f);
+        AudioManager.getInstance().playAudio("BackgroundMusic", "ReadyFight","displayAudio");
+        AudioManager.getInstance().setVolume("BackgroundMusic", "ReadyFight","displayAudio",0.3f);
 
         initDynamicResource();
         gameEngine = new GameEngine(ctx, root, engineLayerListener);

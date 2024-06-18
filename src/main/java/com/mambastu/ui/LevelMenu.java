@@ -9,6 +9,7 @@ import com.mambastu.material.resource.ResourceManager;
 import com.mambastu.util.PropStore;
 
 import javafx.animation.PauseTransition;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,12 +19,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -102,25 +105,36 @@ public class LevelMenu {
         passText.layoutYProperty()
                 .bind(menuPane.heightProperty().subtract(passText.layoutBoundsProperty().get().getHeight()).divide(5)); // 偏上5分之一
 
-        Button nextLevelBtn = new Button("Next Level!");
-        nextLevelBtn.layoutXProperty()
-                .bind(menuPane.widthProperty().subtract(nextLevelBtn.layoutBoundsProperty().get().getWidth()).divide(3)); // 偏左3分之一
-        nextLevelBtn.layoutYProperty()
-                .bind(menuPane.heightProperty().subtract(nextLevelBtn.layoutBoundsProperty().get().getHeight()).divide(5).multiply(4)); // 偏下5分之一
-        nextLevelBtn.setOnAction(e -> {
+        Text nextBtn = new Text("NEXT LEVEL");
+        nextBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 48));
+        nextBtn.layoutXProperty()
+                .bind(menuPane.widthProperty().subtract(nextBtn.layoutBoundsProperty().get().getWidth()).divide(2.1));
+        nextBtn.layoutYProperty()
+                .bind(menuPane.heightProperty().subtract(nextBtn.layoutBoundsProperty().get().getHeight()).multiply(0.86));
+        nextBtn.setFill(Color.WHITE);
+        nextBtn.setOpacity(0.8);
+
+        nextBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+            nextBtn.setOpacity(1.0);
+            nextBtn.styleProperty().bind(Bindings.concat(
+                    "-fx-font-family: 'Segoe Script'; ",
+                    "-fx-font-weight: bolder; ",
+                    "-fx-font-size: ", "66 px;"));
+        });
+
+        nextBtn.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+            nextBtn.setOpacity(0.8);
+            nextBtn.styleProperty().bind(Bindings.concat(
+                    "-fx-font-family: 'Segoe Script'; ",
+                    "-fx-font-weight: bold; ",
+                    "-fx-font-size: ", "48 px;"));
+        });
+
+        nextBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             listener.startLevel();
         });
 
-        Button weaponBtn = new Button("点我就送一刀999!");
-        weaponBtn.layoutXProperty()
-                .bind(menuPane.widthProperty().subtract(weaponBtn.layoutBoundsProperty().get().getWidth()).divide(3).multiply(2)); // 偏右3分之一
-                weaponBtn.layoutYProperty()
-                .bind(menuPane.heightProperty().subtract(weaponBtn.layoutBoundsProperty().get().getHeight()).divide(5).multiply(4)); // 偏下5分之一
-        weaponBtn.setOnAction(e -> {
-            ctx.getLevelConfig().getPlayer().setWeapon(new StandardRifle());
-        });
-
-        menuPane.getChildren().addAll(nextLevelBtn, weaponBtn, storeLayout, passText, dataLayout);
+        menuPane.getChildren().addAll(nextBtn, storeLayout, passText, dataLayout);
     }
 
     private void bulidShopLayout() { // 创建商店布局
@@ -144,33 +158,55 @@ public class LevelMenu {
         VBox itemLayout = new VBox();
 
         ImageView imageView = new ImageView(displayImage);
-        imageView.setFitWidth(150);
-        imageView.setFitHeight(150);
+        imageView.setFitWidth(190);
+        imageView.setFitHeight(190);
 
         Label descriptionLabel = new Label(description);
-        descriptionLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+        descriptionLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
         descriptionLabel.setWrapText(true);
         descriptionLabel.setMaxWidth(150);
         descriptionLabel.setAlignment(Pos.CENTER); // 确保文本居中显示。
 
         Label priceLabel = new Label("Price: " + Integer.toString(price));
         priceLabel.setStyle("-fx-text-fill: white;");
-        priceLabel.setFont(new Font("Segoe Script", 20)); // 设置字体大小和样式
+        priceLabel.setFont(new Font("Segoe Script", 28)); // 设置字体大小和样式
 
-        Button buyButton = new Button("Buy it!");
-        buyButton.setOnAction(e -> { // 购买按钮的点击事件处理程序
+        Text buyBtn = new Text("BUY IT");
+        buyBtn.setFill(Color.WHITE);
+        buyBtn.styleProperty().bind(Bindings.concat(
+                "-fx-font-family: 'Segoe Script'; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", "36 px;"));
+
+        buyBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+            buyBtn.styleProperty().bind(Bindings.concat(
+                    "-fx-font-family: 'Segoe Script'; ",
+                    "-fx-font-weight: bolder; ",
+                    "-fx-font-size: ", "46 px;"));
+        });
+
+        buyBtn.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+            buyBtn.styleProperty().bind(Bindings.concat(
+                    "-fx-font-family: 'Segoe Script'; ",
+                    "-fx-font-weight: bold; ",
+                    "-fx-font-size: ", "36 px;"));
+        });
+
+        buyBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (buyItem(prop)) {
                 imageView.setImage(ResourceManager.getInstance().getImg("noItemImage", "System", "LevelMenu"));
                 imageView.setFitWidth(150);
                 imageView.setFitHeight(190);
                 descriptionLabel.setText("???????????????");
                 priceLabel.setText("Price: ??? "); // 购买后，将价格和描述设置为问号。
-                buyButton.setDisable(true); // 禁用购买按钮，防止重复购买。
+                buyBtn.setText("SOLD OUT");
+                buyBtn.setOpacity(0.5);
+                buyBtn.setDisable(true); // 禁用购买按钮，防止重复购买。
             }
         });
 
         // 将所有组件添加到垂直布局
-        itemLayout.getChildren().addAll(imageView, descriptionLabel, priceLabel, buyButton);
+        itemLayout.getChildren().addAll(imageView, descriptionLabel, priceLabel, buyBtn);
         itemLayout.setSpacing(30);
         itemLayout.setAlignment(Pos.CENTER);
 
@@ -186,7 +222,8 @@ public class LevelMenu {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("YOU ARE TOO POOR");
             alert.setHeaderText("Don't have enough coins to buy !");
-            ImageView imageView = new ImageView(ResourceManager.getInstance().getImg("dieImage", "Player", "LaughPlayer"));
+            ImageView imageView = new ImageView(
+                    ResourceManager.getInstance().getImg("dieImage", "Player", "LaughPlayer"));
             imageView.setFitWidth(100);
             imageView.setFitHeight(100);
             alert.setGraphic(imageView);
@@ -203,7 +240,7 @@ public class LevelMenu {
 
         dataLayout.setSpacing(10); // 设置数据项之间的间距
         dataLayout.setAlignment(Pos.BOTTOM_LEFT); // 设置VBox内部子项居中对齐
-        
+
         Label coinLabel = new Label();
         coinLabel.textProperty().bind(coin.asString("Coin: %d"));
         coinLabel.setStyle("-fx-text-fill: yellow; -fx-font-weight: bolder;");
@@ -236,7 +273,7 @@ public class LevelMenu {
             coolTimeLabel.textProperty().bind(weapon.getCoolTime().asString("WeaponCD: %.2fms"));
             coolTimeLabel.setStyle("-fx-text-fill: white;");
             coolTimeLabel.setFont(new Font("Arial", 24));
-    
+
             Label bulletSpeedLabel = new Label();
             bulletSpeedLabel.textProperty().bind(weapon.getBulletSpeed().asString("BulletSpeed: %.2f"));
             bulletSpeedLabel.setStyle("-fx-text-fill: white;");

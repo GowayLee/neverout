@@ -38,7 +38,6 @@ public class JokerPlayer extends BasePlayer {
         this.dieImage = ResourceManager.getInstance().getImg("dieImage", "Player", "JokerPlayer");
         setImageSize(50, 50);
         this.damageRatio = 1.0;
-        this.jokerSkillState = JokerSkillState.BLUE;
         this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
         this.invincibleTimer.setOnFinished(e -> {
             super.injuryState = InjuryState.NORMAL;
@@ -55,7 +54,7 @@ public class JokerPlayer extends BasePlayer {
             skillState = SkillState.COOLDOWN;
             injuryState = InjuryState.NORMAL;
             if (jokerSkillState == JokerSkillState.BLUE) {
-                damageRatio = 1.0;
+                damageRatio = 0.3;
                 speed.set(speed.get() / 2);
             } else if (jokerSkillState == JokerSkillState.RED) {
                 speed.set(speed.get() * 2);
@@ -107,26 +106,21 @@ public class JokerPlayer extends BasePlayer {
     }
 
     private void activateSkill(Set<GameInput> activeInputs) { // 技能：随机进入一种状态
-        if (this.jokerSkillState == JokerSkillState.RED) {
-            AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerDown", "displayAudio");
-        } else if (this.jokerSkillState == JokerSkillState.BLUE) {
-            AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerUp", "displayAudio");
-        }
-
+        jokerSkillState = random.nextInt(2) == 0 ? JokerSkillState.RED : JokerSkillState.BLUE;
         state = State.SKILL;
         skillState = SkillState.ACTIVE;
 
-        int skillType = random.nextInt(2);
-        if (skillType == 0) { // 状态1：速度减慢至原速度的0.75倍，不会受到伤害，背后有红色虚影
-            jokerSkillState = JokerSkillState.RED;
+        if (jokerSkillState == JokerSkillState.RED) {
+            AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerDown", "displayAudio");
             injuryState = InjuryState.INVINCIBLE;
             speed.set(this.speed.get() / 2);
         } else {
             damageRatio = 0.3;
-            jokerSkillState = JokerSkillState.BLUE;
             injuryState = InjuryState.NORMAL;
             speed.set(this.speed.get() * 2);
+            AudioManager.getInstance().playAudio("SoundEffects", "SkillJokerUp", "displayAudio");
         }
+
         skillTimeline.play();
     }
 
@@ -148,7 +142,7 @@ public class JokerPlayer extends BasePlayer {
         trail.setY(showingImageView.getY());
 
         // 虚影特性：根据技能状态设置颜色，0.5透明度，淡出（时间0.5秒）;
-        skillColorAdjust.setHue(jokerSkillState == JokerSkillState.RED ? 0.0 : 0.5);
+        skillColorAdjust.setHue(jokerSkillState == JokerSkillState.RED ? -0.05 : -0.9);
 
         trail.setEffect(skillColorAdjust);
         trail.setOpacity(0.5);

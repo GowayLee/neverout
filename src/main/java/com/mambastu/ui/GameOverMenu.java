@@ -39,7 +39,6 @@ public class GameOverMenu {
         this.menuPane = new Pane();
     }
 
-
     public void init() { // 初始化
         bindProperties();
         buildLayout();
@@ -61,8 +60,7 @@ public class GameOverMenu {
         totalLevelNum.bind(ctx.getGlobalRecord().getTotalLevelNum());
     }
 
-
-    private void buildLayout(){
+    private void buildLayout() {
 
         // 设置标题
         Text title = new Text("GAME OVER");
@@ -71,73 +69,72 @@ public class GameOverMenu {
         title.styleProperty().bind(Bindings.concat(
                 "-fx-font-family: 'Segoe Script'; ",
                 "-fx-font-weight: bold; ",
-                "-fx-font-size: ", menuPane.widthProperty().multiply(0.10).asString(), "px;"
-        ));
+                "-fx-font-size: ", menuPane.widthProperty().multiply(0.10).asString(), "px;"));
 
-        //设置分割线
+        // 设置分割线
         Line line = new Line();
         line.startXProperty().bind(menuPane.widthProperty().multiply(0.5));
         line.endXProperty().bind(menuPane.widthProperty().multiply(0.5));
         line.startYProperty().bind(menuPane.heightProperty().multiply(0.25));
         line.endYProperty().bind(menuPane.heightProperty().multiply(0.95));
 
-        //本轮成绩设置
+        // 本轮成绩设置
         Pane scareBox = new Pane();
         scareBox.layoutXProperty().bind(menuPane.widthProperty().multiply(0.1));
         scareBox.layoutYProperty().bind(menuPane.heightProperty().multiply(0.25));
         scareBox.prefWidthProperty().bind(menuPane.widthProperty().multiply(0.35));
         scareBox.prefHeightProperty().bind(menuPane.heightProperty().multiply(0.7));
         scareBox.setStyle("-fx-border-color: black; -fx-border-width: 3; -fx-border-style: dashed");
-        //设置具体成绩内容
-        addScore(scareBox,ScoreType.SCORE_TITLE,0.1,0.1);
-        addScore(scareBox,ScoreType.TOTAL_LEVEL,0.1,0.4);
-        addScore(scareBox,ScoreType.TOTAL_KILL,0.1,0.6);
-        addScore(scareBox,ScoreType.TOTAL_DURATION,0.1,0.8);
+        // 设置具体成绩内容
+        addScore(scareBox, ScoreType.SCORE_TITLE, 0.1, 0.1);
+        addScore(scareBox, ScoreType.TOTAL_LEVEL, 0.1, 0.4);
+        addScore(scareBox, ScoreType.TOTAL_KILL, 0.1, 0.6);
+        addScore(scareBox, ScoreType.TOTAL_DURATION, 0.1, 0.8);
 
-        //设置右侧内容
+        // 设置右侧内容
         Pane chooseBox = new Pane();
         chooseBox.layoutXProperty().bind(menuPane.widthProperty().multiply(0.55));
         chooseBox.layoutYProperty().bind(menuPane.heightProperty().multiply(0.25));
         chooseBox.prefWidthProperty().bind(menuPane.widthProperty().multiply(0.35));
         chooseBox.prefHeightProperty().bind(menuPane.heightProperty().multiply(0.7));
-//        chooseBox.setStyle("-fx-border-color: black; -fx-border-width: 3; -fx-border-style: dashed");
-        //设置语录
-        Text quote = new Text("The Joker may have faltered this round, yet the dance of life twirls on.\nCast your next die !!");
+        // chooseBox.setStyle("-fx-border-color: black; -fx-border-width: 3;
+        // -fx-border-style: dashed");
+        // 设置语录
+        Text quote = new Text(
+                "The Joker may have faltered this round, yet the dance of life twirls on.\nCast your next die !!");
         quote.wrappingWidthProperty().bind(chooseBox.widthProperty().multiply(0.9));
         quote.styleProperty().bind(Bindings.concat(
                 "-fx-font-family: 'Segoe Script'; ",
                 "-fx-font-weight: bold; ",
-                "-fx-font-size: ", chooseBox.widthProperty().multiply(0.05).asString(), "px;"
-        ));
+                "-fx-font-size: ", chooseBox.widthProperty().multiply(0.05).asString(), "px;"));
         quote.layoutXProperty().bind(chooseBox.widthProperty().multiply(0.028));
         quote.layoutYProperty().bind(chooseBox.heightProperty().multiply(0.05));
         chooseBox.getChildren().add(quote);
-        //设置按钮
+        // 设置按钮
         addButton(chooseBox, ButtonType.REPLAY, 0.02, 0.3);
         addButton(chooseBox, ButtonType.RETURN, 0.02, 0.6);
-        //设置人物
+        // 设置人物
         Pane facePane = new Pane();
         facePane.layoutXProperty().bind(menuPane.widthProperty().multiply(0.8));
         facePane.layoutYProperty().bind(menuPane.heightProperty().multiply(0.8));
         facePane.prefWidthProperty().bind(menuPane.widthProperty().multiply(0.2));
         facePane.prefHeightProperty().bind(menuPane.heightProperty().multiply(0.2));
-//        facePane.setStyle("-fx-border-color: black; -fx-border-width: 3; -fx-border-style: dashed");
+        // facePane.setStyle("-fx-border-color: black; -fx-border-width: 3;
+        // -fx-border-style: dashed");
         buildFace(facePane);
-        
 
-        //设置画布
-        menuPane.getChildren().addAll(title,line,scareBox,chooseBox,facePane);
+        // 设置画布
+        menuPane.getChildren().addAll(title, line, scareBox, chooseBox, facePane);
     }
 
-    private void addScore(Pane pane, ScoreType scoreType, Double xRatio, Double yRation){
+    private void addScore(Pane pane, ScoreType scoreType, Double xRatio, Double yRation) {
         Text score = new Text();
         score.layoutXProperty().bind(pane.heightProperty().multiply(xRatio));
         score.layoutYProperty().bind(pane.widthProperty().multiply(yRation));
         score.styleProperty().bind(Bindings.concat(
                 "-fx-font-family: 'Segoe Script'; ",
                 "-fx-font-weight: bold; ",
-                "-fx-font-size: ", pane.widthProperty().multiply(0.08).asString(), "px;"
-        ));
+                "-fx-font-size: ", pane.widthProperty().multiply(0.08).asString(), "px;"));
 
         switch (scoreType) {
             case TOTAL_KILL: {
@@ -161,8 +158,7 @@ public class GameOverMenu {
                 score.styleProperty().bind(Bindings.concat(
                         "-fx-font-family: 'Segoe Script'; ",
                         "-fx-font-weight: normal; ",
-                        "-fx-font-size: ", pane.widthProperty().multiply(0.1).asString(), "px;"
-                ));
+                        "-fx-font-size: ", pane.widthProperty().multiply(0.1).asString(), "px;"));
                 break;
             }
         }
@@ -170,9 +166,9 @@ public class GameOverMenu {
         pane.getChildren().add(score);
     }
 
-    private void addButton(Pane pane, ButtonType buttonType, Double xRatio, Double yRation){
+    private void addButton(Pane pane, ButtonType buttonType, Double xRatio, Double yRation) {
         Group buttonBox = new Group();
-        //设置背景图
+        // 设置背景图
 
         ImageView circleView = new ImageView(ResourceManager.getInstance().getImg("circleImage", "System", "MainMenu"));
         circleView.fitHeightProperty().bind(pane.heightProperty().multiply(0.2));
@@ -180,23 +176,22 @@ public class GameOverMenu {
         circleView.setLayoutX(0);
         circleView.setLayoutY(0);
         circleView.setVisible(false);
-        //设置按钮
+        // 设置按钮
         Text button = new Text();
         button.styleProperty().bind(Bindings.concat(
                 "-fx-font-family: 'Segoe Script'; ",
                 "-fx-font-weight: normal; ",
-                "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.1).asString(), "px;"
-        ));
+                "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.1).asString(), "px;"));
         button.setFill(Color.web("#9F9DD3"));
         button.setOpacity(0.8);
         button.layoutXProperty().bind(circleView.fitWidthProperty().multiply(0.0));
         button.layoutYProperty().bind(circleView.fitHeightProperty().multiply(0.60));
         switch (buttonType) {
-            case REPLAY : {
+            case REPLAY: {
                 button.setText("Hit Me Again!");
                 break;
             }
-            case RETURN:{
+            case RETURN: {
                 button.setText("Escape to the Lobby!");
                 break;
             }
@@ -207,8 +202,7 @@ public class GameOverMenu {
             button.styleProperty().bind(Bindings.concat(
                     "-fx-font-family: 'Segoe Script'; ",
                     "-fx-font-weight: bolder; ",
-                    "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.15).asString(), "px;"
-            ));
+                    "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.15).asString(), "px;"));
 
         });
         button.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
@@ -217,8 +211,7 @@ public class GameOverMenu {
             button.styleProperty().bind(Bindings.concat(
                     "-fx-font-family: 'Segoe Script'; ",
                     "-fx-font-weight: bold; ",
-                    "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.1).asString(), "px;"
-            ));
+                    "-fx-font-size: ", circleView.fitWidthProperty().multiply(0.1).asString(), "px;"));
 
         });
         button.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
@@ -241,6 +234,7 @@ public class GameOverMenu {
         buttonBox.layoutYProperty().bind(pane.heightProperty().multiply(yRation));
         pane.getChildren().add(buttonBox);
     }
+
     private void buildFace(Pane pane) {
         Group facePane = new Group();
         Group leftEye = createEye(pane);
@@ -257,7 +251,6 @@ public class GameOverMenu {
         facePane.setLayoutX(0);
         facePane.setLayoutY(0);
 
-
         facePane.getChildren().addAll(face, leftEye, rightEye);
 
         root.setOnMouseMoved(event -> {
@@ -271,14 +264,14 @@ public class GameOverMenu {
     private Group createEye(Pane pane) {
         // 创建眼睛背景
         Circle eyeBackground = new Circle();
-        eyeBackground.radiusProperty().bind(pane.widthProperty().multiply(0.3*0.25));
+        eyeBackground.radiusProperty().bind(pane.widthProperty().multiply(0.3 * 0.25));
         eyeBackground.setFill(Color.WHITE);
         eyeBackground.setStroke(Color.WHITE);
         eyeBackground.setStrokeWidth(2);
 
         // 创建眼珠
         Circle pupil = new Circle();
-        pupil.radiusProperty().bind(pane.widthProperty().multiply(0.3*0.20*0.45));
+        pupil.radiusProperty().bind(pane.widthProperty().multiply(0.3 * 0.20 * 0.45));
         pupil.setFill(Color.BLACK);
 
         // 将眼珠添加到眼睛背景中
@@ -310,6 +303,7 @@ public class GameOverMenu {
     private enum ScoreType {
         SCORE_TITLE, TOTAL_KILL, TOTAL_DURATION, TOTAL_LEVEL;
     }
+
     private enum ButtonType {
         REPLAY, RETURN;
     }
