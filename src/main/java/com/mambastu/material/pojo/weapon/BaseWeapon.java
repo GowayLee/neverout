@@ -15,19 +15,28 @@ import javafx.animation.PauseTransition;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import lombok.Getter;
+import lombok.Setter;
 
 public abstract class BaseWeapon {
     protected enum Status {READY, COOLDOWN}; // 武器的状态，可以是准备就绪或冷却中。
 
     @Getter
     protected final SimpleIntegerProperty damage = new SimpleIntegerProperty(); // 子弹的伤害值
+    @Getter @Setter
+    protected double damageBuff = 1.0;
     @Getter
     protected final SimpleDoubleProperty bulletSpeed = new SimpleDoubleProperty();
+    @Getter @Setter
+    protected double bulletSpeedBuff = 1.0;
     @Getter
     protected final SimpleDoubleProperty coolTime = new SimpleDoubleProperty();
+    @Getter @Setter
+    protected double coolTimeBuff = 1.0;
     @Getter
     protected final SimpleDoubleProperty range = new SimpleDoubleProperty(); // 武器的射程
-
+    @Getter @Setter
+    protected double rangeBuff = 1.0;
+    @Getter @Setter
     protected BulletType bulletType;
     protected Status coolStatus;
     

@@ -17,9 +17,9 @@ public class NormalCtxImpl implements ModeCtxLogic{
     @Override
     public void initLevelConfig() { // 初始化第一个关卡配置信息，例如怪物密度、怪物伤害等。
         LevelConfig firstLevelConfig = ctx.getLevelConfig();
-        // TODO: 设置其他配置信息 ... 可以使用JSON来配置 例如，设置怪物密度、怪物伤害、关卡难度等。
+        firstLevelConfig.getMonsterEggList().clear();
         firstLevelConfig.getMonsterEggList().add(new MonsterEgg(MonsterTypes.HotMonster, 1.0, 999));
-        firstLevelConfig.getMonsterEggList().add(new MonsterEgg(MonsterTypes.BossMonster, 2.0, 999));
+        firstLevelConfig.getMonsterEggList().add(new MonsterEgg(MonsterTypes.BossMonster, 2.4, 999));
         firstLevelConfig.setMonsterScalDensity(2000);
         firstLevelConfig.setMonsterScalCoin(1.0);
         firstLevelConfig.setDuration(20); // 基础关卡时长30秒。
@@ -32,15 +32,15 @@ public class NormalCtxImpl implements ModeCtxLogic{
             .filter(MonsterEgg -> MonsterEgg.getMonsterType() == MonsterTypes.HotMonster)
             .forEach(MonsterEgg -> {
                 double oldTime = MonsterEgg.getSpawnTime();
-                MonsterEgg.setSpawnTime(oldTime > 0.5 ? oldTime * 0.8 : oldTime);
+                MonsterEgg.setSpawnTime(oldTime > 0.5 ? oldTime * 0.9 : oldTime);
             });
         ctx.getLevelConfig().getMonsterEggList().stream()
             .filter(MonsterEgg -> MonsterEgg.getMonsterType() == MonsterTypes.BossMonster)
             .forEach(MonsterEgg -> {
                 double oldTime = MonsterEgg.getSpawnTime();
-                MonsterEgg.setSpawnTime(oldTime > 1.0 ? oldTime * 0.8 : oldTime);
+                MonsterEgg.setSpawnTime(oldTime > 1.0 ? oldTime * 0.9 : oldTime);
             });
-        ctx.getLevelConfig().setDuration(ctx.getLevelConfig().getDuration() + 10); // 增加关卡时长10s
+        ctx.getLevelConfig().setDuration(ctx.getLevelConfig().getDuration() + 5); // 增加关卡时长10s
     }
 
     @Override

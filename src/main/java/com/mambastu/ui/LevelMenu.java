@@ -37,6 +37,7 @@ public class LevelMenu {
     private BaseProp prop1;
     private BaseProp prop2;
     private BaseProp prop3;
+    private final SimpleIntegerProperty refreshCount;
     private final SimpleIntegerProperty killCount;
     private final SimpleIntegerProperty coin;
     private BaseWeapon weapon;
@@ -48,6 +49,7 @@ public class LevelMenu {
     public LevelMenu(StackPane root, Context ctx, LevelMenuListener listener) {
         this.listener = listener;
         this.root = root;
+        this.refreshCount = new SimpleIntegerProperty();
         this.killCount = new SimpleIntegerProperty();
         this.coin = new SimpleIntegerProperty();
         this.ctx = ctx;
@@ -64,6 +66,7 @@ public class LevelMenu {
     }
 
     public void update() { // 更新菜单内容
+        refreshCount.set(3);
         bindProperties();
         updateShop();
         bulidShopLayout(); // 重建商店
@@ -132,7 +135,38 @@ public class LevelMenu {
             listener.startLevel();
         });
 
-        menuPane.getChildren().addAll(nextBtn, storeLayout, passText, dataLayout);
+        Text refreshBtn = new Text("Refresh Shop!");
+        refreshBtn.setFont(Font.font("Segoe Script", 32));
+        refreshBtn.layoutXProperty()
+                .bind(menuPane.widthProperty().subtract(refreshBtn.layoutBoundsProperty().get().getWidth()).multiply(0.85));
+        refreshBtn.layoutYProperty()
+                .bind(menuPane.heightProperty().subtract(refreshBtn.layoutBoundsProperty().get().getHeight()).multiply(0.3));
+        refreshBtn.setFill(Color.WHITE);
+        refreshBtn.setOpacity(0.8);
+
+        refreshBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+            refreshBtn.setOpacity(1.0);
+            refreshBtn.styleProperty().bind(Bindings.concat(
+                    "-fx-font-family: 'Segoe Script'; ",
+                    "-fx-font-size: ", "44 px;"));
+        });
+
+        refreshBtn.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+            refreshBtn.setOpacity(0.8);
+            refreshBtn.styleProperty().bind(Bindings.concat(
+                    "-fx-font-family: 'Segoe Script'; ",
+                    "-fx-font-size: ", "32 px;"));
+        });
+
+        refreshBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (refreshCount.get() > 0) {
+                updateShop();
+                bulidShopLayout();
+                refreshCount.set(refreshCount.get() - 1); // 每次点击减少一次刷新次数。
+            }
+        });
+
+        menuPane.getChildren().addAll(nextBtn, refreshBtn, storeLayout, passText, dataLayout);
     }
 
     private void bulidShopLayout() { // 创建商店布局
@@ -239,6 +273,11 @@ public class LevelMenu {
         dataLayout.setSpacing(10); // 设置数据项之间的间距
         dataLayout.setAlignment(Pos.BOTTOM_LEFT); // 设置VBox内部子项居中对齐
 
+        Label refreshLabel = new Label();
+        refreshLabel.textProperty().bind(refreshCount.asString("Refresh Shop Chance: %d"));
+        refreshLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bolder;");
+        refreshLabel.setFont(new Font("Arial", 28));
+
         Label coinLabel = new Label();
         coinLabel.textProperty().bind(coin.asString("Coin: %d"));
         coinLabel.setStyle("-fx-text-fill: yellow; -fx-font-weight: bolder;");
@@ -259,7 +298,7 @@ public class LevelMenu {
         skillCDLabel.setStyle("-fx-text-fill: yellow;");
         skillCDLabel.setFont(new Font("Arial", 24));
 
-        dataLayout.getChildren().addAll(coinLabel, MaxHPLabel, speedLabel, skillCDLabel); // 将金币和最大生命值标签添加到数据布局中
+        dataLayout.getChildren().addAll(refreshLabel, coinLabel, MaxHPLabel, speedLabel, skillCDLabel); // 将金币和最大生命值标签添加到数据布局中
 
         if (weapon != null) {
             Label damageLabel = new Label();

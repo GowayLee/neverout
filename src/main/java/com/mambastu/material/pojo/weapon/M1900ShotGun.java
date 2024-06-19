@@ -28,9 +28,9 @@ public class M1900ShotGun extends BaseWeapon {
     public M1900ShotGun() {
         super.damage.set(20);
         super.bulletSpeed.set(13);
-        super.range.set(450);
+        super.range.set(400);
         super.coolTime.set(1100);
-        super.bulletType = BulletType.NailBullet;
+        super.bulletType = BulletType.StandardBullet;
         super.coolStatus = Status.READY;
         this.shotState = ShotState.READY;
         super.coolTimer.setDuration(Duration.millis(coolTime.get()));

@@ -17,6 +17,7 @@ public class ChallengeCtxImpl implements ModeCtxLogic{
     @Override
     public void initLevelConfig() { // 初始化第一个关卡配置信息，例如怪物密度、怪物伤害等。
         LevelConfig firstLevelConfig = ctx.getLevelConfig();
+        firstLevelConfig.getMonsterEggList().clear();
         firstLevelConfig.getMonsterEggList().add(new MonsterEgg(MonsterTypes.HellLordMonster, 2.0, 1));
         firstLevelConfig.getMonsterEggList().add(new MonsterEgg(MonsterTypes.HotMonster, 3.5, 10));
         firstLevelConfig.setMonsterScalDensity(2000);

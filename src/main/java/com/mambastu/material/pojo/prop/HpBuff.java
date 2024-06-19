@@ -8,7 +8,7 @@ public class HpBuff extends BaseProp {
     public HpBuff() {
         this.displayImage = ResourceManager.getInstance().getImg("displayImage", "Prop", "HpBuff");
         this.price = 10;
-        this.buffValue = 10;
+        this.buffValue = 15;
     }
 
     @Override

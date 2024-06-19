@@ -15,9 +15,9 @@ import com.mambastu.util.GlobalVar;
 
 import javafx.util.Duration;
 
-public class StandardRifle extends BaseWeapon{
+public class PeaShooter extends BaseWeapon{
 
-    public StandardRifle() {
+    public PeaShooter() {
         damage.set(34);
         bulletSpeed.set(3);
         range.set(700);

@@ -3,19 +3,19 @@
     {
         "name": "DamageBuff",
         "description": "换上硬子弹, 但是保证没有超过1.8J/cm2 🤫\nIncreases damage dealt by 20%",
-        "buffValue": "1.2",
+        "buffValue": "0.20",
         "price": "10"
     },
     {
         "name": "FireCDBuff",
         "description": "悄悄超频了你的枪!\nReduces fire CD by 20%",
-        "buffValue": "0.8",
-        "price": "5"
+        "buffValue": "-0.15",
+        "price": "10"
     },
     {
       "name": "HpBuff",
       "description": "不想再打一半就喊救护车🚑?\nIncreases Max HP by 10 pts",
-      "buffValue": "10.0",
+      "buffValue": "15.0",
       "price": "10"
     },
     {
@@ -27,7 +27,7 @@
     {
       "name": "SpeedBuff",
       "description": "光速前往波兰(划掉)\nIncreases speed by 10 pts",
-      "buffValue": "1",
+      "buffValue": "0.10",
       "price": "10"
     },
     {
@@ -39,8 +39,44 @@
     {
       "name": "BulletRangeBuff",
       "description": "御敌千里之外\nIncreases Bullet Range by 100 pts",
-      "buffValue": "100",
-      "price": "5"
+      "buffValue": "0.15",
+      "price": "10"
+    },
+    {
+      "name": "DreadM1900Item",
+      "description": "双管喷子恐怖版~ 谁让你锯掉的枪管？！\nNew weapon: Dread M1900 Shot Gun",
+      "buffValue": "0",
+      "price": "60"
+    },
+    {
+      "name": "M1900ShotGunItem",
+      "description": "懒得瞄准了？试试双管喷！\nNew weapon: M1900 Shot Gun",
+      "buffValue": "0",
+      "price": "40"
+    },
+    {
+      "name": "NailBulletItem",
+      "description": "在穿透弹面前盾牌也没用\nGet piercing bullets",
+      "buffValue": "0",
+      "price": "30"
+    },
+    {
+      "name": "PeaShooterItem",
+      "description": "豌豆射手？？？\nNew weapon: Pea Shooter",
+      "buffValue": "0",
+      "price": "15"
+    },
+    {
+      "name": "OverloadPeaShooter",
+      "description": "过载了豌豆射手就能获得过载豌豆射手\nNew weapon: Overload Pea Shooter",
+      "buffValue": "0",
+      "price": "50"
+    },
+    {
+      "name": "OverClockPeaShooterItem",
+      "description": "当你的豌豆枪被超频到10.01 GHz...\nNew weapon: Overclock Pea Shooter",
+      "buffValue": "0",
+      "price": "60"
     }
   ]
 }

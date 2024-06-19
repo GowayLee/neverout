@@ -71,6 +71,24 @@
     },
     "BulletSpeedBuff": {
       "displayImage" :"/static/image/PropImage/BulletSpeedUp.png"
+    },
+    "M1900ShotGunItem": {
+      "displayImage" :"/static/image/PropImage/BulletSpeedUp.png"
+    },
+    "DreadM1900Item": {
+      "displayImage" :"/static/image/PropImage/BulletSpeedUp.png"
+    },
+    "PeaShooterItem": {
+      "displayImage" :"/static/image/PropImage/BulletSpeedUp.png"
+    },
+    "OverClockPeaShooterItem": {
+      "displayImage" :"/static/image/PropImage/BulletSpeedUp.png"
+    }, 
+    "OverloadPeaShooterItem": {
+      "displayImage" :"/static/image/PropImage/BulletSpeedUp.png"
+    }, 
+    "NailBulletItem": {
+      "displayImage" :"/static/image/PropImage/BulletSpeedUp.png"
     }
   },
   "System": {

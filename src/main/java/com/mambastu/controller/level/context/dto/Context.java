@@ -8,6 +8,7 @@ import com.mambastu.factories.PlayerFactory;
 import com.mambastu.material.pojo.entity.player.BasePlayer;
 import com.mambastu.material.pojo.entity.player.PlayerTypes;
 import com.mambastu.material.pojo.weapon.M1900ShotGun;
+import com.mambastu.material.pojo.weapon.PeaShooter;
 
 import javafx.beans.property.SimpleObjectProperty;
 import lombok.Getter;
@@ -37,7 +38,7 @@ public class Context {
 
     public void initPlayer() {
         BasePlayer player =  PlayerFactory.getInstance().create(playerType.get());
-        player.setWeapon(new M1900ShotGun());
+        player.setWeapon(new PeaShooter());
         levelConfig.setPlayer(player); // 设置玩家到关卡配置中
     }
 
