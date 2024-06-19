@@ -48,7 +48,7 @@ public class LogicManager { // TODO: 尝试单例模式
         logiModule.initCountDownTimer();
     }
 
-    public void update(long elapsedTime) {
-        logiModule.update(elapsedTime);
+    public void update() {
+        logiModule.update();
     }
 }

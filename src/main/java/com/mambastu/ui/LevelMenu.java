@@ -4,7 +4,6 @@ import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.listener.LevelMenuListener;
 import com.mambastu.material.pojo.prop.BaseProp;
 import com.mambastu.material.pojo.weapon.BaseWeapon;
-import com.mambastu.material.pojo.weapon.StandardRifle;
 import com.mambastu.material.resource.ResourceManager;
 import com.mambastu.util.PropStore;
 
@@ -15,7 +14,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

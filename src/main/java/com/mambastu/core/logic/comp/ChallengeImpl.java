@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.mambastu.controller.input.InputManager;
 import com.mambastu.controller.level.context.dto.Context;
+import com.mambastu.controller.level.context.dto.config.LevelConfig.MonsterEgg;
 import com.mambastu.core.engine.GameEngine.EngineProps;
 import com.mambastu.core.event.EventManager;
 import com.mambastu.core.event.comp.event.BulletHitMonsterEvent;
@@ -80,16 +80,19 @@ public class ChallengeImpl implements ModeLogic{
         }
     }
 
+    @Override
     public void initCountDownTimer() { // 初始化倒计时，并将其添加到游戏画布中。
         ctx.getLevelRecord().getRemainDuration().set(ctx.getLevelConfig().getDuration());
         countDownTimer.getKeyFrames().add(new KeyFrame(
             Duration.seconds(1), event -> {
                 ctx.getLevelRecord().getRemainDuration().set(ctx.getLevelRecord().getRemainDuration().get() - 1);
+                checkIsGamePass();
             }));
         countDownTimer.setCycleCount(Timeline.INDEFINITE);
         countDownTimer.play();
     }
 
+    @Override
     public void initPlayer() { // 初始化玩家位置和属性，并将其添加到游戏画布中。
         try {
             player.init();
@@ -100,16 +103,16 @@ public class ChallengeImpl implements ModeLogic{
         }
     }
 
+    @Override
     public void initMonsterGenTimer() {
-        for (Map.Entry<MonsterTypes, Double> eggEntry : ctx.getLevelConfig().getMonsterEggList()
-                .entrySet()) {
+        for (MonsterEgg eggEntry : ctx.getLevelConfig().getMonsterEggList()) {
             Timeline monsterEggTimer = new Timeline();
             monsterEggTimer.getKeyFrames()
                     .add(new KeyFrame(
                             Duration.millis(
-                                    (long) (ctx.getLevelConfig().getMonsterScalDensity() * eggEntry.getValue())),
-                            generateMonster(eggEntry.getKey())));
-            monsterEggTimer.setCycleCount(1);
+                                    (long) (ctx.getLevelConfig().getMonsterScalDensity() * eggEntry.getSpawnTime())),
+                            generateMonster(eggEntry.getMonsterType())));
+            monsterEggTimer.setCycleCount(eggEntry.getSpawnCount());
             monsterEggTimerList.add(monsterEggTimer);
         }
         startMonsterGenTimer();
@@ -133,14 +136,14 @@ public class ChallengeImpl implements ModeLogic{
 
     // ================================= Update Logic Section =================================
 
-    public void update(long elapsedTime) { // 游戏循环更新
-        checkCollision();
+    @Override
+    public void update() { // 游戏循环更新
+        checkMonsterHitPlayer();
         checkBullletHitMonster();
         playerMove();
         monsterMove();
         bulletMove();
         playerFire();
-        checkIsGameOver();
     }
 
     private void monsterMove() {
@@ -168,12 +171,13 @@ public class ChallengeImpl implements ModeLogic{
         }
     }
 
-    private void checkCollision() {
+    private void checkMonsterHitPlayer() {
         for (BaseMonster monster : monsterList) {
             if (player.getBound().collisionState(monster.getBound()) == CollisionState.TRUE) { // 触发事件
                 CollisionEvent event = CollisionEvent.getInstance();
                 event.setProperty(player, monster);
                 EventManager.getInstance().fireEvent(event);
+                checkIsGameFail();
             }
         }
     }
@@ -212,12 +216,14 @@ public class ChallengeImpl implements ModeLogic{
             EventManager.getInstance().fireEvent(event);                                  // 在怪物死亡效果结束后再放回对象池
             monsterList.remove(monster); // 移除怪物
             ctx.getLevelRecord().getKillCount().set(ctx.getLevelRecord().getKillCount().get() + 1);
+            checkIsLevelClear();
         }
     }
 
-    private void checkIsGameOver() {
-        checkIsGameFail();
-        checkIsGamePass();
+    private void checkIsLevelClear() { // 挑战模式下击杀全部怪物
+        if (monsterList.size() == 0) {
+            stopEngine(true);
+        }
     }
 
     private void checkIsGamePass() { // 检查游戏是否失败，例如玩家死亡等条件

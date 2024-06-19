@@ -34,7 +34,6 @@ public class GameEngine {
     private final StackPane root;
     private final EngineProps engineProps;
     private AnimationTimer timer;
-    private Long lastUpdateTime = System.nanoTime();
 
     @Getter
     @Setter
@@ -118,11 +117,7 @@ public class GameEngine {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (lastUpdateTime > 0) {
-                    long elapsedTime = (now - lastUpdateTime) / 1_000_000; // 计算时间差(ms)
-                    logicManager.update(elapsedTime);
-                }
-                lastUpdateTime = now;
+                logicManager.update();
             }
         };
         timer.start();

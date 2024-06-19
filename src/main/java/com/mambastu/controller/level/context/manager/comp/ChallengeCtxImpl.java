@@ -2,6 +2,7 @@ package com.mambastu.controller.level.context.manager.comp;
 
 import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.controller.level.context.dto.config.LevelConfig;
+import com.mambastu.controller.level.context.dto.config.LevelConfig.MonsterEgg;
 import com.mambastu.controller.level.context.dto.record.GlobalRecord;
 import com.mambastu.controller.level.context.dto.record.LevelRecord;
 import com.mambastu.material.pojo.entity.monster.MonsterTypes;
@@ -16,8 +17,9 @@ public class ChallengeCtxImpl implements ModeCtxLogic{
     @Override
     public void initLevelConfig() { // 初始化第一个关卡配置信息，例如怪物密度、怪物伤害等。
         LevelConfig firstLevelConfig = ctx.getLevelConfig();
-        firstLevelConfig.getMonsterEggList().put(MonsterTypes.HellLordMonster, 1.0);
-        firstLevelConfig.setMonsterScalDensity(3000);
+        firstLevelConfig.getMonsterEggList().add(new MonsterEgg(MonsterTypes.HellLordMonster, 2.0, 1));
+        firstLevelConfig.getMonsterEggList().add(new MonsterEgg(MonsterTypes.HotMonster, 3.5, 10));
+        firstLevelConfig.setMonsterScalDensity(2000);
         firstLevelConfig.setMonsterScalCoin(1.0);
         firstLevelConfig.setDuration(9999); // 基础关卡时长30秒。
 
@@ -25,9 +27,7 @@ public class ChallengeCtxImpl implements ModeCtxLogic{
 
     @Override
     public void updateLevelConfig() { // 更新下一关的配置信息，例如怪物密度、怪物伤害等
-        ctx.getLevelConfig().getMonsterEggList().computeIfPresent(MonsterTypes.HotMonster, (key, value) -> value > 0.5 ? value * 0.8 : value);
-        ctx.getLevelConfig().getMonsterEggList().computeIfPresent(MonsterTypes.BossMonster, (key, value) -> value > 1.0 ? value * 0.8 : value);
-        ctx.getLevelConfig().setDuration(ctx.getLevelConfig().getDuration() + 10); // 增加关卡时长10s
+        return; // 挑战模式下不更新关卡配置。
     }
 
     @Override

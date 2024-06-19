@@ -37,7 +37,6 @@ public class MainMenu {
     private final SimpleObjectProperty<PlayerTypes> playerType; // 玩家类型
 
     private final Pane menuPane;
-    private final Pane titlePane;
     private final Group facePane;
     private final Group btnPane;
     private final HBox charPane; // 角色面板，用于显示角色选择界面
@@ -55,7 +54,6 @@ public class MainMenu {
         this.gameMode = new SimpleObjectProperty<>(GameMode.NORMAL);
         this.playerType = new SimpleObjectProperty<>(PlayerTypes.JokerPlayer);
         this.menuPane = new Pane();
-        this.titlePane = new Pane();
         this.facePane = new Group();
         this.btnPane = new Group();
         this.charPane = new HBox();
