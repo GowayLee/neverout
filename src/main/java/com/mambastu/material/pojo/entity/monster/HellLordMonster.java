@@ -83,7 +83,7 @@ public class HellLordMonster extends BaseMonster {
 
         this.redEyeView = new ImageView(redEyeImage);
 
-        this.damage = 0;
+        this.damage = 5;
         this.warningColorAdjust = new ColorAdjust();
         warningColorAdjust.setHue(-0.1);
         this.initTimer.setDuration(Duration.seconds(1));
