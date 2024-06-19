@@ -1,6 +1,7 @@
 package com.mambastu.material.pojo.entity.bullet;
 
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.AudioManager;
 
 import javafx.scene.image.Image;
 
@@ -31,6 +32,12 @@ public class NailBullet extends BaseBullet {
         showingImageView.setX(currentX);
         showingImageView.setY(currentY);
         isValid = !trappedInStage() && range > 0; // 判断子弹是否有效
+    }
+
+    @Override
+    public Integer releaseDamage() {
+        AudioManager.getInstance().playAudio("SoundEffects", "NailBulletHit", "displayAudio");
+        return damage;
     }
 
     @Override

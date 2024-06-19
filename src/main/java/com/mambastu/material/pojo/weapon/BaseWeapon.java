@@ -14,6 +14,7 @@ import com.mambastu.material.pojo.entity.monster.BaseMonster;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,6 +44,22 @@ public abstract class BaseWeapon {
     @Getter
     protected final PauseTransition coolTimer = new PauseTransition();
     protected final List<BaseBullet> newBulletList = new ArrayList<>();
+
+    public void updateBuffProperties(double damageBuff, double bulletSpeedBuff, double coolTimeBuff, double rangeBuff) { // 更新武器的属性值，包括伤害、子弹速度、冷却时间和射程。
+        this.damageBuff = damageBuff;
+        this.bulletSpeedBuff= bulletSpeedBuff;
+        this.coolTimeBuff = coolTimeBuff;
+        this.rangeBuff = rangeBuff;
+    }
+
+    public void updateValueProperties(int newDamage, double newBulletSpeed, double newCoolTime, double newRange, BulletType newBulletType) {
+        this.damage.set((int) (newDamage * damageBuff)); // 更新伤害值
+        this.bulletSpeed.set(newBulletSpeed * bulletSpeedBuff); // 更新子弹速度
+        this.coolTime.set(newCoolTime * coolTimeBuff); // 更新冷却时间
+        this.range.set(newRange * rangeBuff); // 更新射程
+        this.bulletType = newBulletType; // 更新子弹类型
+        coolTimer.setDuration(Duration.millis(coolTime.get()));
+    }
 
     abstract public BaseEntity selectTarget(double x, double y, LinkedList<BaseMonster> monsters); // 在一群实体中选择目标 TODO: 空间划分
 

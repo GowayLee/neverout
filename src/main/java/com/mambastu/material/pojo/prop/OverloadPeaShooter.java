@@ -31,10 +31,7 @@ public class OverloadPeaShooter extends BaseProp{
 
         player.setWeapon(new PeaShooter());
         BaseWeapon newWeapon = player.getWeapon();
-        newWeapon.setBulletType(temp);
-        newWeapon.getDamage().set((int) (120 * damageBuff));
-        newWeapon.getBulletSpeed().set(20 * bulletSpeedBuff);
-        newWeapon.getRange().set(850 * rangeBuff);
-        newWeapon.getCoolTime().set(700 * coolTimeBuff);
+        newWeapon.updateBuffProperties(damageBuff, bulletSpeedBuff, coolTimeBuff, rangeBuff);
+        newWeapon.updateValueProperties(120, 20 , 1100, 850, temp);
     }
 }

@@ -30,11 +30,8 @@ public class PeaShooterItem extends BaseProp {
         }
 
         player.setWeapon(new PeaShooter());
-        player.getWeapon().setBulletType(temp);
-        BaseWeapon weapon = player.getWeapon();
-        weapon.getBulletSpeed().set(3 * bulletSpeedBuff);
-        weapon.getRange().set(700 * rangeBuff);
-        weapon.getCoolTime().set(300 * coolTimeBuff);
-        weapon.getDamage().set((int) (34 * damageBuff));
+        BaseWeapon newWeapon = player.getWeapon();
+        newWeapon.updateBuffProperties(damageBuff, bulletSpeedBuff, coolTimeBuff, rangeBuff);
+        newWeapon.updateValueProperties(34, 3, 300, 700, temp);
     }
 }

@@ -11,6 +11,7 @@ import com.mambastu.material.pojo.entity.BaseEntity;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.bullet.BulletType;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
+import com.mambastu.util.AudioManager;
 import com.mambastu.util.GlobalVar;
 
 import javafx.util.Duration;
@@ -35,6 +36,7 @@ public class PeaShooter extends BaseWeapon{
     public List<BaseBullet> fire(double x, double y, LinkedList<BaseMonster> monsters, Set<GameInput> activeInputs) {
         if (activeInputs.contains(GameInput.FIRE) && coolStatus == Status.READY && monsters.size() > 0){
             newBulletList.clear();
+            AudioManager.getInstance().playAudio("SoundEffects", "FirePeaShooter", "displayAudio");
             try {
                 BaseBullet newBullet = BulletFactory.getInstance().create(bulletType);
                 newBullet.setProps(damage.get(), bulletSpeed.get(), range.get());

@@ -249,6 +249,8 @@ public class LevelMenu {
         if (coin.get() >= prop.getPrice()) {
             coin.set(coin.get() - prop.getPrice()); // 更新金币数量
             prop.updateValue(ctx.getLevelConfig().getPlayer()); // 更新玩家属性值，例如增加生命值、攻击力等。
+            bindProperties();
+            bulidDataLayout();
             return true;
         } else {
             Alert alert = new Alert(AlertType.ERROR);

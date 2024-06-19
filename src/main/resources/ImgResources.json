@@ -39,10 +39,10 @@
   },
   "Bullet": {
     "StandardBullet": {
-      "bornImage": "/static/image/char/JokerPlayer.png"
+      "bornImage": "/static/image/bullet/Standard_Bullet.png"
     },
     "NailBullet": {
-      "bornImage": "/static/image/char/JokerPlayer.png"
+      "bornImage": "/static/image/char/Basaker_Normal.png"
     }
   },
   "Barrier": {

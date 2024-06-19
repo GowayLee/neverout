@@ -1,6 +1,7 @@
 package com.mambastu.material.pojo.entity.bullet;
 
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.AudioManager;
 
 import javafx.scene.image.Image;
 
@@ -10,7 +11,7 @@ public class StandardBullet extends BaseBullet{
     public StandardBullet() {
         super();
         this.bornImage = ResourceManager.getInstance().getImg("bornImage", "Bullet", "StandardBullet");
-        setImageSize(15, 15);
+        setImageSize(25, 25);
     }
 
     @Override
@@ -31,6 +32,12 @@ public class StandardBullet extends BaseBullet{
         showingImageView.setX(currentX);
         showingImageView.setY(currentY);
         isValid = !trappedInStage() && range > 0; // 判断子弹是否有效
+    }
+
+    @Override
+    public Integer releaseDamage() {
+        AudioManager.getInstance().playAudio("SoundEffects", "StandardBulletHit", "displayAudio");
+        return damage;
     }
 
     @Override

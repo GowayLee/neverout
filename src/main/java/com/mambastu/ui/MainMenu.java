@@ -5,6 +5,7 @@ import com.mambastu.controller.level.context.enums.GameMode;
 import com.mambastu.listener.MainMenuListener;
 import com.mambastu.material.pojo.entity.player.PlayerTypes;
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.AudioManager;
 import com.mambastu.util.BetterMath;
 
 import javafx.animation.Animation;
@@ -162,6 +163,7 @@ public class MainMenu {
         });
 
         modeView.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            AudioManager.getInstance().playAudio("SoundEffects", "DingDong", "displayAudio");
             this.gameMode.setValue(gameMode);
             modeIntroPane.getChildren().clear();
             modeIntroPane.getChildren().add(introView);
@@ -258,6 +260,7 @@ public class MainMenu {
         });
 
         charView.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> { // 鼠标点击事件处理程序，选择角色并隐藏角色选择面板
+            AudioManager.getInstance().playAudio("SoundEffects", "Ding", "displayAudio");
             this.playerType.setValue(playerTypes); // 设置玩家类型为所选角色类型
             charIntroPane.getChildren().clear();
             charIntroPane.getChildren().add(introView); // 添加角色介绍图像视图到介绍面板

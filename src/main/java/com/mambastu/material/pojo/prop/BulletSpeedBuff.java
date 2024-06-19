@@ -9,7 +9,7 @@ public class BulletSpeedBuff extends BaseProp {
     public BulletSpeedBuff() {
         this.displayImage = ResourceManager.getInstance().getImg("displayImage", "Prop", "FireCDBuff");
         this.price = 10;
-        this.buffValue = 0.10;
+        this.buffValue = 0.05;
     }
 
     @Override

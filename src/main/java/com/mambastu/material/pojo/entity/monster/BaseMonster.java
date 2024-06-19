@@ -43,7 +43,7 @@ public abstract class BaseMonster extends BaseEntity {
         this.colorAdjust.setBrightness(0.9); // 将亮度设置为最大，变成白色
         this.hurtFXTimer.setDuration(Duration.millis(50));
         this.hurtFXTimer.setOnFinished(event -> showingImageView.setEffect(null));
-        this.inBulletQueueTimer.setDuration(Duration.millis(100));
+        this.inBulletQueueTimer.setDuration(Duration.millis(200));
         this.inBulletQueueTimer.setOnFinished(event -> processQueue());
     }
 
@@ -62,9 +62,9 @@ public abstract class BaseMonster extends BaseEntity {
 
     abstract public void die();
 
-    public void getHurt(Integer damage, BaseBullet bullet) {
+    public void getHurt(BaseBullet bullet) {
         if (state == State.NORMAL && !inBulletQueue.contains(bullet)) { // 如果怪物处于正常状态，并且子弹不在无敌子弹队列中，则造成伤害
-            HP.set(HP.get() - damage);
+            HP.set(HP.get() - bullet.releaseDamage());
             if (HP.get() > 0) { // 如果怪物血量大于0，则播放受伤动画，并进入无敌帧状态
                 showingImageView.setEffect(colorAdjust);
                 hurtFXTimer.play();

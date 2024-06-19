@@ -30,12 +30,8 @@ public class DreadM1900Item extends BaseProp {
         }
 
         player.setWeapon(new M1900ShotGun());
-        player.getWeapon().setBulletType(temp);
-        player.setWeapon(new M1900ShotGun());
-        BaseWeapon weapon = player.getWeapon();
-        weapon.getBulletSpeed().set(15 * bulletSpeedBuff);
-        weapon.getRange().set(450 * rangeBuff);
-        weapon.getCoolTime().set(1600 * coolTimeBuff);
-        weapon.getDamage().set((int) (34 * damageBuff));
+        BaseWeapon newWeapon = player.getWeapon();
+        newWeapon.updateBuffProperties(damageBuff, bulletSpeedBuff, coolTimeBuff, rangeBuff);
+        newWeapon.updateValueProperties(34, 15, 1600, 450, temp);
     }
 }

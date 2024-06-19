@@ -6,6 +6,7 @@ import java.util.Random;
 import com.mambastu.factories.MonsterFactory;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.AudioManager;
 import com.mambastu.util.BetterMath;
 import com.mambastu.util.GlobalVar;
 
@@ -123,10 +124,10 @@ public class HellLordMonster extends BaseMonster {
                 resetToNormalState();
             }
         });
-        accelerateTimer.getKeyFrames().add(new KeyFrame(Duration.millis(50), event -> speed += 1.5));
-        accelerateTimer.setCycleCount(10);
-        decelerateTimer.getKeyFrames().add(new KeyFrame(Duration.millis(50), event -> speed -= 1.5));
-        decelerateTimer.setCycleCount(10); // 15 to 0 in 0.5 seconds
+        accelerateTimer.getKeyFrames().add(new KeyFrame(Duration.millis(50), event -> speed += 1.0));
+        accelerateTimer.setCycleCount(8);
+        decelerateTimer.getKeyFrames().add(new KeyFrame(Duration.millis(50), event -> speed -= 1.0));
+        decelerateTimer.setCycleCount(8); // 15 to 0 in 0.5 seconds
         accelerateTimer.setOnFinished(event -> decelerateTimer.play());
         decelerateTimer.setOnFinished(event -> {
             curDashCount--;
@@ -242,6 +243,7 @@ public class HellLordMonster extends BaseMonster {
                     startInvisibleSkill();
                     break;
                 case 2:
+                    AudioManager.getInstance().playAudio("SoundEffects", "HellLordMonsterCurtain", "displayAudio");
                     startCurtainSkill();
                     break;
             }
@@ -303,9 +305,9 @@ public class HellLordMonster extends BaseMonster {
     }
 
     @Override
-    public void getHurt(Integer damage, BaseBullet bullet) {
+    public void getHurt(BaseBullet bullet) {
         if (state == State.NORMAL && !inBulletQueue.contains(bullet)) { // 如果怪物处于正常状态，并且子弹不在无敌子弹队列中，则造成伤害
-            HP.set(HP.get() - damage);
+            HP.set(HP.get() - bullet.releaseDamage());
             if (HP.get() < 1000 && !isLowHP) { // 血量低于1000进入2阶段
                 isLowHP = true;
                 skillCooldownTimer.setDuration(Duration.seconds(SKILL_CD_2));

@@ -32,10 +32,7 @@ public class OverClockPeaShooterItem extends BaseProp {
 
         player.setWeapon(new PeaShooter());
         BaseWeapon newWeapon = player.getWeapon();
-        newWeapon.setBulletType(temp);
-        newWeapon.getBulletSpeed().set(10 * bulletSpeedBuff);
-        newWeapon.getRange().set(400 * rangeBuff);
-        newWeapon.getCoolTime().set(100 * coolTimeBuff);
-        newWeapon.getDamage().set((int) (18 * damageBuff));
+        newWeapon.updateBuffProperties(damageBuff, bulletSpeedBuff, coolTimeBuff, rangeBuff);
+        newWeapon.updateValueProperties(18, 10, 120, 400, temp);
     }
 }

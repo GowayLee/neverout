@@ -14,13 +14,13 @@
     },
     {
       "name": "HpBuff",
-      "description": "不想再打一半就喊救护车🚑?\nIncreases Max HP by 10 pts",
+      "description": "提升你的抗揍属性！\nIncreases Max HP by 10 pts",
       "buffValue": "15.0",
       "price": "10"
     },
     {
       "name": "SkillCDBuff",
-      "description": "I say NO MORE WAITING TIME!\nReduces skill CD by 20%",
+      "description": "急急急急急急等不了一点\nReduces skill CD by 20%",
       "buffValue": "0.8",
       "price": "20"
     },
@@ -32,19 +32,19 @@
     },
     {
       "name": "BulletSpeedBuff",
-      "description": "💡您的村民向您分享的黑火药的技术!\nIncreases Bullet Speed by 5 pts",
+      "description": "💡您的村民向您分享的无烟火药的技术!\nIncreases Bullet Speed by 5 pts",
       "buffValue": "5",
       "price": "5"
     },
     {
       "name": "BulletRangeBuff",
-      "description": "御敌千里之外\nIncreases Bullet Range by 100 pts",
+      "description": "子弹能克服远距离~\nIncreases Bullet Range by 100 pts",
       "buffValue": "0.15",
       "price": "10"
     },
     {
       "name": "DreadM1900Item",
-      "description": "双管喷子恐怖版~ 谁让你锯掉的枪管？！\nNew weapon: Dread M1900 Shot Gun",
+      "description": "谁让你锯掉的枪管？！这是双管喷子恐怖版~ \nNew weapon: Dread M1900 Shot Gun",
       "buffValue": "0",
       "price": "60"
     },
@@ -56,7 +56,7 @@
     },
     {
       "name": "NailBulletItem",
-      "description": "在穿透弹面前盾牌也没用\nGet piercing bullets",
+      "description": "在穿透弹面前盾牌就是心理安慰\nGet piercing bullets",
       "buffValue": "0",
       "price": "30"
     },

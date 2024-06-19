@@ -31,10 +31,7 @@ public class M1900ShotGunItem extends BaseProp{
         
         player.setWeapon(new M1900ShotGun());
         BaseWeapon newWeapon = player.getWeapon();
-        newWeapon.setBulletType(temp);
-        newWeapon.getBulletSpeed().set(13 * bulletSpeedBuff);
-        newWeapon.getRange().set(400 * rangeBuff);
-        newWeapon.getCoolTime().set(1100 * coolTimeBuff);
-        newWeapon.getDamage().set((int) (20 * damageBuff));
+        newWeapon.updateBuffProperties(damageBuff, bulletSpeedBuff, coolTimeBuff, rangeBuff);
+        newWeapon.updateValueProperties(20, 13, 1100, 400, temp);
     }
 }
