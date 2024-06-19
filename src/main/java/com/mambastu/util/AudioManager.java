@@ -286,7 +286,6 @@ public class AudioManager {
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
             float dB = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
             gainControl.setValue(dB);
-            System.out.println("Volume set to: " + volume);
             logger.info("Volume set to: " + volume + " For /" + category + "/" + name + "/" + key);
         }
     }

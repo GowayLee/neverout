@@ -14,6 +14,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -45,6 +46,8 @@ public class MainMenu {
     private final HBox modePane; // 模式面板，用于显示游戏模式选择界面
     private final Pane modeIntroPane;
 
+    private Node modeTemp =  new Pane();
+    private Node charTemp = new Pane();
     private boolean isCharIntroPinned = false;
     private boolean isModeIntroPinned = false;
 
@@ -141,12 +144,18 @@ public class MainMenu {
         scaleTransition.setCycleCount(2);
         scaleTransition.setAutoReverse(true);
 
+        
         modeView.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
             if (scaleTransition.getStatus() != Animation.Status.RUNNING) {
                 modeView.setEffect(shadow);
                 scaleImageView(modeView, 1.2);
-                if (!isModeIntroPinned || modeIntroPane.getChildren().indexOf(introView) == -1) {
-                    modeIntroPane.getChildren().clear(); // 确保介绍面板为空，然后添加新的角色介绍图像视图
+
+                if (isModeIntroPinned) {
+                    modeTemp = modeIntroPane.getChildren().get(0); // 获取当前角色介绍图像视图的引用，以便稍后重新添加它。
+                    modeIntroPane.getChildren().clear(); // 清除介绍面板，以便添加新的角色介绍图像视图。
+                    modeIntroPane.getChildren().add(introView); // 添加新的角色介绍图像视图。
+                } else {
+                    modeIntroPane.getChildren().clear();
                     modeIntroPane.getChildren().add(introView);
                 }
             }
@@ -156,7 +165,11 @@ public class MainMenu {
             if (scaleTransition.getStatus() != Animation.Status.RUNNING) { // 确保动画没有在运行
                 modeView.setEffect(null);
                 scaleImageView(modeView, 1.0);
-                if (!isModeIntroPinned || modeIntroPane.getChildren().indexOf(introView) == -1) {
+
+                if (isModeIntroPinned) {
+                    modeIntroPane.getChildren().clear();
+                    modeIntroPane.getChildren().add(modeTemp);
+                } else {
                     modeIntroPane.getChildren().clear();
                 }
             }
@@ -167,6 +180,7 @@ public class MainMenu {
             this.gameMode.setValue(gameMode);
             modeIntroPane.getChildren().clear();
             modeIntroPane.getChildren().add(introView);
+            modeTemp = introView;
             isModeIntroPinned = true;
             scaleTransition.play();
         });
@@ -242,9 +256,13 @@ public class MainMenu {
             if (scaleTransition.getStatus() != Animation.Status.RUNNING) {
                 charView.setEffect(shadow);
                 scaleImageView(charView, 1.2);
-                if (!isCharIntroPinned || charIntroPane.getChildren().indexOf(introView) == -1) {
-                    charIntroPane.getChildren().clear(); // 确保介绍面板为空，然后添加新的角色介绍图像视图
-                    charIntroPane.getChildren().add(introView); // 添加角色介绍图像视图到介绍面板
+                if (isCharIntroPinned) {
+                    charTemp = charIntroPane.getChildren().get(0); // 获取当前角色介绍图像视图的引用，以便稍后重新添加它。
+                    charIntroPane.getChildren().clear(); // 清除介绍面板，以便添加新的角色介绍图像视图。
+                    charIntroPane.getChildren().add(introView); // 添加新的角色介绍图像视图。
+                } else {
+                   charIntroPane.getChildren().clear();
+                   charIntroPane.getChildren().add(introView);
                 }
             }
         });
@@ -253,7 +271,11 @@ public class MainMenu {
             if (scaleTransition.getStatus() != Animation.Status.RUNNING) {
                 charView.setEffect(null);
                 scaleImageView(charView, 1.0);
-                if (!isCharIntroPinned || charIntroPane.getChildren().indexOf(introView) == -1) {
+
+                if (isCharIntroPinned) {
+                    charIntroPane.getChildren().clear();
+                    charIntroPane.getChildren().add(charTemp);
+                } else {
                     charIntroPane.getChildren().clear();
                 }
             }
@@ -264,6 +286,7 @@ public class MainMenu {
             this.playerType.setValue(playerTypes); // 设置玩家类型为所选角色类型
             charIntroPane.getChildren().clear();
             charIntroPane.getChildren().add(introView); // 添加角色介绍图像视图到介绍面板
+            charTemp = introView;
             isCharIntroPinned = true; // 标记面板为固定状态，不再响应鼠标事件
             scaleTransition.play();
         });

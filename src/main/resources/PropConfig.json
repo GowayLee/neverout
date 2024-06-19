@@ -8,13 +8,13 @@
     },
     {
         "name": "FireCDBuff",
-        "description": "悄悄超频了你的枪!\nReduces fire CD by 20%",
+        "description": "悄悄超频了你的枪!\nReduces fire CD by 15%",
         "buffValue": "-0.15",
         "price": "10"
     },
     {
       "name": "HpBuff",
-      "description": "提升你的抗揍属性！\nIncreases Max HP by 10 pts",
+      "description": "提升你的抗揍属性！\nIncreases Max HP by 15",
       "buffValue": "15.0",
       "price": "10"
     },
@@ -26,19 +26,19 @@
     },
     {
       "name": "SpeedBuff",
-      "description": "光速前往波兰(划掉)\nIncreases speed by 10 pts",
+      "description": "光速前往波兰(划掉)\nIncreases speed by 10%",
       "buffValue": "0.10",
       "price": "10"
     },
     {
       "name": "BulletSpeedBuff",
-      "description": "💡您的村民向您分享的无烟火药的技术!\nIncreases Bullet Speed by 5 pts",
-      "buffValue": "5",
+      "description": "💡您的村民向您分享的无烟火药的技术!\nIncreases Bullet Speed by 5%",
+      "buffValue": "0.05",
       "price": "5"
     },
     {
       "name": "BulletRangeBuff",
-      "description": "子弹能克服远距离~\nIncreases Bullet Range by 100 pts",
+      "description": "子弹能克服远距离~\nIncreases Bullet Range by 15%",
       "buffValue": "0.15",
       "price": "10"
     },

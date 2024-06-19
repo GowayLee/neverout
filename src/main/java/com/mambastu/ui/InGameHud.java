@@ -131,7 +131,7 @@ public class InGameHud {
         int steps = (int) totalSkillCD.get() * 1000 / 16; // 在60fps的情况下确保每一帧都有关键帧
         for (int i = 0; i <= steps; i++) {
             double progress = (double) i / steps;
-            Duration stepDuration = Duration.millis(totalSkillCD.get() * 1000 * progress > 1 ? totalSkillCD.get() * 1000 * progress : 1.0); // FIXME:
+            Duration stepDuration = Duration.millis(totalSkillCD.get() * 1000 * progress > 1 ? totalSkillCD.get() * 1000 * progress : 1.0);
             skillCDTimer.getKeyFrames().add(new KeyFrame(stepDuration, e -> skillCDprogress.set(progress)));
         }
         skillCDTimer.playFromStart();
