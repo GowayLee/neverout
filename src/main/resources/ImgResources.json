@@ -42,7 +42,7 @@
       "bornImage": "/static/image/bullet/Standard_Bullet.png"
     },
     "NailBullet": {
-      "bornImage": "/static/image/char/Basaker_Normal.png"
+      "bornImage": "/static/image/bullet/Nail_Bullet.png"
     }
   },
   "Barrier": {

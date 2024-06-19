@@ -2,6 +2,7 @@ package com.mambastu.material.pojo.entity.player;
 
 import com.mambastu.controller.input.comp.GameInput;
 import com.mambastu.material.resource.ResourceManager;
+import com.mambastu.util.AudioManager;
 import com.mambastu.util.BetterMath;
 import com.mambastu.util.GlobalVar;
 
@@ -138,6 +139,7 @@ public class BasakerPlayer extends BasePlayer {
         state = State.SKILL;
         skillState = SkillState.ACTIVE;
         basakerSkillState = BasakerSkillState.ENRAGED;
+        AudioManager.getInstance().playAudio("SoundEffects","SkillBasaker","displayAudio");
         if (weapon != null)
         {
             weapon.getDamage().set((weapon.getDamage().get() * 2));

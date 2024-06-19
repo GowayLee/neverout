@@ -48,13 +48,16 @@
       "displayAudio": "/Audio/Hit_Monster.wav"
     },
     "SkillJokerUp": {
-      "displayAudio": "/Audio/Skill_Joker_Up.wav"
+      "displayAudio": "/Audio/Joker_player_Skill_Blue.wav"
     },
     "SkillJokerDown": {
-      "displayAudio": "/Audio/Skill_Joker_Down.wav"
+      "displayAudio": "/Audio/Joker_Player_Skill_Red.WAV"
     },
     "SkillLaugh": {
-      "displayAudio": "/Audio/Skill_Laugh.wav"
+      "displayAudio": "/Audio/Laugh_Player_Skill.wav"
+    },
+    "SkillBasaker": {
+      "displayAudio":"/Audio/Basaker_Player_Skill.WAV"
     },
     "HellLordMonsterCurtain": {
       "displayAudio": "/Audio/HellLordMonster_Curtain.wav"
