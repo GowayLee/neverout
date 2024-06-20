@@ -127,7 +127,7 @@ public class InGameHud implements DynamicMenu{
             Duration stepDuration = Duration.millis(totalFireCD.get()).multiply(progress);
             fireCDTimer.getKeyFrames().add(new KeyFrame(stepDuration, e -> fireCDprogress.set(progress)));
         }
-        fireCDTimer.playFromStart();
+        fireCDprogress.set(1.0);
     }
 
     private void setupSkillCDTimerKeyFrames() {
@@ -138,7 +138,7 @@ public class InGameHud implements DynamicMenu{
             Duration stepDuration = Duration.millis(totalSkillCD.get() * 1000 * progress > 1 ? totalSkillCD.get() * 1000 * progress : 1.0);
             skillCDTimer.getKeyFrames().add(new KeyFrame(stepDuration, e -> skillCDprogress.set(progress)));
         }
-        skillCDTimer.playFromStart();
+        skillCDprogress.set(1.0);
     }
 
     private void buildLayout() {

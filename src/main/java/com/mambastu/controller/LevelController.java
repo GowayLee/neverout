@@ -104,7 +104,6 @@ public class LevelController {
 
     private void startNextLevel() { // 生成新的LevelConfig与LevelRecord, 初始化引擎层,
         // 开始关卡逻辑，与startFirstLevel类似，但需要从上下文中获取关卡信息，并更新上下文中的关卡记录信息。
-        AudioManager.getInstance().setVolume("BackgroundMusic", "BattleTheme2","displayAudio",0.3f);
         ctxManager.updateCtx();
         updateDynamicMenu();
         gameEngine = new GameEngine(ctx, root, engineLayerListener);
@@ -133,7 +132,6 @@ public class LevelController {
             inGameHud.hide();
 
             if (isPassLevel) { // 如果通过关卡，则显示下一关卡菜单，否则显示游戏结束菜单。
-                AudioManager.getInstance().setVolume("BackgroundMusic", "BattleTheme2","displayAudio",0.04f);
                 ctxManager.updateCoin(); // 更新玩家当前关卡获得的硬币数。
                 levelMenu.update();
                 levelMenu.show();

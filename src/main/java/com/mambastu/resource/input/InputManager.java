@@ -17,7 +17,7 @@ import com.mambastu.controller.listener.InputListener;
 import com.mambastu.enums.GameInput;
 import com.mambastu.resource.ResourceManager;
 
-public class InputManager implements ResourceManager{
+public class InputManager implements ResourceManager {
     private static final Logger logger = LogManager.getLogger(InputManager.class);
 
     private InputListener listener;
@@ -31,7 +31,7 @@ public class InputManager implements ResourceManager{
      */
     @Getter
     private final Set<GameInput> activeInputs;
-    private final ControllerManager gamepadControllers = new ControllerManager();
+    private final ControllerManager gamepadControllers = new ControllerManager(1, "gamecontrollerdb.txt");
     private ControllerState currState;
 
     private InputManager(Scene scene) {
@@ -82,29 +82,26 @@ public class InputManager implements ResourceManager{
             boolean isConnected = currState.isConnected;
             if (isConnected) {
                 leftJoystickInput(currState.leftStickX, currState.leftStickY);
-                buttonInput(currState.x, currState.a, currState.b, currState.y, currState.startJustPressed, currState.backJustPressed);
+                buttonInput(currState.x, currState.a, currState.b, currState.y, currState.startJustPressed,
+                        currState.backJustPressed);
                 triggerInput(currState.leftTrigger, currState.rightTrigger);
             }
         }
     }
 
     private void triggerInput(double leftTrigger, double rightTrigger) {
-        if (rightTrigger>0.5) {
+        if (rightTrigger > 0.5) {
             activeInputs.add(GameInput.FIRE);
-        }else{
+        } else {
             activeInputs.remove(GameInput.FIRE);
         }
-
-
     }
 
-    private void buttonInput(boolean x, boolean a, boolean b, boolean y, boolean start, boolean back) { // FIXME: 暂停键映射无法正常暂停
-        // if (start) {
-        //     listener.switchPausenResume();
-        // }
-        if(b){
+    private void buttonInput(boolean x, boolean a, boolean b, boolean y, boolean start, boolean back) { // FIXME:
+                                                                                                        // 暂停键映射无法正常暂停
+        if (b) {
             activeInputs.add(GameInput.SKILL);
-        }else{
+        } else {
             activeInputs.remove(GameInput.SKILL);
         }
     }
@@ -190,5 +187,9 @@ public class InputManager implements ResourceManager{
                     break;
             }
         }
+    }
+
+    public void disconnectDevice() {
+        gamepadControllers.quitSDLGamepad();
     }
 }

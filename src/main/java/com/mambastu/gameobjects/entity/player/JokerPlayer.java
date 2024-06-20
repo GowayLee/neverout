@@ -37,6 +37,7 @@ public class JokerPlayer extends BasePlayer {
         this.bornImage = ImageManager.getInstance().getImg("bornImage", "Player", "JokerPlayer");
         this.dieImage = ImageManager.getInstance().getImg("dieImage", "Player", "JokerPlayer");
         setImageSize(50, 50);
+        super.skillCD.set(5.0);
         this.damageRatio = 1.0;
         this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
         this.invincibleTimer.setOnFinished(e -> {

@@ -26,8 +26,8 @@
     },
     {
       "name": "SpeedBuff",
-      "description": "光速前往波兰(划掉)\nIncreases speed by 10%",
-      "buffValue": "0.10",
+      "description": "光速前往波兰(划掉)\nIncreases speed by 1.0 pts",
+      "buffValue": "1.0",
       "price": "10"
     },
     {

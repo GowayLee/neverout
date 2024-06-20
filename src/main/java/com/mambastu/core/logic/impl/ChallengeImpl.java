@@ -281,7 +281,8 @@ public class ChallengeImpl implements ModeLogic{
 
     private void stopMonsterGenTimer() {
         for (Timeline monsterEggTimer : monsterEggTimerList) {
-            monsterEggTimer.stop();
+            // monsterEggTimer.stop();
+            monsterEggTimer.pause(); // 暂停生成怪物的计时器，因为后续需要重新生成计时器，所以不能直接stop掉
         }
     }
 

@@ -13,6 +13,6 @@ public class SkillCDBuff extends BaseProp {
 
     @Override
     public void updateValue(BasePlayer player) {
-        player.getSkillCD().set(player.getSkillCD().get() * (buffValue + 1.0));
+        player.getSkillCD().set(player.getSkillCD().get() * (buffValue + 1.0) > 1.0 ? player.getSkillCD().get() * (buffValue + 1.0) : 1.0);
     }
 }

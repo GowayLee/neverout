@@ -42,12 +42,7 @@ public class BasakerPlayer extends BasePlayer {
         this.rageImage = ImageManager.getInstance().getImg("enragedImage", "Player", "Basaker");
         this.bloodImage = ImageManager.getInstance().getImg("bloodImage", "Player", "Basaker");
         setImageSize(50, 50);
-
-        this.invincibleTimer.setCycleCount(8); // 无敌帧循环8次
-        this.invincibleTimer.setOnFinished(e -> {
-            super.injuryState = InjuryState.NORMAL;
-        });
-
+        super.skillCD.set(9.0);
         // 初始化技能特效
         this.skillShadow = new ImageView();
         this.bloodImageView = new ImageView(bloodImage);
