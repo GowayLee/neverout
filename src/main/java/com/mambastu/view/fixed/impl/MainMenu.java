@@ -1,4 +1,4 @@
-package com.mambastu.view;
+package com.mambastu.view.fixed.impl;
 
 import com.mambastu.controller.context.dto.Context;
 import com.mambastu.controller.listener.MainMenuListener;
@@ -7,6 +7,7 @@ import com.mambastu.enums.gameobjects.PlayerTypes;
 import com.mambastu.resource.media.impl.AudioManager;
 import com.mambastu.resource.media.impl.ImageManager;
 import com.mambastu.utils.BetterMath;
+import com.mambastu.view.fixed.FixedMenu;
 
 import javafx.animation.Animation;
 import javafx.animation.ScaleTransition;
@@ -29,7 +30,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-public class MainMenu {
+public class MainMenu implements FixedMenu{
     private final MainMenuListener listener;
 
     private final StackPane root;
@@ -66,15 +67,18 @@ public class MainMenu {
         this.modeIntroPane = new Pane();
     }
 
+    @Override
     public void show() {
         root.getChildren().clear();
         root.getChildren().add(menuPane); // 确保菜单在游戏场景之上(StackPane的栈顶)
     }
 
+    @Override
     public void hide() {
         root.getChildren().remove(menuPane);
     }
 
+    @Override
     public void init() { // 初始化
         bindProperties();
         buildLayout();

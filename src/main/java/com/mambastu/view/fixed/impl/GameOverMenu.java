@@ -1,9 +1,10 @@
-package com.mambastu.view;
+package com.mambastu.view.fixed.impl;
 
 import com.mambastu.controller.context.dto.Context;
 import com.mambastu.controller.listener.GameOverMenuListener;
 import com.mambastu.resource.media.impl.ImageManager;
 import com.mambastu.utils.BetterMath;
+import com.mambastu.view.fixed.FixedMenu;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -17,7 +18,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
-public class GameOverMenu {
+public class GameOverMenu implements FixedMenu{
     private final GameOverMenuListener listener;
 
     private final StackPane root;
@@ -39,17 +40,20 @@ public class GameOverMenu {
         this.menuPane = new Pane();
     }
 
+    @Override
     public void init() { // 初始化
         bindProperties();
         buildLayout();
         menuPane.setStyle("-fx-background-color: white;");
     }
 
+    @Override
     public void show() {
         root.getChildren().remove(menuPane);
         root.getChildren().add(menuPane); // 确保菜单在游戏场景之上(StackPane的栈顶)
     }
 
+    @Override
     public void hide() {
         root.getChildren().remove(menuPane);
     }

@@ -1,6 +1,7 @@
-package com.mambastu.view;
+package com.mambastu.view.dynamic.impl;
 
 import com.mambastu.controller.context.dto.Context;
+import com.mambastu.view.dynamic.DynamicMenu;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -20,7 +21,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
-public class InGameHud {
+public class InGameHud implements DynamicMenu{
     private final StackPane root;
     private final Context ctx;
 
@@ -61,15 +62,18 @@ public class InGameHud {
         this.skillCDDot = new Circle(120, 120 , 15, Color.LIME);
     }
 
+    @Override
     public void init() { // 初始化
         bindProperties();
         buildLayout();
     }
 
+    @Override
     public void update() {
         bindProperties();
     }
 
+    @Override
     public void show() {
         root.getChildren().remove(menuPane);
         root.getChildren().add(menuPane); // 确保菜单在游戏场景之上(StackPane的栈顶)

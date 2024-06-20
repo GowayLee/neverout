@@ -7,7 +7,6 @@ import com.mambastu.enums.GameMode;
 import com.mambastu.enums.gameobjects.PlayerTypes;
 import com.mambastu.factories.PlayerFactory;
 import com.mambastu.gameobjects.entity.player.BasePlayer;
-import com.mambastu.gameobjects.weapon.M1900ShotGun;
 import com.mambastu.gameobjects.weapon.PeaShooter;
 
 import javafx.beans.property.SimpleObjectProperty;

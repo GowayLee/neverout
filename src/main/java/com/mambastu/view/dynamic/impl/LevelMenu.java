@@ -1,4 +1,4 @@
-package com.mambastu.view;
+package com.mambastu.view.dynamic.impl;
 
 import com.mambastu.controller.PropStoreController;
 import com.mambastu.controller.context.dto.Context;
@@ -6,6 +6,7 @@ import com.mambastu.controller.listener.LevelMenuListener;
 import com.mambastu.gameobjects.prop.BaseProp;
 import com.mambastu.gameobjects.weapon.BaseWeapon;
 import com.mambastu.resource.media.impl.ImageManager;
+import com.mambastu.view.dynamic.DynamicMenu;
 
 import javafx.animation.PauseTransition;
 import javafx.beans.binding.Bindings;
@@ -28,7 +29,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-public class LevelMenu {
+public class LevelMenu implements DynamicMenu{
     private final LevelMenuListener listener;
 
     private final StackPane root;
@@ -58,6 +59,7 @@ public class LevelMenu {
         this.dataLayout = new VBox();
     }
 
+    @Override
     public void init() { // 初始化
         updateShop();
         buildLayout();
@@ -65,6 +67,7 @@ public class LevelMenu {
         menuPane.setOpacity(0.85);
     }
 
+    @Override
     public void update() { // 更新菜单内容
         refreshCount.set(3);
         bindProperties();
@@ -73,11 +76,13 @@ public class LevelMenu {
         bulidDataLayout(); // 重建数据面板
     }
 
+    @Override
     public void show() {
         root.getChildren().remove(menuPane);
         root.getChildren().add(menuPane); // 确保菜单在游戏场景之上(StackPane的栈顶)
     }
 
+    @Override
     public void hide() {
         root.getChildren().remove(menuPane);
     }

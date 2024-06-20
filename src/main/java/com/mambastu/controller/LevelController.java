@@ -12,11 +12,11 @@ import com.mambastu.controller.listener.MainMenuListener;
 import com.mambastu.controller.listener.PauseMenuListener;
 import com.mambastu.core.GameEngine;
 import com.mambastu.resource.media.impl.AudioManager;
-import com.mambastu.view.GameOverMenu;
-import com.mambastu.view.InGameHud;
-import com.mambastu.view.LevelMenu;
-import com.mambastu.view.MainMenu;
-import com.mambastu.view.PauseMenu;
+import com.mambastu.view.dynamic.impl.InGameHud;
+import com.mambastu.view.dynamic.impl.LevelMenu;
+import com.mambastu.view.dynamic.impl.PauseMenu;
+import com.mambastu.view.fixed.impl.GameOverMenu;
+import com.mambastu.view.fixed.impl.MainMenu;
 
 import javafx.scene.layout.StackPane;
 
