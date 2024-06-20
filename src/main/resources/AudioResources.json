@@ -1,66 +1,66 @@
 {
   "BackgroundMusic": {
     "BattleTheme1": {
-      "displayAudio": "/Audio/Background_Fighting1.wav"
+      "displayAudio": "/static/sound/Background_Fighting1.wav"
     },
     "BattleTheme2": {
-      "displayAudio": "/Audio/Background_Fighting2.wav"
+      "displayAudio": "/static/sound/Background_Fighting2.wav"
     },
     "BattleTheme3": {
-      "displayAudio": "/Audio/Background_Fighting3.wav"
+      "displayAudio": "/static/sound/Background_Fighting3.wav"
     },
     "PassLevel": {
-      "displayAudio": "/Audio/Pass_Level.wav"
+      "displayAudio": "/static/sound/Pass_Level.wav"
     },
     "ReadyFight": {
-      "displayAudio": "/Audio/Ready_Fight.wav"
+      "displayAudio": "/static/sound/Ready_Fight.wav"
     },
     "GameOver": {
-      "displayAudio": "/Audio/Game_Over.wav"
+      "displayAudio": "/static/sound/Game_Over.wav"
     }
   },
   "SoundEffects": {
     "DingDong": {
-      "displayAudio": "/Audio/MainMenu_DingDong.wav"
+      "displayAudio": "/static/sound/MainMenu_DingDong.wav"
     },
     "Ding": {
-      "displayAudio": "/Audio/MainMenu_Ding.wav"
+      "displayAudio": "/static/sound/MainMenu_Ding.wav"
     },
     "FireNormal": {
-      "displayAudio": "/Audio/Fire_Normal.wav"
+      "displayAudio": "/static/sound/Fire_Normal.wav"
     },
     "FirePeaShooter": {
-      "displayAudio": "/Audio/PeaShooter_Fire.wav"
+      "displayAudio": "/static/sound/PeaShooter_Fire.wav"
     },
     "FireM1900ShotGun": {
-      "displayAudio": "/Audio/M1900ShotGunShoot.wav"
+      "displayAudio": "/static/sound/M1900ShotGunShoot.wav"
     },
     "GunReloading": {
-      "displayAudio": "/Audio/Gun_Reloading.wav"
+      "displayAudio": "/static/sound/Gun_Reloading.wav"
     },
     "StandardBulletHit": {
-      "displayAudio": "/Audio/StandardBullet_Hit.wav"
+      "displayAudio": "/static/sound/StandardBullet_Hit.wav"
     },
     "NailBulletHit": {
-      "displayAudio": "/Audio/NailBullet_Hit.wav"
+      "displayAudio": "/static/sound/NailBullet_Hit.wav"
     },
     "HitMonster": {
-      "displayAudio": "/Audio/Hit_Monster.wav"
+      "displayAudio": "/static/sound/Hit_Monster.wav"
     },
     "SkillJokerUp": {
-      "displayAudio": "/Audio/Joker_player_Skill_Blue.wav"
+      "displayAudio": "/static/sound/Joker_player_Skill_Blue.wav"
     },
     "SkillJokerDown": {
-      "displayAudio": "/Audio/Joker_Player_Skill_Red.WAV"
+      "displayAudio": "/static/sound/Joker_Player_Skill_Red.WAV"
     },
     "SkillLaugh": {
-      "displayAudio": "/Audio/Laugh_Player_Skill.wav"
+      "displayAudio": "/static/sound/Laugh_Player_Skill.wav"
     },
     "SkillBasaker": {
-      "displayAudio":"/Audio/Basaker_Player_Skill.WAV"
+      "displayAudio":"/static/sound/Basaker_Player_Skill.WAV"
     },
     "HellLordMonsterCurtain": {
-      "displayAudio": "/Audio/HellLordMonster_Curtain.wav"
+      "displayAudio": "/static/sound/HellLordMonster_Curtain.wav"
     }
   }
 }
