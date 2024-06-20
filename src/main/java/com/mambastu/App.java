@@ -1,8 +1,10 @@
 package com.mambastu;
 
-import com.mambastu.material.resource.ImgCache;
-import com.mambastu.util.AudioManager;
-import com.mambastu.util.GlobalVar;
+import com.mambastu.controller.LevelController;
+import com.mambastu.controller.PropStoreController;
+import com.mambastu.resource.input.InputManager;
+import com.mambastu.resource.media.impl.AudioManager;
+import com.mambastu.resource.media.impl.ImageManager;
 
 import javafx.application.Application;
 import javafx.scene.ImageCursor;
@@ -13,10 +15,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-import com.mambastu.controller.input.InputManager;
-import com.mambastu.controller.level.LevelController;
-import com.mambastu.material.resource.ResourceManager;
-import com.mambastu.util.PropStore;
+import com.mambastu.utils.GlobalVar;
 
 /**
  * JavaFX App
@@ -36,12 +35,12 @@ public class App extends Application {
         GlobalVar.getScreenWidthProperty().bind(scene.widthProperty());
         GlobalVar.getScreenHeightProperty().bind(scene.heightProperty());
 
-        ResourceManager.getInstance().loadResources(); // 初始化图片资源管理器，载入JSON
+        ImageManager.getInstance().loadResources(); // 初始化图片资源管理器，载入JSON
         AudioManager.getInstance().loadResources(); // 初始化音频资源管理器，载入JSON
-        PropStore.getInstance().loadResources(); // 初始化道具存储器，载入JSON
+        PropStoreController.getInstance().loadResources(); // 初始化道具存储器，载入JSON
         InputManager.init(scene); // 初始化输入管理器
 
-        Image cursorImage = ResourceManager.getInstance().getImg("cursorImage", "System", "MainMenu"); // 载入光标图片，并设置为鼠标光标
+        Image cursorImage = ImageManager.getInstance().getImg("cursorImage", "System", "MainMenu"); // 载入光标图片，并设置为鼠标光标
         ImageCursor customCursor = new ImageCursor(cursorImage, 4, 8);
         scene.setCursor(customCursor);
 
@@ -50,7 +49,7 @@ public class App extends Application {
 
         stage.setScene(scene);
         stage.setTitle("Never Out");
-        stage.getIcons().add(ImgCache.getImage("/static/image/char/LaughPlayer.png"));
+        stage.getIcons().add(ImageManager.getInstance().getImg("bornImage", "Player", "LaughPlayer"));
         stage.show();
     }
 

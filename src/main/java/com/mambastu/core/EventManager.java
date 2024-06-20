@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.mambastu.annotation.EventInfo;
 import com.mambastu.core.event.BaseEvent;
-import com.mambastu.core.handler.EventHandler;
+import com.mambastu.core.event.handler.EventHandler;
 import com.mambastu.enums.EventType;
 
 public class EventManager {
@@ -52,7 +52,7 @@ public class EventManager {
     }
 
     private <T extends BaseEvent> void loadHandlerForEvent(Class<T> event, EventType eventType) {
-        String handlerClassName = "com.mambastu.core.handler." + event.getSimpleName() + "Handler";
+        String handlerClassName = "com.mambastu.core.event.handler.impl." + event.getSimpleName() + "Handler";
         try {
             Class<?> handlerClass = Class.forName(handlerClassName);
             @SuppressWarnings("unchecked")

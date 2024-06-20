@@ -1,6 +1,8 @@
 package com.mambastu.factories;
 
-import com.mambastu.material.pojo.entity.player.*;
+import com.mambastu.enums.gameobjects.PlayerTypes;
+import com.mambastu.gameobjects.entity.player.*;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

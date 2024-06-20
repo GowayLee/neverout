@@ -2,8 +2,8 @@ package com.mambastu.core.event;
 
 import com.mambastu.annotation.EventInfo;
 import com.mambastu.enums.EventType;
-import com.mambastu.material.pojo.entity.bullet.BaseBullet;
-import com.mambastu.material.pojo.entity.monster.BaseMonster;
+import com.mambastu.gameobjects.entity.bullet.BaseBullet;
+import com.mambastu.gameobjects.entity.monster.BaseMonster;
 
 import lombok.Getter;
 

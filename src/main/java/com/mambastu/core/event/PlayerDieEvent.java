@@ -2,7 +2,7 @@ package com.mambastu.core.event;
 
 import com.mambastu.annotation.EventInfo;
 import com.mambastu.enums.EventType;
-import com.mambastu.material.pojo.entity.player.BasePlayer;
+import com.mambastu.gameobjects.entity.player.BasePlayer;
 
 import lombok.Getter;
 

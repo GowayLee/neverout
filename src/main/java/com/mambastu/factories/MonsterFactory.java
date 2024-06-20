@@ -1,11 +1,12 @@
 package com.mambastu.factories;
 
-import com.mambastu.material.pojo.entity.monster.*;
+import com.mambastu.enums.gameobjects.MonsterTypes;
+import com.mambastu.gameobjects.entity.monster.*;
+import com.mambastu.utils.pool.ObjectPool;
+import com.mambastu.utils.pool.ObjectPoolManager;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.mambastu.material.pools.ObjectPool;
-import com.mambastu.material.pools.ObjectPoolManager;
 
 public class MonsterFactory implements EntityFactory<BaseMonster, MonsterTypes> {
     private static final Logger logger = LogManager.getLogger(MonsterFactory.class);

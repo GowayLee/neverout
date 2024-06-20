@@ -5,15 +5,15 @@ import java.util.LinkedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mambastu.controller.level.context.dto.Context;
-import com.mambastu.listener.EngineLayerListener;
-import com.mambastu.listener.LogicLayerListener;
-import com.mambastu.material.pojo.bound.ScreenBound;
-import com.mambastu.material.pojo.entity.barrier.BaseBarrier;
-import com.mambastu.material.pojo.entity.bullet.BaseBullet;
-import com.mambastu.material.pojo.entity.monster.BaseMonster;
-import com.mambastu.material.pojo.entity.player.BasePlayer;
-import com.mambastu.util.GlobalVar;
+import com.mambastu.controller.context.dto.Context;
+import com.mambastu.controller.listener.EngineLayerListener;
+import com.mambastu.controller.listener.LogicLayerListener;
+import com.mambastu.gameobjects.bound.ScreenBound;
+import com.mambastu.gameobjects.entity.barrier.BaseBarrier;
+import com.mambastu.gameobjects.entity.bullet.BaseBullet;
+import com.mambastu.gameobjects.entity.monster.BaseMonster;
+import com.mambastu.gameobjects.entity.player.BasePlayer;
+import com.mambastu.utils.GlobalVar;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.layout.Pane;

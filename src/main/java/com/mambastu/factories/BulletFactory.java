@@ -3,12 +3,12 @@ package com.mambastu.factories;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mambastu.material.pojo.entity.bullet.BaseBullet;
-import com.mambastu.material.pojo.entity.bullet.BulletType;
-import com.mambastu.material.pojo.entity.bullet.NailBullet;
-import com.mambastu.material.pojo.entity.bullet.StandardBullet;
-import com.mambastu.material.pools.ObjectPool;
-import com.mambastu.material.pools.ObjectPoolManager;
+import com.mambastu.enums.gameobjects.BulletType;
+import com.mambastu.gameobjects.entity.bullet.BaseBullet;
+import com.mambastu.gameobjects.entity.bullet.NailBullet;
+import com.mambastu.gameobjects.entity.bullet.StandardBullet;
+import com.mambastu.utils.pool.ObjectPool;
+import com.mambastu.utils.pool.ObjectPoolManager;
 
 public class BulletFactory implements EntityFactory<BaseBullet, BulletType>{
     private static final Logger logger = LogManager.getLogger(BulletFactory.class);
