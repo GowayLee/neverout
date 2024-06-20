@@ -23,6 +23,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
@@ -41,7 +42,8 @@ public class MainMenu implements FixedMenu{
 
     private final Pane menuPane;
     private final Group facePane;
-    private final Group btnPane;
+    private final Group startBtnPane;
+    private final Group helpBtnPane;
     private final HBox charPane; // 角色面板，用于显示角色选择界面
     private final Pane charIntroPane; // 介绍面板，用于显示角色介绍界面
     private final HBox modePane; // 模式面板，用于显示游戏模式选择界面
@@ -51,6 +53,13 @@ public class MainMenu implements FixedMenu{
     private Node charTemp = new Pane();
     private boolean isCharIntroPinned = false;
     private boolean isModeIntroPinned = false;
+    private int currentIndex = 0;
+    private ImageView imageView = new ImageView();
+    private Image[] images = {
+        ImageManager.getInstance().getImg("helpKeyBoardImage", "System", "MainMenu"),
+        ImageManager.getInstance().getImg("helpGamePadImage", "System", "MainMenu")
+    };
+    HBox progressDots = new HBox(8);
 
     public MainMenu(StackPane root, Context ctx, MainMenuListener listener) {
         this.root = root;
@@ -60,7 +69,8 @@ public class MainMenu implements FixedMenu{
         this.playerType = new SimpleObjectProperty<>(PlayerTypes.JokerPlayer);
         this.menuPane = new Pane();
         this.facePane = new Group();
-        this.btnPane = new Group();
+        this.startBtnPane = new Group();
+        this.helpBtnPane = new Group();
         this.charPane = new HBox();
         this.charIntroPane = new Pane();
         this.modePane = new HBox();
@@ -94,10 +104,12 @@ public class MainMenu implements FixedMenu{
         menuPane.getChildren().clear();
         
         buildFaceLayout();
-        buildBtnLayout();
+        buildStartBtnLayout();
+        buildHelpBtnLayout();
         buildCharLayout();
         bulidGameModeLayout();
-        menuPane.getChildren().addAll(facePane, btnPane, charPane, charIntroPane, modePane, modeIntroPane);
+
+        menuPane.getChildren().addAll(facePane, startBtnPane, helpBtnPane, charPane, charIntroPane, modePane, modeIntroPane);
     }
 
     private void bulidGameModeLayout() {
@@ -312,8 +324,8 @@ public class MainMenu implements FixedMenu{
         st.play();
     }
 
-    private void buildBtnLayout() {
-        btnPane.getChildren().clear();
+    private void buildStartBtnLayout() {
+        startBtnPane.getChildren().clear();
 
         ImageView circleView = new ImageView(ImageManager.getInstance().getImg("circleImage", "System", "MainMenu"));
         circleView.setFitWidth(600);
@@ -341,11 +353,87 @@ public class MainMenu implements FixedMenu{
             listener.startGame();
         });
 
-        btnPane.getChildren().addAll(circleView, startBtn);
+        startBtnPane.getChildren().addAll(circleView, startBtn);
 
-        btnPane.setLayoutX(70);
-        btnPane.layoutYProperty()
-                .bind(root.heightProperty().subtract(btnPane.layoutBoundsProperty().get().getHeight()).multiply(0.68));
+        startBtnPane.setLayoutX(70);
+        startBtnPane.layoutYProperty()
+                .bind(root.heightProperty().subtract(startBtnPane.layoutBoundsProperty().get().getHeight()).multiply(0.68));
+    }
+
+    private void buildHelpBtnLayout() {
+        helpBtnPane.getChildren().clear();
+
+        ImageView circleView = new ImageView(ImageManager.getInstance().getImg("circleImage", "System", "MainMenu"));
+        circleView.setFitWidth(600);
+        circleView.setFitHeight(120);
+        circleView.setLayoutX(0);
+        circleView.setLayoutY(0);
+        circleView.setVisible(false);
+
+        Text helpBtn = new Text("HELP");
+        helpBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 80));
+        helpBtn.setFill(Color.BLACK);
+        helpBtn.setOpacity(0.8);
+        helpBtn.setLayoutX(135);
+        helpBtn.setLayoutY(85);
+
+        helpBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+            circleView.setVisible(true); // 显示圆圈
+        });
+
+        helpBtn.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+            circleView.setVisible(false);
+        });
+
+        helpBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            showHelpImageLayer();
+        });
+
+        helpBtnPane.getChildren().addAll(circleView, helpBtn);
+
+        helpBtnPane.layoutXProperty()
+                .bind(root.widthProperty().subtract(helpBtnPane.layoutBoundsProperty().get().getWidth()).multiply(0.78));
+        helpBtnPane.layoutYProperty()
+                .bind(root.heightProperty().subtract(helpBtnPane.layoutBoundsProperty().get().getHeight()).multiply(0.9));
+    }
+
+    private void showHelpImageLayer() {
+        StackPane imageLayer = new StackPane();
+        imageLayer.setStyle("-fx-background-color: rgba(255, 255, 255, 0.6);");
+        imageLayer.setAlignment(Pos.CENTER);
+        imageLayer.setOnMouseClicked(event -> root.getChildren().remove(imageLayer));
+
+        imageView.setImage(images[currentIndex]);
+        imageView.setOnMouseClicked(event -> {
+            event.consume(); // 消耗事件以防止触发父层的关闭事件
+            currentIndex = (currentIndex + 1) % images.length;
+            imageView.setImage(images[currentIndex]);
+            updateProgressDots(); // 更新进度点
+        });
+        imageView.setFitHeight(648);
+        imageView.setFitWidth(1152);
+
+        progressDots.setAlignment(Pos.CENTER);
+        updateProgressDots();
+
+        VBox vbox = new VBox(10, imageView, progressDots);
+        vbox.setAlignment(Pos.CENTER);
+        imageLayer.getChildren().add(vbox);
+
+        root.getChildren().add(imageLayer);
+    }
+
+    private void updateProgressDots() {
+        progressDots.getChildren().clear();
+        for (int i = 0; i < images.length; i++) {
+            Circle dot = new Circle(6);
+            if (i == currentIndex) {
+                dot.setFill(Color.ROYALBLUE);
+            } else {
+                dot.setFill(Color.GAINSBORO);
+            }
+            progressDots.getChildren().add(dot);
+        }
     }
 
     private void buildFaceLayout() {

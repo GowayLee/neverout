@@ -20,9 +20,9 @@ import com.mambastu.resource.ResourceManager;
 public class InputManager implements ResourceManager {
     private static final Logger logger = LogManager.getLogger(InputManager.class);
 
-    private InputListener listener;
+    private static InputManager INSTANCE = new InputManager();
 
-    private static InputManager INSTANCE;
+    private InputListener listener;
 
     /*
      * 使用两套输入判定系统：
@@ -31,12 +31,12 @@ public class InputManager implements ResourceManager {
      */
     @Getter
     private final Set<GameInput> activeInputs;
+    private Thread gamePadThread;
     private final ControllerManager gamepadControllers = new ControllerManager(1, "gamecontrollerdb.txt");
     private ControllerState currState;
 
-    private InputManager(Scene scene) {
+    private InputManager() {
         activeInputs = new HashSet<>();
-        initialize(scene);
     }
 
     public static InputManager getInstance() {
@@ -47,23 +47,15 @@ public class InputManager implements ResourceManager {
         return INSTANCE;
     }
 
-    public static void init(Scene scene) {
-        if (INSTANCE == null) { // 初始化
-            INSTANCE = new InputManager(scene);
-        } else { // 重复初始化
-            logger.error("InputManager is already initialized.");
-            throw new IllegalStateException("InputManager is already initialized.");
-        }
-    }
-
     public void addListener(InputListener listener) {
         this.listener = listener; // 添加侦听器
     }
 
-    public void initialize(Scene scene) {
+    public void init(Scene scene) {
         handleKeyboardInput(scene);
         gamepadControllers.initSDLGamepad();
-        new Thread(this::updateGamepadInput).start();// 手柄
+        gamePadThread = new Thread(this::updateGamepadInput);
+        gamePadThread.start(); // 启动游戏手柄线程
     }
 
     private void handleKeyboardInput(Scene scene) { // 映射键盘输入
@@ -189,7 +181,9 @@ public class InputManager implements ResourceManager {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void disconnectDevice() {
+        gamePadThread.stop(); // 中断GamePadThread线程，释放资源
         gamepadControllers.quitSDLGamepad();
     }
 }

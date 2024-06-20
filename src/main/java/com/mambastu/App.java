@@ -25,7 +25,7 @@ public class App extends Application {
     private static Scene scene;
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage primaryStage) throws IOException {
 
         StackPane root = new StackPane();
         scene = new Scene(root, 1920, 1080);
@@ -38,7 +38,7 @@ public class App extends Application {
         ImageManager.getInstance().loadResources(); // 初始化图片资源管理器，载入JSON
         AudioManager.getInstance().loadResources(); // 初始化音频资源管理器，载入JSON
         PropStoreController.getInstance().loadResources(); // 初始化道具存储器，载入JSON
-        InputManager.init(scene); // 初始化输入管理器
+        InputManager.getInstance().init(scene); // 初始化输入管理器
 
         Image cursorImage = ImageManager.getInstance().getImg("cursorImage", "System", "MainMenu"); // 载入光标图片，并设置为鼠标光标
         ImageCursor customCursor = new ImageCursor(cursorImage, 4, 8);
@@ -47,10 +47,15 @@ public class App extends Application {
         LevelController controller = new LevelController(root);
         controller.showMainMenu();
 
-        stage.setScene(scene);
-        stage.setTitle("Never Out");
-        stage.getIcons().add(ImageManager.getInstance().getImg("bornImage", "Player", "LaughPlayer"));
-        stage.show();
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Never Out");
+        primaryStage.getIcons().add(ImageManager.getInstance().getImg("bornImage", "Player", "LaughPlayer"));
+        primaryStage.show();
+    }
+
+    @Override
+    public void stop() {
+        InputManager.getInstance().disconnectDevice();
     }
 
     public static void main(String[] args) {
