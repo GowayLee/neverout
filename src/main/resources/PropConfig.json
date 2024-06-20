@@ -21,7 +21,7 @@
     {
       "name": "SkillCDBuff",
       "description": "急急急急急急等不了一点\nReduces skill CD by 20%",
-      "buffValue": "0.8",
+      "buffValue": "-0.2",
       "price": "20"
     },
     {

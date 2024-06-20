@@ -1,11 +1,11 @@
-package com.mambastu.core.logic;
+package com.mambastu.core;
 
 import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.controller.level.context.enums.GameMode;
-import com.mambastu.core.engine.GameEngine.EngineProps;
-import com.mambastu.core.logic.comp.ChallengeImpl;
-import com.mambastu.core.logic.comp.ModeLogic;
-import com.mambastu.core.logic.comp.NormalImpl;
+import com.mambastu.core.GameEngine.EngineProps;
+import com.mambastu.core.logic.ChallengeImpl;
+import com.mambastu.core.logic.ModeLogic;
+import com.mambastu.core.logic.NormalImpl;
 import com.mambastu.listener.LogicLayerListener;
 
 public class LogicManager { // TODO: 尝试单例模式

@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.controller.level.context.manager.ContextManager;
-import com.mambastu.core.engine.GameEngine;
+import com.mambastu.core.GameEngine;
 import com.mambastu.listener.EngineLayerListener;
 import com.mambastu.listener.GameOverMenuListener;
 import com.mambastu.listener.LevelMenuListener;

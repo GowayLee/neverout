@@ -1,4 +1,4 @@
-package com.mambastu.core.engine;
+package com.mambastu.core;
 
 import java.util.LinkedList;
 
@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mambastu.controller.level.context.dto.Context;
-import com.mambastu.core.logic.LogicManager;
 import com.mambastu.listener.EngineLayerListener;
 import com.mambastu.listener.LogicLayerListener;
 import com.mambastu.material.pojo.bound.ScreenBound;

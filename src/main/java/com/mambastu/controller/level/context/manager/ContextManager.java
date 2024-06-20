@@ -22,8 +22,8 @@ public class ContextManager {
     }
 
     private void initFirstCtx() { // 进入第一关前初始化关卡上下文信息，包括关卡参数、关卡记录等。
-        modeCtxLogic.initLevelConfig();
         ctx.initPlayer();
+        modeCtxLogic.initLevelConfig();
         ctx.initLevelRecord();
         ctx.initGlobalRecord();
     }

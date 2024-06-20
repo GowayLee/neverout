@@ -1,4 +1,4 @@
-package com.mambastu.core.logic.comp;
+package com.mambastu.core.logic;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,12 +9,12 @@ import java.util.Set;
 import com.mambastu.controller.input.InputManager;
 import com.mambastu.controller.level.context.dto.Context;
 import com.mambastu.controller.level.context.dto.config.LevelConfig.MonsterEgg;
-import com.mambastu.core.engine.GameEngine.EngineProps;
-import com.mambastu.core.event.EventManager;
-import com.mambastu.core.event.comp.event.BulletHitMonsterEvent;
-import com.mambastu.core.event.comp.event.CollisionEvent;
-import com.mambastu.core.event.comp.event.MonsterDieEvent;
-import com.mambastu.core.event.comp.event.PlayerDieEvent;
+import com.mambastu.core.EventManager;
+import com.mambastu.core.GameEngine.EngineProps;
+import com.mambastu.core.event.BulletHitMonsterEvent;
+import com.mambastu.core.event.MonsterDieEvent;
+import com.mambastu.core.event.MonsterHitPlayerEvent;
+import com.mambastu.core.event.PlayerDieEvent;
 import com.mambastu.factories.BulletFactory;
 import com.mambastu.factories.MonsterFactory;
 import com.mambastu.listener.InputListener;
@@ -174,7 +174,7 @@ public class ChallengeImpl implements ModeLogic{
     private void checkMonsterHitPlayer() {
         for (BaseMonster monster : monsterList) {
             if (player.getBound().collisionState(monster.getBound()) == CollisionState.TRUE) { // 触发事件
-                CollisionEvent event = CollisionEvent.getInstance();
+                MonsterHitPlayerEvent event = MonsterHitPlayerEvent.getInstance();
                 event.setProperty(player, monster);
                 EventManager.getInstance().fireEvent(event);
                 checkIsGameFail();

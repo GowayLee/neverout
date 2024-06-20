@@ -1,10 +1,13 @@
-package com.mambastu.core.event.comp.event;
+package com.mambastu.core.event;
 
+import com.mambastu.annotation.EventInfo;
+import com.mambastu.enums.EventType;
 import com.mambastu.material.pojo.entity.bullet.BaseBullet;
 import com.mambastu.material.pojo.entity.monster.BaseMonster;
 
 import lombok.Getter;
 
+@EventInfo(type = EventType.BulletHitMonster)
 public class BulletHitMonsterEvent extends BaseEvent {
     private final static BulletHitMonsterEvent INSTANCE = new BulletHitMonsterEvent();
 
@@ -18,9 +21,7 @@ public class BulletHitMonsterEvent extends BaseEvent {
         return INSTANCE;
     }
 
-    public BulletHitMonsterEvent() {
-
-        super("BulletHitMonsterEvent");
+    private BulletHitMonsterEvent() {
     }
 
     public void setProperty(BaseBullet bullet, BaseMonster monster) {

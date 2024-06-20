@@ -1,4 +1,4 @@
-package com.mambastu.core.logic.comp;
+package com.mambastu.core.logic;
 
 public interface ModeLogic {
     /*

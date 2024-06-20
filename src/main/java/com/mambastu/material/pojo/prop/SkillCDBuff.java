@@ -8,7 +8,7 @@ public class SkillCDBuff extends BaseProp {
     public SkillCDBuff() {
         this.displayImage = ResourceManager.getInstance().getImg("displayImage", "Prop", "SkillCDBuff");
         this.price = 10;
-        this.buffValue = -0.8;
+        this.buffValue = -0.2;
     }
 
     @Override
