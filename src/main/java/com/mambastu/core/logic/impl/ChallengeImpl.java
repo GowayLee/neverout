@@ -11,7 +11,7 @@ import com.mambastu.controller.context.dto.config.LevelConfig.MonsterEgg;
 import com.mambastu.controller.listener.InputListener;
 import com.mambastu.controller.listener.LogicLayerListener;
 import com.mambastu.core.EventManager;
-import com.mambastu.core.GameEngine.EngineProps;
+import com.mambastu.core.GameEngine.GameRegistry;
 import com.mambastu.core.event.BulletHitMonsterEvent;
 import com.mambastu.core.event.MonsterDieEvent;
 import com.mambastu.core.event.MonsterHitPlayerEvent;
@@ -55,17 +55,17 @@ public class ChallengeImpl implements ModeLogic{
 
     // ================================= Init Section =================================
 
-    public ChallengeImpl(EngineProps engineProps, LogicLayerListener listener) {
+    public ChallengeImpl(GameRegistry gameRegistry, LogicLayerListener listener) {
         this.listener = listener;
         this.inputListener = new InputHandler();
-        this.ctx = engineProps.getCtx();
-        this.player = engineProps.getPlayer();
+        this.ctx = gameRegistry.getCtx();
+        this.player = gameRegistry.getPlayer();
         this.countDownTimer = new Timeline();
         this.monsterEggTimerList = new ArrayList<>();
-        this.monsterList = engineProps.getMonsterList();
-        this.bulletList = engineProps.getBulletList();
-        this.barrierList = engineProps.getBarrierList();
-        this.gamePane = engineProps.getGamePane();
+        this.monsterList = gameRegistry.getMonsterList();
+        this.bulletList = gameRegistry.getBulletList();
+        this.barrierList = gameRegistry.getBarrierList();
+        this.gamePane = gameRegistry.getGamePane();
         InputManager.getInstance().addListener(inputListener);
     }
 

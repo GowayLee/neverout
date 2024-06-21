@@ -31,7 +31,7 @@ public class GameEngine {
     private final LogicManager logicManager;
 
     private final StackPane root;
-    private final EngineProps engineProps;
+    private final GameRegistry gameRegistry;
     private AnimationTimer timer;
 
     /**
@@ -40,7 +40,7 @@ public class GameEngine {
      */
     @Getter
     @Setter
-    public class EngineProps { // 成员内部类 引擎属性将贯穿引擎层与逻辑层
+    public class GameRegistry { // 成员内部类 引擎属性将贯穿引擎层与逻辑层
         private final Context ctx;
 
         private final Pane gamePane;
@@ -50,7 +50,7 @@ public class GameEngine {
         private final LinkedList<BaseBullet> bulletList;
         private final LinkedList<BaseBarrier> barrierList;
 
-        public EngineProps(Context ctx) {
+        public GameRegistry(Context ctx) {
             this.ctx = ctx; // 引擎配置参数
             this.gamePane = new Pane();
             ScreenBound.init(gamePane); // 初始化游戏画布边界
@@ -67,8 +67,8 @@ public class GameEngine {
         this.listener = listener;
         this.logicLayerHandler = new LogicLayerHandler();
         this.root = root;
-        this.engineProps = new EngineProps(ctx);
-        this.logicManager = new LogicManager(engineProps, logicLayerHandler); // 传递引擎参数初始化逻辑管理器
+        this.gameRegistry = new GameRegistry(ctx);
+        this.logicManager = new LogicManager(gameRegistry, logicLayerHandler); // 传递引擎参数初始化逻辑管理器
         logger.info("Game Engine successfully initialized!");
     }
 
@@ -95,14 +95,14 @@ public class GameEngine {
 
     // ================================= Control Section =================================
     public void showGamePane() { // 显示游戏画布
-        Pane gamePane = engineProps.getGamePane();
+        Pane gamePane = gameRegistry.getGamePane();
         GlobalVar.setGamePane(gamePane);
         root.getChildren().remove(gamePane);
         root.getChildren().add(gamePane); // 将游戏画布节点压入StackPane
     }
 
     public void hideGamePane() { // 隐藏游戏画布
-        root.getChildren().remove(engineProps.getGamePane());
+        root.getChildren().remove(gameRegistry.getGamePane());
     }
 
     public void pauseThisEngine() { // 暂停引擎

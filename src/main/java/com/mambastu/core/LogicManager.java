@@ -2,7 +2,7 @@ package com.mambastu.core;
 
 import com.mambastu.controller.context.dto.Context;
 import com.mambastu.controller.listener.LogicLayerListener;
-import com.mambastu.core.GameEngine.EngineProps;
+import com.mambastu.core.GameEngine.GameRegistry;
 import com.mambastu.core.logic.ModeLogic;
 import com.mambastu.core.logic.impl.ChallengeImpl;
 import com.mambastu.core.logic.impl.NormalImpl;
@@ -10,15 +10,15 @@ import com.mambastu.enums.GameMode;
 
 public class LogicManager {
     private final Context ctx;
-    private final EngineProps engineProps;
+    private final GameRegistry gameRegistry;
     private final LogicLayerListener listener;
 
     private ModeLogic logiModule; // 游戏模式逻辑策略
 
-    public LogicManager(EngineProps engineProps, LogicLayerListener listener) { // 初始化逻辑管理器并选择具体模式逻辑策略实现
+    public LogicManager(GameRegistry gameRegistry, LogicLayerListener listener) { // 初始化逻辑管理器并选择具体模式逻辑策略实现
         this.listener = listener;
-        this.engineProps = engineProps;
-        this.ctx = engineProps.getCtx();
+        this.gameRegistry = gameRegistry;
+        this.ctx = gameRegistry.getCtx();
         pickLogiImpl(ctx.getGameMode().get());
     }
 
@@ -31,10 +31,10 @@ public class LogicManager {
     private void pickLogiImpl(GameMode gameMode) {
         switch (gameMode) {
             case NORMAL:
-                logiModule = new NormalImpl(engineProps, listener);
+                logiModule = new NormalImpl(gameRegistry, listener);
                 break;
             case CHALLENGE:
-                logiModule = new ChallengeImpl(engineProps, listener);
+                logiModule = new ChallengeImpl(gameRegistry, listener);
                 break;
             default:
                 break;

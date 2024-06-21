@@ -57,9 +57,9 @@ public class InGameHud implements DynamicMenu{
         this.skillCDprogress = new SimpleDoubleProperty(1.0);
         this.skillCDTimer = new Timeline();
         this.skillCDTimer.setCycleCount(1);
-        this.fireCDarc = new Arc(50, 120, 15, 15, 45, 0);
-        this.skillCDarc = new Arc(50, 120, 25, 25, 225, 0);
-        this.skillCDDot = new Circle(120, 120 , 15, Color.LIME);
+        this.fireCDarc = new Arc(60, 130, 20, 20, 45, 0);
+        this.skillCDarc = new Arc(60, 130, 30, 30, 225, 0);
+        this.skillCDDot = new Circle(130, 130 , 15, Color.LIME);
     }
 
     @Override
