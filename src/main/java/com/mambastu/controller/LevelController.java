@@ -64,13 +64,13 @@ public class LevelController {
         initDynamicMenu();
     }
 
-    private void updateDynamicMenu() { // 更新动态资源ctx, 动态菜单，如游戏内HUD、暂停菜单等，这些菜单需要根据关卡配置信息来显示不同的内容。
+    private void updateDynamicMenu() { // 更新动态资源ctx, 动态菜单，这些菜单需要根据关卡配置信息来显示不同的内容。
         pauseMenu.update();
         inGameHud.update();
         levelMenu.update();
     }
 
-    private void initDynamicMenu() { // 初始化动态菜单，如游戏内HUD、暂停菜单等，这些菜单需要根据关卡配置信息来显示不同的内容。
+    private void initDynamicMenu() { // 初始化动态菜单
         pauseMenu.init();
         inGameHud.init();
         levelMenu.init();
@@ -89,11 +89,17 @@ public class LevelController {
         gameOverMenu.show();
     }
 
+    /**
+     * Start the first level of the game.
+     * Initialize all dynamic resource such as Context and context manager.
+     * Need to initialize the engine layer, start the level logic, and show the in-game HUD.
+     * 
+     */
     private void startFirstLevel() { // 初始化引擎层, 开始关卡逻辑
-        AudioManager.getInstance().loopAudio("BackgroundMusic", "BattleTheme2","displayAudio");
-        AudioManager.getInstance().setVolume("BackgroundMusic", "BattleTheme2","displayAudio",0.3f);
         AudioManager.getInstance().playAudio("BackgroundMusic", "ReadyFight","displayAudio");
         AudioManager.getInstance().setVolume("BackgroundMusic", "ReadyFight","displayAudio",0.3f);
+        AudioManager.getInstance().loopAudio("BackgroundMusic", "BattleTheme2","displayAudio");
+        AudioManager.getInstance().setVolume("BackgroundMusic", "BattleTheme2","displayAudio",0.3f);
 
         initDynamicResource();
         gameEngine = new GameEngine(ctx, root, engineLayerListener);
@@ -102,8 +108,12 @@ public class LevelController {
         inGameHud.show();
     }
 
-    private void startNextLevel() { // 生成新的LevelConfig与LevelRecord, 初始化引擎层,
-        // 开始关卡逻辑，与startFirstLevel类似，但需要从上下文中获取关卡信息，并更新上下文中的关卡记录信息。
+    /**
+     * Start the next level of the game.
+     * Update all dynamic resource
+     * Need to initialize the engine layer, start the level logic, and show the in-game HUD.
+     */
+    private void startNextLevel() { // 开始下一关逻辑，与startFirstLevel类似，但需要从上下文中获取关卡信息，并更新上下文中的关卡记录信息。
         ctxManager.updateCtx();
         updateDynamicMenu();
         gameEngine = new GameEngine(ctx, root, engineLayerListener);
@@ -135,13 +145,13 @@ public class LevelController {
                 ctxManager.updateCoin(); // 更新玩家当前关卡获得的硬币数。
                 levelMenu.update();
                 levelMenu.show();
-                logger.error("LevelManager: Level is past.");
+                logger.info("LevelManager: Level is past.");
             } else {
                 AudioManager.getInstance().stopAudio("BackgroundMusic", "BattleTheme2","displayAudio");
                 AudioManager.getInstance().playAudio("BackgroundMusic", "GameOver","displayAudio");
                 ctxManager.recordBeforeOver();
                 showGameOverMenu();
-                logger.error("LevelManager: Game is over.");
+                logger.info("LevelManager: Game is over.");
             }
         }
     }

@@ -3,12 +3,17 @@ package com.mambastu.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.mambastu.annotation.EventInfo;
 import com.mambastu.core.event.BaseEvent;
 import com.mambastu.core.event.handler.EventHandler;
 import com.mambastu.enums.EventType;
 
 public class EventManager {
+    private static final Logger logger = LogManager.getLogger(EventManager.class); // 初始化日志记录器，用于记录程序运行过程中的日志信息
+
     private static EventManager INSTANCE = new EventManager();
 
     private final Map<EventType, EventHandler<? extends BaseEvent>> handlerMap = new HashMap<>();
@@ -22,6 +27,7 @@ public class EventManager {
 
     public <T extends BaseEvent> void register(EventType eventType, EventHandler<T> handler) {
         handlerMap.put(eventType, handler);
+        logger.info("Register event: " + eventType);
     }
 
     public <T extends BaseEvent> void unregister(EventType eventType, EventHandler<T> handler) {

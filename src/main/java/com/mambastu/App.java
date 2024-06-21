@@ -41,7 +41,7 @@ public class App extends Application {
         PropStoreController.getInstance().loadResources(); // 初始化道具存储器，载入JSON
         InputManager.getInstance().init(scene); // 初始化输入管理器
 
-        Image cursorImage = ImageManager.getInstance().getImg("cursorImage", "System", "MainMenu"); // 载入光标图片，并设置为鼠标光标
+        Image cursorImage = ImageManager.getInstance().getImg("cursorImage", "System", "MainMenu"); // Using comstimized image as the cursor
         ImageCursor customCursor = new ImageCursor(cursorImage, 4, 8);
         scene.setCursor(customCursor);
 
@@ -57,6 +57,8 @@ public class App extends Application {
     @Override
     public void stop() {
         InputManager.getInstance().disconnectDevice();
+        ImageManager.getInstance().clearCache(); // 清理图片缓存，释放内存
+        AudioManager.getInstance().clearCache(); // 清理音频缓存，释放内存
         Platform.exit();
         System.exit(0);
     }

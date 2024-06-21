@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ImageManager implements MediaResourceManager{
+public class ImageManager implements MediaResourceManager {
     private static final Logger logger = LogManager.getLogger(AudioManager.class);
 
     private static ImageManager INSTANCE = new ImageManager();
@@ -31,6 +31,10 @@ public class ImageManager implements MediaResourceManager{
         this.imageCache = new HashMap<>();
     }
 
+    /**
+     * Load local image resource list from a static JSON file.
+     * 
+     */
     @Override
     public void loadResources() {
         String JsonUrl = "ImgResources.json";
@@ -46,7 +50,7 @@ public class ImageManager implements MediaResourceManager{
     }
 
     /**
-     * 传入 JSON 中的所有父节点，从而查询到url
+     * Import all parent nodes from JSON and parse URL string
      * caseType 为想要的图片key，path 从左到右为：父节点1，父节点2，父节点3...
      *
      * @param caseType
@@ -58,18 +62,27 @@ public class ImageManager implements MediaResourceManager{
         for (String path : paths) {
             currentNode = currentNode.getJSONObject(path);
             if (currentNode == null) {
-                ;
                 return null;
             }
         }
         return currentNode.optString(caseType, null);
     }
 
+    /**
+     * Get image from cache or load it from file. If image is not found, return
+     * null.
+     * 
+     * @param caseType
+     * @param caseType
+     * @param paths
+     * @return
+     */
     public Image getImg(String caseType, String... paths) {
         String path = parseURL(caseType, paths);
         if (!imageCache.containsKey(path)) {
             Image image = new Image(path);
             imageCache.put(path, image);
+            logger.info("Load image from: " + path);
             return image;
         }
         return imageCache.get(path);

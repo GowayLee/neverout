@@ -26,7 +26,6 @@ import com.mambastu.gameobjects.entity.bullet.BaseBullet;
 import com.mambastu.gameobjects.entity.monster.BaseMonster;
 import com.mambastu.gameobjects.entity.player.BasePlayer;
 import com.mambastu.resource.input.InputManager;
-import com.mambastu.utils.pool.ObjectPoolManager;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -261,7 +260,7 @@ public class ChallengeImpl implements ModeLogic{
         stopMonsterGenTimer();
         stopCountDownTimer();
         clearAllEntity();
-        ObjectPoolManager.getInstance().close(); // 关闭对象池，释放内存
+        // ObjectPoolManager.getInstance().close(); // 关闭对象池，释放内存
         listener.stopEngine(isPassLevel);
     }
 
@@ -281,7 +280,6 @@ public class ChallengeImpl implements ModeLogic{
 
     private void stopMonsterGenTimer() {
         for (Timeline monsterEggTimer : monsterEggTimerList) {
-            // monsterEggTimer.stop();
             monsterEggTimer.pause(); // 暂停生成怪物的计时器，因为后续需要重新生成计时器，所以不能直接stop掉
         }
     }

@@ -8,7 +8,7 @@ import com.mambastu.core.logic.impl.ChallengeImpl;
 import com.mambastu.core.logic.impl.NormalImpl;
 import com.mambastu.enums.GameMode;
 
-public class LogicManager { // TODO: 尝试单例模式
+public class LogicManager {
     private final Context ctx;
     private final EngineProps engineProps;
     private final LogicLayerListener listener;
@@ -24,6 +24,8 @@ public class LogicManager { // TODO: 尝试单例模式
 
     
     /** 
+     * Stratgey mode, choose different Logic Implement for different game mode
+     * 
      * @param gameMode
      */
     private void pickLogiImpl(GameMode gameMode) {
@@ -39,10 +41,18 @@ public class LogicManager { // TODO: 尝试单例模式
         }
     }
 
+    /** 
+     * Initialize Entities and Timers for the game mode.
+     * 
+     */
     public void initEntities() { // 初始化游戏实体，包括玩家、障碍物等
         logiModule.initPlayer();
     }
 
+    /**
+     * Initialize timers for the game mode.
+     * 
+     */
     public void initTimers() { // 初始化游戏计时器，包括怪物生成计时器、倒计时计时器等
         logiModule.initMonsterGenTimer();
         logiModule.initCountDownTimer();

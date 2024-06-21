@@ -7,11 +7,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.mambastu.gameobjects.entity.BaseEntity;
 
-/**
- * Author:JngyEn
- * Description:
- * DateTime: 2024/6/9上午11:35
- **/
 public class ObjectPoolManager {
     private static final Logger logger = LogManager.getLogger(ObjectPoolManager.class);
 
@@ -39,15 +34,12 @@ public class ObjectPoolManager {
     }
 
     /**
-     * 通过获得的池管理器来取得对象池以及防止重复产生某一个对象的对象池
-     *
-     * @param poolName        :命名规则：类名 + Pool
-     * @param resourceFactory
-     * @param v
-     * @param initialSize
-     * @param maxSize
-     * @return : 返回某个子类的ObjectPool对象
+     * Create an object pool depend on class type of the target object.
+     * 
      * @param <T>
+     * @param objectClass
+     * @param maxSize
+     * @return
      */
     private <T extends BaseEntity> ObjectPool<T> createObjectPool(Class<? extends BaseEntity> objectClass, int maxSize) { 
         @SuppressWarnings({ "unchecked", "rawtypes" })

@@ -2,10 +2,15 @@ package com.mambastu.core.logic;
 
 public interface ModeLogic {
     /*
-     * 更新所有游戏实体属性
+     * Update game datas for each frame
+     * 
      */
     void update();
 
+    /**
+     * Initialize count down timer.
+     * 
+     */
     void initCountDownTimer();
 
     void initMonsterGenTimer();

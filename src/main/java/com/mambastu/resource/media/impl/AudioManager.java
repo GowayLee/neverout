@@ -23,7 +23,7 @@ import org.json.JSONTokener;
 
 import com.mambastu.resource.media.MediaResourceManager;
 
-public class AudioManager implements MediaResourceManager{
+public class AudioManager implements MediaResourceManager {
     private static final Logger logger = LogManager.getLogger(AudioManager.class);
 
     private static final AudioManager INSTANCE = new AudioManager();
@@ -36,7 +36,7 @@ public class AudioManager implements MediaResourceManager{
     private final Map<String, Clip> audioCache;
     private final Map<String, List<Clip>> effectCache;
 
-    private boolean readyForEnlarge = true; // 是否可以扩容(线程安全)
+    private boolean isReadyForEnlarge = true; // 是否可以扩容(线程安全)
     private Map<String, Long> lastPlayTimes;
 
     public static AudioManager getInstance() {
@@ -124,6 +124,13 @@ public class AudioManager implements MediaResourceManager{
         }
     }
 
+    /**
+     * Enlarge the pool of sound effects. This method is called when the number of
+     * available sound effects is less than 30% of total sound effects.
+     * This method will try to enlarge the pool by 100% each time it is called.
+     * 
+     * @param path
+     */
     private void enlargeEffectCache(String path) { // 扩充音效冗余池
         List<Clip> clips = effectCache.get(path);
         try {
@@ -144,7 +151,7 @@ public class AudioManager implements MediaResourceManager{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        readyForEnlarge = true;
+        isReadyForEnlarge = true;
     }
 
     private void loadAudio(String path) {
@@ -168,7 +175,7 @@ public class AudioManager implements MediaResourceManager{
         String path = getAudioPath(category, name, key);
         if (path == null)
             return null;
-        if (category == "SoundEffects") { // 如果需要的是音效，则从音效冗余池缓存中获取
+        if (category.equals("SoundEffects")) { // 如果需要的是音效，则从音效冗余池缓存中获取
             if (!effectCache.containsKey(path)) { // 如果音效未在缓存中，则加载该音效
                 loadSoundEffects(path);
             }
@@ -180,8 +187,8 @@ public class AudioManager implements MediaResourceManager{
                 }
                 i++;
             }
-            if ((double) i / clips.size() > 0.7 && readyForEnlarge) {
-                readyForEnlarge = false;
+            if ((double) i / clips.size() > 0.7 && isReadyForEnlarge) {
+                isReadyForEnlarge = false;
                 enlargeEffectCache(path);
             }
             return clips.get(0); // 如果没有未使用的音效，则返回第一个音效，并等待其他音效空闲
@@ -194,7 +201,7 @@ public class AudioManager implements MediaResourceManager{
     }
 
     /**
-     * 检查指定音频是否正在播放
+     * Check wether the clip is playing
      * 
      * @param category
      * @param name
@@ -217,7 +224,7 @@ public class AudioManager implements MediaResourceManager{
         executor.submit(() -> {
             Clip clip = getClip(category, name, key);
             if (clip != null) {
-                if (category == "SoundEffects") {
+                if (category.equals("SoundEffects")) {
                     clip.setFramePosition(0); // 重置到起始位置
                     clip.start();
                 } else {
@@ -264,6 +271,13 @@ public class AudioManager implements MediaResourceManager{
         }
     }
 
+    /**
+     * Play specific clip in looping way
+     * 
+     * @param category
+     * @param name
+     * @param key
+     */
     public void loopAudio(String category, String name, String key) {
         Clip clip = getClip(category, name, key);
         if (clip != null) {

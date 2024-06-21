@@ -34,6 +34,10 @@ public class GameEngine {
     private final EngineProps engineProps;
     private AnimationTimer timer;
 
+    /**
+     * Contain all the parameters of Engine Layer and also Logic Layer inside the Layer
+     * 
+     */
     @Getter
     @Setter
     public class EngineProps { // 成员内部类 引擎属性将贯穿引擎层与逻辑层

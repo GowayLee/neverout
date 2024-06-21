@@ -26,7 +26,6 @@ import com.mambastu.gameobjects.entity.bullet.BaseBullet;
 import com.mambastu.gameobjects.entity.monster.BaseMonster;
 import com.mambastu.gameobjects.entity.player.BasePlayer;
 import com.mambastu.resource.input.InputManager;
-import com.mambastu.utils.pool.ObjectPoolManager;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -54,8 +53,7 @@ public class NormalImpl implements ModeLogic {
     private final List<BaseBullet> removeList = new ArrayList<>();
     private final Set<BaseMonster> hittedSet = new HashSet<>();
 
-    // ================================= Init Section
-    // =================================
+    // ================================= Init Section =================================
 
     public NormalImpl(EngineProps engineProps, LogicLayerListener listener) {
         this.listener = listener;
@@ -120,13 +118,19 @@ public class NormalImpl implements ModeLogic {
         startMonsterGenTimer();
     }
 
+    /**
+     * EventHandler for generate monsters based on the parameter in its eggs in the level config
+     * 
+     * @param eggType
+     * @return
+     */
     private EventHandler<ActionEvent> generateMonster(MonsterTypes eggType) {
         return new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 try {
                     BaseMonster monster = MonsterFactory.getInstance().create(eggType);
-                    monster.omen(monsterList); // 生成预警
+                    monster.omen(monsterList); // TODO: 优化关键变量传递
                     monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
                     monster.putOnPane(gamePane);
                 } catch (Exception e) {
@@ -136,8 +140,7 @@ public class NormalImpl implements ModeLogic {
         };
     }
 
-    // ================================= Update Logic Section
-    // =================================
+    // ================================= Update Logic Section =================================
 
     @Override
     public void update() { // 游戏循环更新
@@ -237,8 +240,8 @@ public class NormalImpl implements ModeLogic {
             stopEngine(false);
         }
     }
-    // ================================= EngineState Control Section
-    // =================================
+    
+    // ================================= EngineState Control Section =================================
 
     private void pauseEngine() { // 游戏暂停时调用，暂停引擎
         isPause = true;
@@ -258,7 +261,7 @@ public class NormalImpl implements ModeLogic {
         stopMonsterGenTimer();
         stopCountDownTimer();
         clearAllEntity();
-        ObjectPoolManager.getInstance().close(); // 关闭对象池，释放内存
+        // ObjectPoolManager.getInstance().close(); // 关闭对象池，释放内存
         listener.stopEngine(isPassLevel);
     }
 
