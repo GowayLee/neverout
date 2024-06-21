@@ -68,7 +68,8 @@ public class GameEngine {
         this.logicLayerHandler = new LogicLayerHandler();
         this.root = root;
         this.gameRegistry = new GameRegistry(ctx);
-        this.logicManager = new LogicManager(gameRegistry, logicLayerHandler); // 传递引擎参数初始化逻辑管理器
+        this.logicManager = LogicManager.getInstance();
+        this.logicManager.init(gameRegistry, logicLayerHandler); // 传递引擎参数初始化逻辑管理器
         logger.info("Game Engine successfully initialized!");
     }
 

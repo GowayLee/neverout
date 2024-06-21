@@ -9,13 +9,22 @@ import com.mambastu.core.logic.impl.NormalImpl;
 import com.mambastu.enums.GameMode;
 
 public class LogicManager {
-    private final Context ctx;
-    private final GameRegistry gameRegistry;
-    private final LogicLayerListener listener;
+    private static final LogicManager INSTANCE = new LogicManager();
+
+    private  Context ctx;
+    private  GameRegistry gameRegistry;
+    private  LogicLayerListener listener;
 
     private ModeLogic logiModule; // 游戏模式逻辑策略
 
-    public LogicManager(GameRegistry gameRegistry, LogicLayerListener listener) { // 初始化逻辑管理器并选择具体模式逻辑策略实现
+    public static LogicManager getInstance() {
+        return INSTANCE;
+    }
+
+    private LogicManager() {
+    }
+
+    public void init(GameRegistry gameRegistry, LogicLayerListener listener) { // 初始化逻辑管理器并选择具体模式逻辑策略实现
         this.listener = listener;
         this.gameRegistry = gameRegistry;
         this.ctx = gameRegistry.getCtx();
