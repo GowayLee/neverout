@@ -43,7 +43,7 @@ public class ChallengeCtxImpl implements ModeCtxLogic{
     @Override
     public void updateCoin() { // 更新玩家当前关卡获得的硬币数。
         int newCoin = (int) (ctx.getLevelRecord().getKillCount().get() * ctx.getLevelConfig().getMonsterScalCoin()); // 计算当前关卡击杀怪物获得的硬币数。
-        ctx.getGlobalRecord().getCoins().set(ctx.getGlobalRecord().getCoins().get() + newCoin+10000);
+        ctx.getGlobalRecord().getCoins().set(ctx.getGlobalRecord().getCoins().get() + newCoin);
     }
     @Override
 

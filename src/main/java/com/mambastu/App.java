@@ -7,6 +7,7 @@ import com.mambastu.resource.media.impl.AudioManager;
 import com.mambastu.resource.media.impl.ImageManager;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -56,6 +57,8 @@ public class App extends Application {
     @Override
     public void stop() {
         InputManager.getInstance().disconnectDevice();
+        Platform.exit();
+        System.exit(0);
     }
 
     public static void main(String[] args) {
