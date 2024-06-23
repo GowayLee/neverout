@@ -26,6 +26,7 @@ import com.mambastu.gameobjects.entity.bullet.BaseBullet;
 import com.mambastu.gameobjects.entity.monster.BaseMonster;
 import com.mambastu.gameobjects.entity.player.BasePlayer;
 import com.mambastu.resource.input.InputManager;
+import com.mambastu.utils.pool.ObjectPoolManager;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -261,8 +262,8 @@ public class NormalImpl implements ModeLogic {
         stopMonsterGenTimer();
         stopCountDownTimer();
         clearAllEntity();
-        // ObjectPoolManager.getInstance().close(); // 关闭对象池，释放内存
         listener.stopEngine(isPassLevel);
+        ObjectPoolManager.getInstance().close(); // 关闭对象池，释放内存
     }
 
     private void startCountDownTimer() {
@@ -294,5 +295,4 @@ public class NormalImpl implements ModeLogic {
         bulletList.clear();
         barrierList.clear();
     }
-
 }

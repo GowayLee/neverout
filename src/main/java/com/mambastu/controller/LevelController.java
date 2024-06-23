@@ -127,13 +127,13 @@ public class LevelController {
         @Override
         public void pauseGame() {
             pauseMenu.show();
-            logger.info("LevelManager: Game is paused.");
+            logger.info("LevelController: Game is paused.");
         }
 
         @Override
         public void resumeGame() {
             pauseMenu.hide();
-            logger.info("LevelManager: Game is resumed.");
+            logger.info("LevelController: Game is resumed.");
         }
 
         @Override
@@ -145,7 +145,7 @@ public class LevelController {
                 ctxManager.updateCoin(); // 更新玩家当前关卡获得的硬币数。
                 levelMenu.update();
                 levelMenu.show();
-                logger.info("LevelManager: Level is past.");
+                logger.info("LevelController: Level is past.");
             } else {
                 AudioManager.getInstance().stopAudio("BackgroundMusic", "BattleTheme2","displayAudio");
                 AudioManager.getInstance().playAudio("BackgroundMusic", "GameOver","displayAudio");
