@@ -30,6 +30,7 @@ public class LaughPlayer extends BasePlayer {
         this.dieImage = ImageManager.getInstance().getImg("dieImage", "Player", "LaughPlayer");
         setImageSize(50, 50);
         super.skillCD.set(5.0);
+        super.skillCDTimer.setDuration(Duration.seconds(skillCD.get()));
         this.skillTimeline = new PauseTransition();
         this.skillColorAdjust = new ColorAdjust();
         initSkillFX();

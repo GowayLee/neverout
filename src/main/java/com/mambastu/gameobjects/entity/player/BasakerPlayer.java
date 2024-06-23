@@ -36,13 +36,13 @@ public class BasakerPlayer extends BasePlayer {
 
     public BasakerPlayer() {
         super();
-        super.skillCD.set(5);
-        this.bornImage = ImageManager.getInstance().getImg("bornImage", "Player", "Basaker");
+        super.skillCD.set(5);        this.bornImage = ImageManager.getInstance().getImg("bornImage", "Player", "Basaker");
         this.dieImage = ImageManager.getInstance().getImg("dieImage", "Player", "Basaker");
         this.rageImage = ImageManager.getInstance().getImg("enragedImage", "Player", "Basaker");
         this.bloodImage = ImageManager.getInstance().getImg("bloodImage", "Player", "Basaker");
         setImageSize(50, 50);
         super.skillCD.set(9.0);
+        super.skillCDTimer.setDuration(Duration.seconds(skillCD.get()));
         // 初始化技能特效
         this.skillShadow = new ImageView();
         this.bloodImageView = new ImageView(bloodImage);
