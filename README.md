@@ -3,7 +3,7 @@
 
 ## System Architecture 🛠
 In order to enhance scalability and maintainability, the game is divided into several components, each with its own responsibilities. The architecture follows a specific designed pattern, ensuring separation of concerns and easy integration of new features. 
-![Total](docs\images\total.png "total")
+![Total](https://github.com/GowayLee/neverout/blob/56a524565b4cf768fdea3d0b8dce2961500a1ab1/Docs/images/total.png "total")
 
 ### Level Controller
 When we launch the application, LevelController will be initialized first. It controlles all the components in View Layer
