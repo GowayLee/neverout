@@ -8,7 +8,6 @@ module com.mambastu {
     requires org.apache.logging.log4j;
     requires org.json;
     requires Jamepad;
-    requires javafx.web;
     requires jdk.jsobject;
     requires gdx;
 
