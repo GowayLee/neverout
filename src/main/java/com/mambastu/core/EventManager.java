@@ -36,6 +36,12 @@ public class EventManager {
         }
     }
 
+    /**
+     * Handler the event. If the event type is not registered, it will be dynamically loaded.
+     * 
+     * @param <T>
+     * @param event
+     */
     public <T extends BaseEvent> void fireEvent(T event) {
         EventInfo eventInfo = event.getClass().getAnnotation(EventInfo.class);
         if (eventInfo == null) throw new IllegalArgumentException("Event class must be annotated with @EventInfo");
@@ -57,6 +63,13 @@ public class EventManager {
         }
     }
 
+    /**
+     * Reflect to get the instance of specific EventHandler Class and register it
+     * 
+     * @param <T>
+     * @param event
+     * @param eventType
+     */
     private <T extends BaseEvent> void loadHandlerForEvent(Class<T> event, EventType eventType) {
         String handlerClassName = "com.mambastu.core.event.handler.impl." + event.getSimpleName() + "Handler";
         try {

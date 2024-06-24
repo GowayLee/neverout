@@ -36,6 +36,7 @@ public class App extends Application {
         GlobalVar.getScreenWidthProperty().bind(scene.widthProperty());
         GlobalVar.getScreenHeightProperty().bind(scene.heightProperty());
 
+        // initialize resource managers with parsing JSON file
         ImageManager.getInstance().loadResources(); // 初始化图片资源管理器，载入JSON
         AudioManager.getInstance().loadResources(); // 初始化音频资源管理器，载入JSON
         PropStoreController.getInstance().loadResources(); // 初始化道具存储器，载入JSON
@@ -56,6 +57,7 @@ public class App extends Application {
 
     @Override
     public void stop() {
+        // release memory
         InputManager.getInstance().disconnectDevice();
         ImageManager.getInstance().clearCache(); // 清理图片缓存，释放内存
         AudioManager.getInstance().clearCache(); // 清理音频缓存，释放内存

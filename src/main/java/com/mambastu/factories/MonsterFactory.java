@@ -23,10 +23,10 @@ public class MonsterFactory implements EntityFactory<BaseMonster, MonsterTypes> 
     }
 
     /**
-     * 传入MonsterTypes中的一种，返回对应的BaseMonster对象，在外部记得实例化！！！
+     * Get an instance from the relative object pool. If the object pool is empty, create a new instance.
      *
      * @param monsterType
-     * @return
+     * @return BaseMonster
      */
     @Override
     public BaseMonster create(MonsterTypes monsterType) {
@@ -52,6 +52,11 @@ public class MonsterFactory implements EntityFactory<BaseMonster, MonsterTypes> 
         }
     }
 
+    /**
+     * Return an instance to the relative object pool.
+     * 
+     * @param monsterType
+     */
     @Override
     public void delete(BaseMonster obj) {
         obj.setOnStage(false);

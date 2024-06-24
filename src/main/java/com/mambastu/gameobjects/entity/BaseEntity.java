@@ -43,9 +43,9 @@ public abstract class BaseEntity {
     }
 
     /**
-     * 防止实体超出舞台范围，并触发碰撞检测
+     * Avoid enetity move to the outside of the stage
+     * 
      * @return boolean 
-     * 如果实体碰到在舞台边界，返回true，否则返回false
      */
     public boolean trappedInStage() {
         CollisionState collisionState = ScreenBound.collisionState(bound);
