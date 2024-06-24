@@ -1,5 +1,6 @@
 # NeverOut !
 *A brilliant Rouge Game proudly presented by Mamba Studio.*
+[Downloads](https://github.com/GowayLee/neverout/releases)
 
 ## System Architecture 🛠
 In order to enhance scalability and maintainability, the game is divided into several components, each with its own responsibilities. The architecture follows a specific designed pattern, ensuring separation of concerns and easy integration of new features. 
