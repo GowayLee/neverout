@@ -12,6 +12,7 @@ import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -27,7 +28,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-
+        // 适应系统显示缩放比例
+        System.setProperty("prism.allowhidpi", "True");
+        
         StackPane root = new StackPane();
         scene = new Scene(root, 1920, 1080);
         // 绑定StackPane的尺寸到场景的尺寸
