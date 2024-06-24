@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ImageManager implements MediaResourceManager {
-    private static final Logger logger = LogManager.getLogger(AudioManager.class);
+    private static final Logger logger = LogManager.getLogger(ImageManager.class);
 
     private static ImageManager INSTANCE = new ImageManager();
 

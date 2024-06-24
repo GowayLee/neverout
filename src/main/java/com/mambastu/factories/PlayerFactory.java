@@ -11,8 +11,6 @@ public class PlayerFactory implements EntityFactory<BasePlayer, PlayerTypes>  {
 
     private static PlayerFactory INSTANCE = new PlayerFactory();;
 
-    // private final ObjectPoolManager objectPoolManager = ObjectPoolManager.getInstance();
-
     private PlayerFactory() {
     }
 
