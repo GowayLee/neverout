@@ -61,7 +61,6 @@ public class App extends Application {
     @Override
     public void stop() {
         // release memory
-        InputManager.getInstance().disconnectDevice();
         ImageManager.getInstance().clearCache(); // 清理图片缓存，释放内存
         AudioManager.getInstance().clearCache(); // 清理音频缓存，释放内存
         Platform.exit();

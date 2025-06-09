@@ -4,9 +4,8 @@ module com.mambastu {
     requires java.desktop;
     requires org.apache.logging.log4j;
     requires org.json;
-    requires Jamepad;
+//    requires Jamepad;
     requires jdk.jsobject;
-    requires gdx;
 
     opens com.mambastu to javafx.fxml;
     exports com.mambastu;
