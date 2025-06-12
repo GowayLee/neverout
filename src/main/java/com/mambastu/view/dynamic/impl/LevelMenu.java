@@ -111,14 +111,24 @@ public class LevelMenu implements DynamicMenu{
         passText.layoutYProperty()
                 .bind(menuPane.heightProperty().subtract(passText.layoutBoundsProperty().get().getHeight()).divide(5)); // 偏上5分之一
 
+//
         Text nextBtn = new Text("NEXT LEVEL");
         nextBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 48));
-        nextBtn.layoutXProperty()
-                .bind(menuPane.widthProperty().subtract(nextBtn.layoutBoundsProperty().get().getWidth()).divide(2.1));
-        nextBtn.layoutYProperty()
-                .bind(menuPane.heightProperty().subtract(nextBtn.layoutBoundsProperty().get().getHeight()).multiply(0.86));
         nextBtn.setFill(Color.WHITE);
         nextBtn.setOpacity(0.8);
+
+// 当窗口尺寸或字体变化时更新位置
+        nextBtn.layoutXProperty().bind(Bindings.createDoubleBinding(() -> {
+            double textWidth = nextBtn.getBoundsInLocal().getWidth();
+            double paneWidth = menuPane.getWidth();
+            return (paneWidth - textWidth) / 2;
+        }, menuPane.widthProperty(), nextBtn.boundsInLocalProperty()));
+
+        nextBtn.layoutYProperty().bind(Bindings.createDoubleBinding(() -> {
+            double textHeight = nextBtn.getBoundsInLocal().getHeight();
+            double paneHeight = menuPane.getHeight();
+            return paneHeight - textHeight - 30; // 距离底部保留 30 像素
+        }, menuPane.heightProperty(), nextBtn.boundsInLocalProperty()));
 
         nextBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
             nextBtn.setOpacity(1.0);
