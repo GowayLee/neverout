@@ -540,7 +540,7 @@ private void buildStartBtnLayout() {
 
         Group leftEye = createEye();
         Group rightEye = createEye();
-        ImageView face = new ImageView(ImageManager.getInstance().getImg("bornImage", "Monster", "BossMonster"));
+        ImageView face = new ImageView(ImageManager.getInstance().getImg("bornImage", "Menu", "Menu"));
         face.setFitWidth(550);
         face.setFitHeight(324);
         leftEye.setLayoutX(face.getFitWidth() * 0.300);
