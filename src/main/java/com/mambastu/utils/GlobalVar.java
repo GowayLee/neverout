@@ -3,10 +3,12 @@ package com.mambastu.utils;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import lombok.Getter;
 
 public class GlobalVar {
     private static final SimpleDoubleProperty screenWidth = new SimpleDoubleProperty();
     private static final SimpleDoubleProperty screenHeight = new SimpleDoubleProperty();
+    // 获取游戏面板。
     private static Pane gamePane;
     private static Scene primeScene; // 场景。
 
@@ -22,10 +24,6 @@ public class GlobalVar {
     
     public static Scene getPrimeScene() { // 获取场景。
         return primeScene;
-    }
-
-    public static Pane getGamePane() { // 获取游戏面板。
-        return gamePane;
     }
 
     public static void setGamePane(Pane pane) { // 设置游戏面板。
