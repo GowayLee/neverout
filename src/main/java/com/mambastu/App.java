@@ -32,7 +32,7 @@ public class App extends Application {
         System.setProperty("prism.allowhidpi", "True");
         
         StackPane root = new StackPane();
-        scene = new Scene(root, 1920, 1080);
+        scene = new Scene(root, 1800, 720);
         // 绑定StackPane的尺寸到场景的尺寸
         root.prefWidthProperty().bind(scene.widthProperty());
         root.prefHeightProperty().bind(scene.heightProperty());
@@ -61,7 +61,6 @@ public class App extends Application {
     @Override
     public void stop() {
         // release memory
-        InputManager.getInstance().disconnectDevice();
         ImageManager.getInstance().clearCache(); // 清理图片缓存，释放内存
         AudioManager.getInstance().clearCache(); // 清理音频缓存，释放内存
         Platform.exit();

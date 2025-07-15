@@ -119,17 +119,14 @@ public class ChallengeImpl implements ModeLogic{
     }
 
     private EventHandler<ActionEvent> generateMonster(MonsterTypes eggType) {
-        return new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    BaseMonster monster = MonsterFactory.getInstance().create(eggType);
-                    monster.omen(monsterList); // 生成预警
-                    monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
-                    monster.putOnPane(gamePane);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        return event -> {
+            try {
+                BaseMonster monster = MonsterFactory.getInstance().create(eggType);
+                monster.omen(monsterList); // 生成预警
+                monster.setPos(gamePane.getWidth(), gamePane.getHeight(), player);
+                monster.putOnPane(gamePane);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         };
     }

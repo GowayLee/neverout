@@ -21,6 +21,11 @@
       "curtainImage": "/static/image/char/HellLord_Dark.png"
     }
   },
+  "Menu": {
+    "Menu": {
+      "bornImage": "/static/image/char/Menu.png"
+    }
+  },
   "Player": {
     "LaughPlayer": {
       "bornImage": "/static/image/char/LaughPlayer.png",

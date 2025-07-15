@@ -241,69 +241,18 @@ public class GameOverMenu implements FixedMenu{
 
     private void buildFace(Pane pane) {
         Group facePane = new Group();
-        Group leftEye = createEye(pane);
-        Group rightEye = createEye(pane);
         ImageView face = new ImageView(ImageManager.getInstance().getImg("bornImage", "Player", "JokerPlayer"));
         face.fitWidthProperty().bind(pane.widthProperty().multiply(0.9));
         face.fitHeightProperty().bind(pane.heightProperty().multiply(0.9));
         face.setLayoutX(0);
         face.setLayoutY(0);
-        leftEye.layoutXProperty().bind(face.fitWidthProperty().multiply(0.33));
-        leftEye.layoutYProperty().bind(face.fitHeightProperty().multiply(0.42));
-        rightEye.layoutXProperty().bind(face.fitWidthProperty().multiply(0.65));
-        rightEye.layoutYProperty().bind(face.fitHeightProperty().multiply(0.42));
         facePane.setLayoutX(0);
         facePane.setLayoutY(0);
 
-        facePane.getChildren().addAll(face, leftEye, rightEye);
-
-        root.setOnMouseMoved(event -> {
-            updatePupilPosition(pane, event.getX(), event.getY(), leftEye);
-            updatePupilPosition(pane, event.getX(), event.getY(), rightEye);
-        });
+        facePane.getChildren().addAll(face);
         pane.getChildren().add(facePane);
 
     }
-
-    private Group createEye(Pane pane) {
-        // 创建眼睛背景
-        Circle eyeBackground = new Circle();
-        eyeBackground.radiusProperty().bind(pane.widthProperty().multiply(0.3 * 0.25));
-        eyeBackground.setFill(Color.WHITE);
-        eyeBackground.setStroke(Color.WHITE);
-        eyeBackground.setStrokeWidth(2);
-
-        // 创建眼珠
-        Circle pupil = new Circle();
-        pupil.radiusProperty().bind(pane.widthProperty().multiply(0.3 * 0.20 * 0.45));
-        pupil.setFill(Color.BLACK);
-
-        // 将眼珠添加到眼睛背景中
-        return new Group(eyeBackground, pupil);
-    }
-
-    // 更新眼珠位置的方法
-    private void updatePupilPosition(Pane facePane, double mouseX, double mouseY, Group eye) {
-        Circle pupil = (Circle) eye.getChildren().get(1);
-        Circle eyeBackground = (Circle) eye.getChildren().get(0);
-
-        double eyeCenterX = eye.getLayoutX() + eyeBackground.getCenterX() + facePane.getLayoutX();
-        double eyeCenterY = eye.getLayoutY() + eyeBackground.getCenterY() + facePane.getLayoutY();
-
-        double deltaX = mouseX - eyeCenterX;
-        double deltaY = mouseY - eyeCenterY;
-        double distance = BetterMath.sqrt(deltaX * deltaX + deltaY * deltaY);
-        double maxDistance = eyeBackground.getRadius() - pupil.getRadius();
-
-        if (distance > maxDistance) {
-            deltaX = (deltaX / distance) * maxDistance;
-            deltaY = (deltaY / distance) * maxDistance;
-        }
-
-        pupil.setTranslateX(deltaX);
-        pupil.setTranslateY(deltaY);
-    }
-
     private enum ScoreType {
         SCORE_TITLE, TOTAL_KILL, TOTAL_DURATION, TOTAL_LEVEL;
     }

@@ -211,48 +211,73 @@ public class MainMenu implements FixedMenu{
         return introView;
     }
 
-    private void buildCharLayout() {
-        charIntroPane.getChildren().clear();
+//
+private void buildCharLayout() {
+    charIntroPane.getChildren().clear();
+    charPane.getChildren().clear();
 
-        ImageView laughPlayerIntro = createCharIntro(
-                ImageManager.getInstance().getImg("laughIntroImage", "System", "MainMenu")); // 创建角色介绍图像视图
-        ImageView laughPlayerView = createChar(
-                ImageManager.getInstance().getImg("laughPlayerImage", "System", "MainMenu"),
-                PlayerTypes.LaughPlayer, laughPlayerIntro);
+    // 创建角色介绍与视图
+    ImageView laughPlayerIntro = createCharIntro(
+            ImageManager.getInstance().getImg("laughIntroImage", "System", "MainMenu"));
+    ImageView laughPlayerView = createChar(
+            ImageManager.getInstance().getImg("laughPlayerImage", "System", "MainMenu"),
+            PlayerTypes.LaughPlayer, laughPlayerIntro);
 
-        ImageView jokerPlayerIntro = createCharIntro(
-                ImageManager.getInstance().getImg("jokerIntroImage", "System", "MainMenu"));
-        ImageView jokerPlayerView = createChar(
-                ImageManager.getInstance().getImg("jokerPlayerImage", "System", "MainMenu"),
-                PlayerTypes.JokerPlayer, jokerPlayerIntro);
+    ImageView jokerPlayerIntro = createCharIntro(
+            ImageManager.getInstance().getImg("jokerIntroImage", "System", "MainMenu"));
+    ImageView jokerPlayerView = createChar(
+            ImageManager.getInstance().getImg("jokerPlayerImage", "System", "MainMenu"),
+            PlayerTypes.JokerPlayer, jokerPlayerIntro);
 
-        ImageView basakerPlayerIntro = createCharIntro(
-                ImageManager.getInstance().getImg("basakerIntroImage", "System", "MainMenu"));
-        ImageView basakerPlayerView = createChar(
-                ImageManager.getInstance().getImg("basakerPlayerImage", "System", "MainMenu"),
-                PlayerTypes.BasakerPlayer, basakerPlayerIntro);
+    ImageView basakerPlayerIntro = createCharIntro(
+            ImageManager.getInstance().getImg("basakerIntroImage", "System", "MainMenu"));
+    ImageView basakerPlayerView = createChar(
+            ImageManager.getInstance().getImg("basakerPlayerImage", "System", "MainMenu"),
+            PlayerTypes.BasakerPlayer, basakerPlayerIntro);
 
-        charPane.getChildren().addAll(laughPlayerView, jokerPlayerView, basakerPlayerView);
-        charPane.setSpacing(70);
-        charPane.setPadding(new Insets(50));
-        charPane.setAlignment(Pos.CENTER);
+    // 添加到角色头像容器
+    charPane.getChildren().addAll(laughPlayerView, jokerPlayerView, basakerPlayerView);
+    charPane.setSpacing(40);
+    charPane.setAlignment(Pos.CENTER);
 
-        charPane.layoutXProperty()
-                .bind(root.widthProperty().subtract(charPane.layoutBoundsProperty().get().getWidth()).multiply(0.66));
-        charPane.layoutYProperty()
-                .bind(root.heightProperty().subtract(charPane.layoutBoundsProperty().get().getHeight()).multiply(0.55));
-
-        charIntroPane.setPrefSize(620, 620);
-        charIntroPane.layoutXProperty()
-                .bind(root.widthProperty().subtract(charIntroPane.layoutBoundsProperty().get().getWidth())
-                        .multiply(0.65));
-        charIntroPane.setLayoutY(10);
+    // 将角色介绍图像预加入介绍面板（初始不可见）
+    charIntroPane.getChildren().addAll(laughPlayerIntro, jokerPlayerIntro, basakerPlayerIntro);
+    for (Node node : charIntroPane.getChildren()) {
+        if (node instanceof ImageView) {
+            ((ImageView) node).setVisible(false);
+            ((ImageView) node).setFitWidth(400);
+            ((ImageView) node).setFitHeight(400);
+        }
     }
 
+    // 监听窗口高度，缩放头像
+    root.heightProperty().addListener((obs, oldVal, newVal) -> {
+        double scale = newVal.doubleValue() / 720.0;
+        double baseSize = 90; // 初始头像宽高
+        for (Node node : charPane.getChildren()) {
+            if (node instanceof ImageView) {
+                ((ImageView) node).setFitWidth(baseSize * scale);
+                ((ImageView) node).setFitHeight(baseSize * scale);
+            }
+        }
+    });
+
+    // 将头像置于窗口右侧中央
+    charPane.layoutXProperty().bind(root.widthProperty().subtract(charPane.widthProperty()).subtract(40));
+    charPane.layoutYProperty().bind(root.heightProperty().subtract(charPane.heightProperty()).divide(2));
+
+    // 设置介绍面板位置
+    charIntroPane.setPrefSize(620, 620);
+    charIntroPane.layoutXProperty().bind(root.widthProperty().multiply(0.1));
+    charIntroPane.setLayoutY(50);
+}
+
     private ImageView createChar(Image img, PlayerTypes playerTypes, ImageView introView) {
-        ImageView charView = new ImageView(img); // 创建角色图像视图
-        charView.setFitWidth(110);
-        charView.setFitHeight(110);
+        ImageView charView = new ImageView(img);
+        charView.setFitWidth(90); // 初始宽高（会被动态调整）
+        charView.setFitHeight(90);
+        charView.setPreserveRatio(true);
+        charView.setSmooth(true);
 
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.BLACK);
@@ -268,47 +293,54 @@ public class MainMenu implements FixedMenu{
         scaleTransition.setCycleCount(2);
         scaleTransition.setAutoReverse(true);
 
-        charView.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> { // 鼠标进入事件处理程序，显示角色信息面板
+        charView.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
             if (scaleTransition.getStatus() != Animation.Status.RUNNING) {
                 charView.setEffect(shadow);
                 scaleImageView(charView, 1.2);
                 if (isCharIntroPinned) {
-                    charTemp = charIntroPane.getChildren().get(0); // 获取当前角色介绍图像视图的引用，以便稍后重新添加它。
-                    charIntroPane.getChildren().clear(); // 清除介绍面板，以便添加新的角色介绍图像视图。
-                    charIntroPane.getChildren().add(introView); // 添加新的角色介绍图像视图。
+                    charTemp = charIntroPane.getChildren().get(0);
+                    charIntroPane.getChildren().clear();
+                    introView.setVisible(true);
+                    charIntroPane.getChildren().add(introView);
                 } else {
-                   charIntroPane.getChildren().clear();
-                   charIntroPane.getChildren().add(introView);
+                    charIntroPane.getChildren().clear();
+                    introView.setVisible(true);
+                    charIntroPane.getChildren().add(introView);
                 }
             }
         });
 
-        charView.addEventHandler(MouseEvent.MOUSE_EXITED, event -> { // 鼠标离开事件处理程序，隐藏角色信息面板
+        charView.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
             if (scaleTransition.getStatus() != Animation.Status.RUNNING) {
                 charView.setEffect(null);
                 scaleImageView(charView, 1.0);
-
                 if (isCharIntroPinned) {
                     charIntroPane.getChildren().clear();
-                    charIntroPane.getChildren().add(charTemp);
+                    if (charTemp != null) {
+                        charTemp.setVisible(true);
+                        charIntroPane.getChildren().add(charTemp);
+                    }
                 } else {
+                    introView.setVisible(false);
                     charIntroPane.getChildren().clear();
                 }
             }
         });
 
-        charView.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> { // 鼠标点击事件处理程序，选择角色并隐藏角色选择面板
+        charView.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             AudioManager.getInstance().playAudio("SoundEffects", "Ding", "displayAudio");
-            this.playerType.setValue(playerTypes); // 设置玩家类型为所选角色类型
+            this.playerType.setValue(playerTypes);
             charIntroPane.getChildren().clear();
-            charIntroPane.getChildren().add(introView); // 添加角色介绍图像视图到介绍面板
+            introView.setVisible(true);
+            charIntroPane.getChildren().add(introView);
             charTemp = introView;
-            isCharIntroPinned = true; // 标记面板为固定状态，不再响应鼠标事件
+            isCharIntroPinned = true;
             scaleTransition.play();
         });
 
         return charView;
     }
+
 
     private ImageView createCharIntro(Image img) {
         ImageView introView = new ImageView(img);
@@ -324,41 +356,108 @@ public class MainMenu implements FixedMenu{
         st.play();
     }
 
-    private void buildStartBtnLayout() {
-        startBtnPane.getChildren().clear();
+//    private void buildStartBtnLayout() {
+//        startBtnPane.getChildren().clear();
+//
+//        ImageView circleView = new ImageView(ImageManager.getInstance().getImg("circleImage", "System", "MainMenu"));
+//        circleView.setFitWidth(600);
+//        circleView.setFitHeight(120);
+//        circleView.setLayoutX(0);
+//        circleView.setLayoutY(0);
+//        circleView.setVisible(false);
+//
+//        Text startBtn = new Text("Start Game");
+//        startBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 80));
+//        startBtn.setFill(Color.BLACK);
+//        startBtn.setOpacity(0.8);
+//        startBtn.setLayoutX(50);
+//        startBtn.setLayoutY(85);
+//
+//        startBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+//            circleView.setVisible(true); // 显示圆圈
+//        });
+//
+//        startBtn.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+//            circleView.setVisible(false);
+//        });
+//
+//        startBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+//            listener.startGame();
+//        });
+//
+//        startBtnPane.getChildren().addAll(circleView, startBtn);
+//
+//        startBtnPane.setLayoutX(70);
+//        startBtnPane.layoutYProperty()
+//                .bind(root.heightProperty().subtract(startBtnPane.layoutBoundsProperty().get().getHeight()).multiply(0.68));
+//    }
 
-        ImageView circleView = new ImageView(ImageManager.getInstance().getImg("circleImage", "System", "MainMenu"));
-        circleView.setFitWidth(600);
-        circleView.setFitHeight(120);
-        circleView.setLayoutX(0);
-        circleView.setLayoutY(0);
-        circleView.setVisible(false);
+private void buildStartBtnLayout() {
+    startBtnPane.getChildren().clear();
 
-        Text startBtn = new Text("Start Game");
-        startBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 80));
-        startBtn.setFill(Color.BLACK);
-        startBtn.setOpacity(0.8);
-        startBtn.setLayoutX(50);
-        startBtn.setLayoutY(85);
+    ImageView circleView = new ImageView(ImageManager.getInstance().getImg("circleImage", "System", "MainMenu"));
+    circleView.setVisible(false);
 
-        startBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-            circleView.setVisible(true); // 显示圆圈
-        });
+    Text startBtn = new Text("Start Game");
+    startBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, 80));
+    startBtn.setFill(Color.BLACK);
+    startBtn.setOpacity(0.8);
 
-        startBtn.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-            circleView.setVisible(false);
-        });
+    // 鼠标事件
+    startBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> circleView.setVisible(true));
+    startBtn.addEventHandler(MouseEvent.MOUSE_EXITED, event -> circleView.setVisible(false));
+    startBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> listener.startGame());
 
-        startBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            listener.startGame();
-        });
+    startBtnPane.getChildren().addAll(circleView, startBtn);
+    root.getChildren().add(startBtnPane); // 确保添加到根容器中
 
-        startBtnPane.getChildren().addAll(circleView, startBtn);
+    // 监听 root 尺寸变化，实现相对定位
+    root.widthProperty().addListener((obs, oldW, newW) -> {
+        double width = newW.doubleValue();
+        double centerX = width * 0.5;
 
-        startBtnPane.setLayoutX(70);
-        startBtnPane.layoutYProperty()
-                .bind(root.heightProperty().subtract(startBtnPane.layoutBoundsProperty().get().getHeight()).multiply(0.68));
-    }
+        // 重新居中
+        double textWidth = startBtn.getBoundsInLocal().getWidth();
+        startBtn.setLayoutX(centerX - textWidth / 2);
+        circleView.setLayoutX(centerX - (circleView.getFitWidth() / 2));
+    });
+
+    root.heightProperty().addListener((obs, oldH, newH) -> {
+        double height = newH.doubleValue();
+
+        // 控件定位到 68% 高度
+        double posY = height * 0.68;
+        startBtnPane.setLayoutY(posY);
+
+        // 自适应字体与背景
+        double fontSize = height * 0.08; // 比如 8% 的高度
+        startBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, fontSize));
+        startBtn.setLayoutY(fontSize); // Y 相对 startBtnPane 顶部偏移
+
+        circleView.setFitHeight(fontSize + 40); // 背景高度略高于字体
+        circleView.setFitWidth(root.getWidth() * 0.5); // 背景宽度为窗口宽度的 50%
+    });
+
+    // 初始化一次（避免窗口大小未改变时看不到）
+    double initW = root.getWidth();
+    double initH = root.getHeight();
+    double centerX = initW * 0.5;
+
+    double initFontSize = initH * 0.08;
+    startBtn.setFont(Font.font("Segoe Script", FontWeight.BOLD, initFontSize));
+    startBtn.setLayoutY(initFontSize);
+
+    double textWidth = startBtn.getBoundsInLocal().getWidth();
+    startBtn.setLayoutX(centerX - textWidth / 2);
+
+    circleView.setFitHeight(initFontSize + 40);
+    circleView.setFitWidth(initW * 0.5);
+    circleView.setLayoutX(centerX - circleView.getFitWidth() / 2);
+
+    startBtnPane.setLayoutX(0); // Pane 本身 X=0，内部控件自适应居中
+    startBtnPane.setLayoutY(initH * 0.68);
+}
+
 
     private void buildHelpBtnLayout() {
         helpBtnPane.getChildren().clear();
@@ -441,7 +540,7 @@ public class MainMenu implements FixedMenu{
 
         Group leftEye = createEye();
         Group rightEye = createEye();
-        ImageView face = new ImageView(ImageManager.getInstance().getImg("bornImage", "Monster", "BossMonster"));
+        ImageView face = new ImageView(ImageManager.getInstance().getImg("bornImage", "Menu", "Menu"));
         face.setFitWidth(550);
         face.setFitHeight(324);
         leftEye.setLayoutX(face.getFitWidth() * 0.300);
